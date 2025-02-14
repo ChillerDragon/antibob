@@ -76,6 +76,7 @@ jobs:
 
     - name: Run server
       run: |
-        cd build
+        cp libantibot.so ../ddnet/build
+        cd ../ddnet/build
         ./DDNet-Server shutdown
 
