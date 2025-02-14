@@ -61,6 +61,7 @@ jobs:
 
     - name: Build ddnet 18.9.1
       run: |
+        cd ..
         git clone --recursive https://github.com/ddnet/ddnet.git
         cd ddnet
         git checkout 18.9.1
