@@ -11,3 +11,6 @@ CXX_FLAGS = \
 
 antibot:
 	$(CXX) src/antibot.cpp $(CXX_FLAGS) -o libantibot.so
+
+clean:
+	rm libantibot.so
