@@ -34,6 +34,18 @@ when launching it. Then it will pick it up.
 Also make sure to compile the server with the cmake flag
 ``-DANTIBOT=ON``
 
+For development I like to symlink the libantibot.so into the servers build
+directory. But be careful it will be overwritten once the server is rebuild.
+
+```
+cd antibob
+make
+cd ../ddnet/build
+make
+ln ../../antibob/libantibot.so .
+./DDNet-Server | grep antibot
+```
+
 ## clangd compile_commands.json
 
 If your editor depends on a compile_commands.json to work properly.
