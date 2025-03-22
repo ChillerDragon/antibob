@@ -34,3 +34,12 @@ when launching it. Then it will pick it up.
 Also make sure to compile the server with the cmake flag
 ``-DANTIBOT=ON``
 
+## clangd compile_commands.json
+
+If your editor depends on a compile_commands.json to work properly.
+You can use bear to generate them.
+
+```
+bear -- make
+```
+
