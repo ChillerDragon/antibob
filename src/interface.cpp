@@ -10,7 +10,9 @@ static CAntibotData *g_pData;
 
 extern "C" {
 
-CAntibob *pAntibob = nullptr;
+#define ANTIBOT_CLASS CAntibob // <= YOUR CLASS HERE
+
+ANTIBOT_CLASS *pAntibob = nullptr;
 
 int AntibotAbiVersion()
 {
@@ -19,7 +21,7 @@ int AntibotAbiVersion()
 void AntibotInit(CAntibotData *pCallbackData)
 {
 	g_pData = pCallbackData;
-	pAntibob = new CAntibob();
+	pAntibob = new ANTIBOT_CLASS();
 	pAntibob->OnInit(pCallbackData);
 }
 void AntibotRoundStart(CAntibotRoundData *pRoundData) { pAntibob->OnRoundStart(pRoundData); }

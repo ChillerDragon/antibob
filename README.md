@@ -1,4 +1,5 @@
 # antibob
+
 exploring ddnet's antibot interface
 
 ## compile
@@ -53,5 +54,47 @@ You can use bear to generate them.
 
 ```
 bear -- make
+```
+
+## Example usage
+
+Create your own class that inherits from antibob.
+
+```C++
+// src/my_antibot.h
+
+#include "antibob.h"
+
+class CMyAntibot : public CAntibob
+{
+public:
+	void OnInit(CAntibotData *pData) override;
+};
+```
+
+```C++
+#include "my_antibot.h"
+
+void CMyAntibot::OnInit(CAntibotData *pData)
+{
+	CAntibob::OnInit(pData);
+	Log("my antibot initialized");
+}
+```
+
+Then patch your class into interface.cpp
+
+
+```C++
+// interface.cpp
+
+#include "my_antibot.h"
+
+// [..]
+extern "C" {
+
+#define ANTIBOT_CLASS CMyAntibot // <= YOUR CLASS HERE
+
+ANTIBOT_CLASS *pAntibob = nullptr;
 ```
 
