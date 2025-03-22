@@ -9,6 +9,8 @@ class CAntibob
 public:
 	virtual ~CAntibob() = default;
 
+	void SendChatTarget(int ClientId, const char *pMessage);
+
 	virtual void OnInit(CAntibotData *pData);
 	virtual void OnRoundStart(CAntibotRoundData *pRoundData);
 	virtual void OnRoundEnd();
