@@ -1,17 +1,14 @@
-#include "antibob.h"
+#include <base/log.h>
 
 #include <cstdio>
 #include <cstring>
 
-void CAntibob::Log(const char *pMessage)
-{
-	m_pData->m_pfnLog(pMessage, m_pData->m_pUser);
-}
+#include "antibob.h"
 
 void CAntibob::OnInit(CAntibotData *pData)
 {
 	m_pData = pData;
-	Log("antibob antibot initialized");
+	log_info("antibot", "antibob antibot initialized");
 }
 
 void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)
@@ -34,11 +31,11 @@ bool CAntibob::OnConsoleCommand(const char *pCommand)
 {
 	if(strcmp(pCommand, "dump") == 0)
 	{
-		Log("null antibot");
+		log_info("antibot", "null antibot");
 	}
 	else
 	{
-		// Log("unknown command");
+		// log_info("antibot", "unknown command");
 		return false;
 	}
 	return true;

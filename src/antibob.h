@@ -9,9 +9,6 @@ class CAntibob
 public:
 	virtual ~CAntibob() = default;
 
-	// TODO: add variadic log_info(level, fmt, ...) macro
-	void Log(const char *pMessage);
-
 	virtual void OnInit(CAntibotData *pData);
 	virtual void OnRoundStart(CAntibotRoundData *pRoundData);
 	virtual void OnRoundEnd();

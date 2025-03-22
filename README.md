@@ -78,7 +78,7 @@ public:
 void CMyAntibot::OnInit(CAntibotData *pData)
 {
 	CAntibob::OnInit(pData);
-	Log("my antibot initialized");
+	log_info("antibot", "my antibot initialized");
 }
 ```
 
