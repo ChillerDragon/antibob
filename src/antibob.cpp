@@ -10,12 +10,12 @@
 #include <cstring>
 
 #include "antibot_player.h"
-#include "base.h"
+#include "gameserver.h"
 
 #include "antibob.h"
 
 CAntibob::CAntibob(CAntibotData *pData) :
-	CBase(pData)
+	CGameServer(pData)
 {
 	mem_zero(m_apPlayers, sizeof(m_apPlayers));
 }

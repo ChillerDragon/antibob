@@ -1,9 +1,9 @@
 #pragma once
 
-#include "base.h"
+#include "gameserver.h"
 #include <antibot/antibot_data.h>
 
-class CAntibob : public CBase
+class CAntibob : public CGameServer
 {
 public:
 	CAntibob(CAntibotData *pData);

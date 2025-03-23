@@ -5,10 +5,10 @@
 #include <antibot/antibot_data.h>
 #include <engine/message.h>
 
-class CBase
+class CGameServer
 {
 public:
-	CBase(CAntibotData *pData);
+	CGameServer(CAntibotData *pData);
 
 	CAntibotData *m_pData = nullptr;
 	CNetwork m_Network;
