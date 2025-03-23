@@ -12,6 +12,10 @@ to build your own antibot module.
 - console command system like in ddnet
 - helper methods for sending chat messages (including automatic 0.6/0.7 translation)
 
+You can explore the most interesting code at [src/antibot.cpp](https://github.com/ChillerDragon/antibob/blob/master/src/bob/antibob.cpp)
+the rest are just helpers that you should not have to worry about until you run into their limits.
+All sample use cases are shown in antibot.cpp already.
+
 ## compile
 
 By default it expects the ddnet source code in the same
@@ -73,7 +77,7 @@ Create your own class that inherits from antibob.
 ```C++
 // src/my_antibot.h
 
-#include "antibob.h"
+#include <bob/antibob.h>
 
 class CMyAntibot : public CAntibob
 {
@@ -96,7 +100,7 @@ Then patch your class into interface.cpp
 
 
 ```C++
-// interface.cpp
+// src/interface.cpp
 
 #include "my_antibot.h"
 
