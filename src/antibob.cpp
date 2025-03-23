@@ -103,6 +103,9 @@ void CAntibob::OnCharacterTick(int ClientId)
 
 void CAntibob::OnHookAttach(int ClientId, bool Player)
 {
+	char aBuf[512];
+	str_format(aBuf, sizeof(aBuf), "'%s' hooked", ClientName(ClientId));
+	SendChat(-1, TEAM_ALL, aBuf);
 }
 
 void CAntibob::OnEngineTick()

@@ -10,6 +10,15 @@ CBase::CBase(CAntibotData *pData) :
 	m_Network.OnInit(pData);
 }
 
+void CBase::SendChat(int ClientId, int Team, const char *pMessage)
+{
+	CNetMsg_Sv_Chat Msg;
+	Msg.m_Team = Team;
+	Msg.m_ClientId = ClientId;
+	Msg.m_pMessage = pMessage;
+	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, -1);
+}
+
 void CBase::SendChatTarget(int ClientId, const char *pMessage)
 {
 	CNetMsg_Sv_Chat Msg;
