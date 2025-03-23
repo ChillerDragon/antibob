@@ -6,11 +6,12 @@
 #include <game/generated/protocol7.h>
 #include <game/generated/protocolglue.h>
 
+#include <bob/antibot_player.h>
+#include <bob/console.h>
+#include <bob/gameserver.h>
+
 #include <cstdio>
 #include <cstring>
-
-#include "antibot_player.h"
-#include "gameserver.h"
 
 #include "antibob.h"
 
@@ -20,18 +21,24 @@ CAntibob::CAntibob(CAntibotData *pData) :
 	mem_zero(m_apPlayers, sizeof(m_apPlayers));
 }
 
-void CAntibob::DumpPlayers()
+void CAntibob::DumpPlayers(const char *pSearch)
 {
-	if(m_pRoundData)
+	if(!m_pRoundData)
 	{
-		for(int i = 0; i < ANTIBOT_MAX_CLIENTS; i++)
-		{
-			if(!m_apPlayers[i])
-				continue;
+		log_error("antibot", "missing round data");
+		return;
+	}
 
-			const char *pName = m_pRoundData->m_aCharacters[i].m_aName;
-			log_info("antibot", "cid=%d name='%s'", i, pName);
-		}
+	for(int i = 0; i < ANTIBOT_MAX_CLIENTS; i++)
+	{
+		if(!m_apPlayers[i])
+			continue;
+
+		const char *pName = m_pRoundData->m_aCharacters[i].m_aName;
+		if(pSearch[0] && !str_find_nocase(pName, pSearch))
+			continue;
+
+		log_info("antibot", "cid=%d name='%s'", i, pName);
 	}
 }
 
@@ -40,6 +47,11 @@ void CAntibob::OnInit(CAntibotData *pData)
 	log_info("antibot", "antibob antibot initialized");
 
 #define CONSOLE_COMMAND(name, params, callback, user, help) Console()->Register(name, params, callback, user, help);
+#include <bob/commands.h>
+#undef CONSOLE_COMMAND
+
+	std::vector<CBobParam> vParams;
+#define CONSOLE_COMMAND(name, params, callback, user, help) dbg_assert(CBobConsole::ParseParams(vParams, params), "invalid antibot param check commands.h");
 #include <bob/commands.h>
 #undef CONSOLE_COMMAND
 }
