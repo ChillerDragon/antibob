@@ -49,7 +49,8 @@ public:
 		void *pUser,
 		const char *pHelp);
 
-	void ExecuteCmd(const char *pCommand);
+	// returns true if the command exists
+	bool ExecuteCmd(const char *pCommand);
 };
 
 // TODO: add custom authorization for antibot commands something like this

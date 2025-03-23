@@ -20,6 +20,21 @@ CAntibob::CAntibob(CAntibotData *pData) :
 	mem_zero(m_apPlayers, sizeof(m_apPlayers));
 }
 
+void CAntibob::DumpPlayers()
+{
+	if(m_pRoundData)
+	{
+		for(int i = 0; i < ANTIBOT_MAX_CLIENTS; i++)
+		{
+			if(!m_apPlayers[i])
+				continue;
+
+			const char *pName = m_pRoundData->m_aCharacters[i].m_aName;
+			log_info("antibot", "cid=%d name='%s'", i, pName);
+		}
+	}
+}
+
 void CAntibob::OnInit(CAntibotData *pData)
 {
 	log_info("antibot", "antibob antibot initialized");
@@ -49,25 +64,9 @@ void CAntibob::OnDestroy()
 
 bool CAntibob::OnConsoleCommand(const char *pCommand)
 {
-	Console()->ExecuteCmd(pCommand);
-
-	if(strcmp(pCommand, "dump") == 0)
+	if(!Console()->ExecuteCmd(pCommand))
 	{
-		log_info("antibot", "null antibot");
-		if(m_pRoundData)
-		{
-			for(int i = 0; i < ANTIBOT_MAX_CLIENTS; i++)
-			{
-				if(!m_apPlayers[i])
-					continue;
-
-				log_info("antibot", "%s", m_pRoundData->m_aCharacters[i].m_aName);
-			}
-		}
-	}
-	else
-	{
-		// log_info("antibot", "unknown command");
+		// log_info("antibot", "unknown command '%s'", pCommand);
 		return false;
 	}
 	return true;

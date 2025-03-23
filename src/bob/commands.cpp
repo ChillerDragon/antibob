@@ -1,3 +1,4 @@
+#include "antibot/antibot_data.h"
 #include <base/log.h>
 #include <bob/antibob.h>
 
@@ -10,6 +11,5 @@ void CAntibob::ComTest(CBobResult *pResult, void *pUserData)
 void CAntibob::ComDump(CBobResult *pResult, void *pUserData)
 {
 	CAntibob *pSelf = (CAntibob *)pUserData;
-
-	log_info("antibot", "dumping all players ...");
+	pSelf->DumpPlayers();
 }

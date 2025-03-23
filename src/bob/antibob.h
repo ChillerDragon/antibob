@@ -11,6 +11,9 @@ public:
 	CAntibob(CAntibotData *pData);
 	virtual ~CAntibob() = default;
 
+	// called on rcon command "antibot dump"
+	virtual void DumpPlayers();
+
 #define CONSOLE_COMMAND(name, params, callback, user, help) static void callback(CBobResult *pResult, void *pUserData);
 #include <bob/commands.h>
 #undef CONSOLE_COMMAND

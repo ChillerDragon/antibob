@@ -11,7 +11,7 @@ void CBobConsole::Register(
 	m_vCommands.emplace_back(pName, pParams, pHelp, pfnFunc, pUser);
 }
 
-void CBobConsole::ExecuteCmd(const char *pCommand)
+bool CBobConsole::ExecuteCmd(const char *pCommand)
 {
 	for(auto Cmd : m_vCommands)
 	{
@@ -21,6 +21,8 @@ void CBobConsole::ExecuteCmd(const char *pCommand)
 		{
 			CBobResult Result;
 			Cmd.m_pfnFunc(&Result, Cmd.m_pUser);
+			return true;
 		}
 	}
+	return false;
 }
