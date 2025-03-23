@@ -6,8 +6,6 @@
 
 #include <cstring>
 
-static CAntibotData *g_pData;
-
 extern "C" {
 
 #define ANTIBOT_CLASS CAntibob // <= YOUR CLASS HERE
@@ -20,8 +18,7 @@ int AntibotAbiVersion()
 }
 void AntibotInit(CAntibotData *pCallbackData)
 {
-	g_pData = pCallbackData;
-	pAntibob = new ANTIBOT_CLASS();
+	pAntibob = new ANTIBOT_CLASS(pCallbackData);
 	pAntibob->OnInit(pCallbackData);
 }
 void AntibotRoundStart(CAntibotRoundData *pRoundData) { pAntibob->OnRoundStart(pRoundData); }

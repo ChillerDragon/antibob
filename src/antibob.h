@@ -1,15 +1,14 @@
 #pragma once
 
+#include "base.h"
 #include <antibot/antibot_data.h>
 
-class CAntibob
+class CAntibob : public CBase
 {
-	CAntibotData *m_pData;
-
 public:
+	CAntibob(CAntibotData *pData) :
+		CBase(pData){};
 	virtual ~CAntibob() = default;
-
-	void SendChatTarget(int ClientId, const char *pMessage);
 
 	virtual void OnInit(CAntibotData *pData);
 	virtual void OnRoundStart(CAntibotRoundData *pRoundData);
