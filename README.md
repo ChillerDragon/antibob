@@ -68,6 +68,7 @@ Create your own class that inherits from antibob.
 class CMyAntibot : public CAntibob
 {
 public:
+	using CAntibob::CAntibob;
 	void OnInit(CAntibotData *pData) override;
 };
 ```
@@ -77,7 +78,6 @@ public:
 
 void CMyAntibot::OnInit(CAntibotData *pData)
 {
-	CAntibob::OnInit(pData);
 	log_info("antibot", "my antibot initialized");
 }
 ```
