@@ -1,6 +1,16 @@
 # antibob
 
-exploring ddnet's antibot interface
+Your ddnet antibot module boilerplate! Example antibot module with helper methods.
+This is not a library so you can just fork this repository and start editing the code
+to build your own antibot module.
+
+## features
+
+- Makefile
+- github CI
+- OOP wrapper around antibot api
+- console command system like in ddnet
+- helper methods for sending chat messages (including automatic 0.6/0.7 translation)
 
 ## compile
 
