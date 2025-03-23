@@ -1,13 +1,17 @@
 #pragma once
 
+#include "antibot_player.h"
 #include "base.h"
 #include <antibot/antibot_data.h>
 
 class CAntibob : public CBase
 {
+	CAntibotRoundData *m_pRoundData = nullptr;
+
 public:
-	CAntibob(CAntibotData *pData) :
-		CBase(pData){};
+	CAntibotPlayer *m_apPlayers[ANTIBOT_MAX_CLIENTS];
+
+	CAntibob(CAntibotData *pData);
 	virtual ~CAntibob() = default;
 
 	virtual void OnInit(CAntibotData *pData);

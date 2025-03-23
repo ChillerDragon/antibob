@@ -1,4 +1,6 @@
+#include <antibot/antibot_data.h>
 #include <base/log.h>
+#include <base/system.h>
 #include <engine/shared/protocol.h>
 #include <game/generated/protocol.h>
 #include <game/generated/protocol7.h>
@@ -7,7 +9,16 @@
 #include <cstdio>
 #include <cstring>
 
+#include "antibot_player.h"
+#include "base.h"
+
 #include "antibob.h"
+
+CAntibob::CAntibob(CAntibotData *pData) :
+	CBase(pData)
+{
+	mem_zero(m_apPlayers, sizeof(m_apPlayers));
+}
 
 void CAntibob::OnInit(CAntibotData *pData)
 {
@@ -16,10 +27,12 @@ void CAntibob::OnInit(CAntibotData *pData)
 
 void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)
 {
+	m_pRoundData = pRoundData;
 }
 
 void CAntibob::OnRoundEnd()
 {
+	m_pRoundData = nullptr;
 }
 
 void CAntibob::OnUpdateData()
@@ -35,6 +48,16 @@ bool CAntibob::OnConsoleCommand(const char *pCommand)
 	if(strcmp(pCommand, "dump") == 0)
 	{
 		log_info("antibot", "null antibot");
+		if(m_pRoundData)
+		{
+			for(int i = 0; i < ANTIBOT_MAX_CLIENTS; i++)
+			{
+				if(!m_apPlayers[i])
+					continue;
+
+				log_info("antibot", "%s", m_pRoundData->m_aCharacters[i].m_aName);
+			}
+		}
 	}
 	else
 	{
@@ -88,10 +111,13 @@ void CAntibob::OnEngineTick()
 
 void CAntibob::OnEngineClientJoin(int ClientId, bool Sixup)
 {
+	m_apPlayers[ClientId] = new CAntibotPlayer(ClientId, Sixup);
 }
 
 void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 {
+	delete m_apPlayers[ClientId];
+	m_apPlayers[ClientId] = nullptr;
 }
 
 bool CAntibob::OnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags)
