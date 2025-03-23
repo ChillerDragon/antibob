@@ -3,11 +3,17 @@
 #include "gameserver.h"
 #include <antibot/antibot_data.h>
 
+#include <bob/console.h>
+
 class CAntibob : public CGameServer
 {
 public:
 	CAntibob(CAntibotData *pData);
 	virtual ~CAntibob() = default;
+
+#define CONSOLE_COMMAND(name, params, callback, user, help) static void callback(CBobResult *pResult, void *pUserData);
+#include <bob/commands.h>
+#undef CONSOLE_COMMAND
 
 	virtual void OnInit(CAntibotData *pData);
 	virtual void OnRoundStart(CAntibotRoundData *pRoundData);

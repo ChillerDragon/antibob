@@ -1,9 +1,11 @@
 #pragma once
 
-#include "antibot_player.h"
-#include "network.h"
 #include <antibot/antibot_data.h>
 #include <engine/message.h>
+
+#include <bob/antibot_player.h>
+#include <bob/console.h>
+#include <bob/network.h>
 
 class CGameServer
 {
@@ -13,6 +15,8 @@ public:
 	CAntibotData *m_pData = nullptr;
 	CNetwork m_Network;
 	CNetwork *Server() { return &m_Network; }
+	CBobConsole m_Console;
+	CBobConsole *Console() { return &m_Console; }
 
 	CAntibotRoundData *m_pRoundData = nullptr;
 	CAntibotPlayer *m_apPlayers[ANTIBOT_MAX_CLIENTS];

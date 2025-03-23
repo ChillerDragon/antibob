@@ -1,8 +1,9 @@
 #include <engine/shared/protocol.h>
 #include <game/generated/protocol.h>
 
+#include <bob/network.h>
+
 #include "gameserver.h"
-#include "network.h"
 
 CGameServer::CGameServer(CAntibotData *pData) :
 	m_pData(pData)

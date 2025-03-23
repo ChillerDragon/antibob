@@ -5,6 +5,7 @@ CXX := clang++
 CXX_FLAGS = \
 	    -I$(DDNET_DIR)/src \
 	    -I$(DDNET_DIR)/build/src \
+	    -Isrc \
 	    -std=c++17 \
 	    -rdynamic \
 	    -fPIC \
@@ -12,7 +13,7 @@ CXX_FLAGS = \
 	    -Og -g
 
 antibot:
-	$(CXX) src/*.cpp $(CXX_FLAGS) -o libantibot.so
+	$(CXX) src/*.cpp src/bob/*.cpp $(CXX_FLAGS) -o libantibot.so
 
 clean:
 	rm libantibot.so

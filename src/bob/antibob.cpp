@@ -23,6 +23,10 @@ CAntibob::CAntibob(CAntibotData *pData) :
 void CAntibob::OnInit(CAntibotData *pData)
 {
 	log_info("antibot", "antibob antibot initialized");
+
+#define CONSOLE_COMMAND(name, params, callback, user, help) Console()->Register(name, params, callback, user, help);
+#include <bob/commands.h>
+#undef CONSOLE_COMMAND
 }
 
 void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)
@@ -45,6 +49,8 @@ void CAntibob::OnDestroy()
 
 bool CAntibob::OnConsoleCommand(const char *pCommand)
 {
+	Console()->ExecuteCmd(pCommand);
+
 	if(strcmp(pCommand, "dump") == 0)
 	{
 		log_info("antibot", "null antibot");
