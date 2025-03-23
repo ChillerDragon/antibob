@@ -112,12 +112,16 @@ void CAntibob::OnEngineTick()
 void CAntibob::OnEngineClientJoin(int ClientId, bool Sixup)
 {
 	m_apPlayers[ClientId] = new CAntibotPlayer(ClientId, Sixup);
+
+	m_Network.OnClientConnect(ClientId, Sixup);
 }
 
 void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 {
 	delete m_apPlayers[ClientId];
 	m_apPlayers[ClientId] = nullptr;
+
+	m_Network.OnClientDisconnect(ClientId);
 }
 
 bool CAntibob::OnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags)
