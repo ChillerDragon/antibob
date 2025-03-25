@@ -106,6 +106,7 @@ public:
 	// returns true if the command exists
 	bool ExecuteCmd(const char *pCommand);
 
+	void PrintCmdHelp(const char *pCommand);
 	void PrintCmdlist();
 };
 

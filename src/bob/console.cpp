@@ -195,6 +195,20 @@ bool CBobConsole::ExecuteCmd(const char *pCommand)
 	return false;
 }
 
+void CBobConsole::PrintCmdHelp(const char *pCommand)
+{
+	for(auto Cmd : m_vCommands)
+	{
+		if(!str_comp_nocase(pCommand, Cmd.m_pName))
+		{
+			log_info("antibot", "Usage: %s %s", Cmd.m_pName, Cmd.m_pParams);
+			log_info("antibot", "%s", Cmd.m_pHelp);
+			return;
+		}
+	}
+	log_info("antibot", "no such command '%s'", pCommand);
+}
+
 void CBobConsole::PrintCmdlist()
 {
 	char aCommands[2048];
