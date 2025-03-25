@@ -35,6 +35,7 @@ class CNetwork
 public:
 	CAntibotClient m_aClients[ANTIBOT_MAX_CLIENTS];
 	CNetObjHandler m_NetObjHandler;
+	protocol7::CNetObjHandler m_NetObjHandler7;
 
 	void OnInit(CAntibotData *pData);
 	void OnClientConnect(int ClientId, bool Sixup);

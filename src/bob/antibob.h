@@ -26,7 +26,11 @@ public:
 	// antibob special hooks
 	//
 
-	void OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker);
+	// return true to drop the message
+	bool OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker);
+
+	// return true to drop the message
+	bool OnSayNetMessage7(const protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker);
 
 	//
 	// ddnet antibot interface hooks

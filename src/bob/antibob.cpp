@@ -54,10 +54,19 @@ void CAntibob::DumpPlayers(const char *pSearch)
 // antibob special hooks
 //
 
-void CAntibob::OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
+bool CAntibob::OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
 {
 	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
 		Kick(ClientId, "self report");
+	return false;
+}
+
+bool CAntibob::OnSayNetMessage7(const protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
+{
+	if(pMsg->m_Mode == protocol7::CHAT_WHISPER)
+		if(str_find_nocase(pMsg->m_pMessage, "i use a cheat"))
+			Kick(ClientId, "self report");
+	return false;
 }
 
 //
@@ -174,11 +183,6 @@ bool CAntibob::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 	if(!m_apPlayers[ClientId])
 		return false;
 
-	// TODO: use PreProcessMsg()
-	// TODO: think about 0.7 whisper
-	if(m_Network.IsSixup(ClientId))
-		return false;
-
 	CMsgPacker Packer(NETMSG_EX);
 	Packer.Reset();
 
@@ -193,12 +197,26 @@ bool CAntibob::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 	if(Result == UNPACKMESSAGE_ERROR)
 		return false;
 
-	void *pRawMsg = m_Network.m_NetObjHandler.SecureUnpackMsg(Msg, &Unpacker);
+	void *pRawMsg = nullptr;
+	if(m_Network.IsSixup(ClientId))
+		pRawMsg = m_Network.m_NetObjHandler7.SecureUnpackMsg(Msg, &Unpacker);
+	else
+		pRawMsg = m_Network.m_NetObjHandler.SecureUnpackMsg(Msg, &Unpacker);
+
 	if(!pRawMsg)
 		return false;
 
-	if(Msg == NETMSGTYPE_CL_SAY)
-		OnSayNetMessage(static_cast<CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+	if(m_Network.IsSixup(ClientId))
+	{
+		if(Msg == protocol7::NETMSGTYPE_CL_SAY)
+			OnSayNetMessage7(static_cast<protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+	}
+	else
+	{
+		if(Msg == NETMSGTYPE_CL_SAY)
+			OnSayNetMessage(static_cast<CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+	}
+
 	return false;
 }
 
