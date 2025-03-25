@@ -177,47 +177,7 @@ void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 
 bool CAntibob::OnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags)
 {
-	// TODO: ddnet does a Server()->ClientIngame(ClientId)
-	//       check here. We probably need that too otherwise clients can
-	//       send messages to early in their connection phase
-	if(!m_apPlayers[ClientId])
-		return false;
-
-	CMsgPacker Packer(NETMSG_EX);
-	Packer.Reset();
-
-	CUnpacker Unpacker;
-	Unpacker.Reset(pData, Size);
-
-	int Msg;
-	bool Sys;
-	CUuid Uuid;
-
-	int Result = UnpackMessageId(&Msg, &Sys, &Uuid, &Unpacker, &Packer);
-	if(Result == UNPACKMESSAGE_ERROR)
-		return false;
-
-	void *pRawMsg = nullptr;
-	if(m_Network.IsSixup(ClientId))
-		pRawMsg = m_Network.m_NetObjHandler7.SecureUnpackMsg(Msg, &Unpacker);
-	else
-		pRawMsg = m_Network.m_NetObjHandler.SecureUnpackMsg(Msg, &Unpacker);
-
-	if(!pRawMsg)
-		return false;
-
-	if(m_Network.IsSixup(ClientId))
-	{
-		if(Msg == protocol7::NETMSGTYPE_CL_SAY)
-			OnSayNetMessage7(static_cast<protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
-	}
-	else
-	{
-		if(Msg == NETMSGTYPE_CL_SAY)
-			OnSayNetMessage(static_cast<CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
-	}
-
-	return false;
+	return m_Network.OnEngineClientMessage(ClientId, pData, Size, Flags, this);
 }
 
 bool CAntibob::OnEngineServerMessage(int ClientId, const void *pData, int Size, int Flags)
