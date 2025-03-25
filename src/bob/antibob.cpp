@@ -1,7 +1,11 @@
 #include <antibot/antibot_data.h>
 #include <base/log.h>
 #include <base/system.h>
+#include <engine/message.h>
+#include <engine/shared/packer.h>
 #include <engine/shared/protocol.h>
+#include <engine/shared/protocol_ex.h>
+#include <engine/shared/uuid_manager.h>
 #include <game/generated/protocol.h>
 #include <game/generated/protocol7.h>
 #include <game/generated/protocolglue.h>
@@ -20,6 +24,10 @@ CAntibob::CAntibob(CAntibotData *pData) :
 {
 	mem_zero(m_apPlayers, sizeof(m_apPlayers));
 }
+
+//
+// rcon commands
+//
 
 void CAntibob::DumpPlayers(const char *pSearch)
 {
@@ -41,6 +49,20 @@ void CAntibob::DumpPlayers(const char *pSearch)
 		log_info("antibot", "cid=%d name='%s'", i, pName);
 	}
 }
+
+//
+// antibob special hooks
+//
+
+void CAntibob::OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
+{
+	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
+		Kick(ClientId, "self report");
+}
+
+//
+// ddnet antibot interface hooks
+//
 
 void CAntibob::OnInit(CAntibotData *pData)
 {
@@ -146,6 +168,37 @@ void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 
 bool CAntibob::OnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags)
 {
+	// TODO: ddnet does a Server()->ClientIngame(ClientId)
+	//       check here. We probably need that too otherwise clients can
+	//       send messages to early in their connection phase
+	if(!m_apPlayers[ClientId])
+		return false;
+
+	// TODO: use PreProcessMsg()
+	// TODO: think about 0.7 whisper
+	if(m_Network.IsSixup(ClientId))
+		return false;
+
+	CMsgPacker Packer(NETMSG_EX);
+	Packer.Reset();
+
+	CUnpacker Unpacker;
+	Unpacker.Reset(pData, Size);
+
+	int Msg;
+	bool Sys;
+	CUuid Uuid;
+
+	int Result = UnpackMessageId(&Msg, &Sys, &Uuid, &Unpacker, &Packer);
+	if(Result == UNPACKMESSAGE_ERROR)
+		return false;
+
+	void *pRawMsg = m_Network.m_NetObjHandler.SecureUnpackMsg(Msg, &Unpacker);
+	if(!pRawMsg)
+		return false;
+
+	if(Msg == NETMSGTYPE_CL_SAY)
+		OnSayNetMessage(static_cast<CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
 	return false;
 }
 

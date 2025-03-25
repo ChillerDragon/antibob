@@ -24,4 +24,10 @@ public:
 
 	void SendChat(int ClientId, int Team, const char *pMessage);
 	void SendChatTarget(int ClientId, const char *pMessage);
+
+	//
+	// antibot callbacks
+	//
+
+	void Kick(int ClientId, const char *pReason) const;
 };

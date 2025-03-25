@@ -28,3 +28,12 @@ void CGameServer::SendChatTarget(int ClientId, const char *pMessage)
 	Msg.m_pMessage = pMessage;
 	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientId);
 }
+
+//
+// antibot callbacks
+//
+
+void CGameServer::Kick(int ClientId, const char *pReason) const
+{
+	m_pData->m_pfnKick(ClientId, pReason, m_pData->m_pUser);
+}

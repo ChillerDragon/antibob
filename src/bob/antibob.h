@@ -11,12 +11,26 @@ public:
 	CAntibob(CAntibotData *pData);
 	virtual ~CAntibob() = default;
 
-	// called on rcon command "antibot dump"
-	virtual void DumpPlayers(const char *pSearch);
-
 #define CONSOLE_COMMAND(name, params, callback, user, help) static void callback(CBobResult *pResult, void *pUserData);
 #include <bob/commands.h>
 #undef CONSOLE_COMMAND
+
+	//
+	// rcon commands
+	//
+
+	// called on rcon command "antibot dump"
+	virtual void DumpPlayers(const char *pSearch);
+
+	//
+	// antibob special hooks
+	//
+
+	void OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker);
+
+	//
+	// ddnet antibot interface hooks
+	//
 
 	virtual void OnInit(CAntibotData *pData);
 	virtual void OnRoundStart(CAntibotRoundData *pRoundData);
