@@ -9,7 +9,7 @@ to build your own antibot module.
 - Makefile
 - github CI
 - OOP wrapper around antibot api
-- console command system like in ddnet
+- console command system like in ddnet ``antibot cmdlist``
 - helper methods for sending chat messages (including automatic 0.6/0.7 translation)
 
 You can explore the most interesting code at [src/antibot.cpp](https://github.com/ChillerDragon/antibob/blob/master/src/bob/antibob.cpp)
