@@ -194,3 +194,20 @@ bool CBobConsole::ExecuteCmd(const char *pCommand)
 	}
 	return false;
 }
+
+void CBobConsole::PrintCmdlist()
+{
+	char aCommands[2048];
+	aCommands[0] = '\0';
+
+	int i = 0;
+	for(auto Cmd : m_vCommands)
+	{
+		str_append(aCommands, Cmd.m_pName);
+		i++;
+		if(i != m_vCommands.size())
+			str_append(aCommands, ", ");
+	}
+
+	log_info("antibot", "%s", aCommands);
+}

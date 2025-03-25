@@ -105,6 +105,8 @@ public:
 
 	// returns true if the command exists
 	bool ExecuteCmd(const char *pCommand);
+
+	void PrintCmdlist();
 };
 
 // TODO: add custom authorization for antibot commands something like this

@@ -5,4 +5,5 @@
 #endif
 
 CONSOLE_COMMAND("test", "", ComTest, this, "tests stuff")
+CONSOLE_COMMAND("cmdlist", "", ComCmdlist, this, "lists all antibot commands")
 CONSOLE_COMMAND("dump", "?r[search]", ComDump, this, "shows current antibot datat for all players")

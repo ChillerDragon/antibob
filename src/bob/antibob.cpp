@@ -78,7 +78,7 @@ bool CAntibob::OnConsoleCommand(const char *pCommand)
 {
 	if(!Console()->ExecuteCmd(pCommand))
 	{
-		// log_info("antibot", "unknown command '%s'", pCommand);
+		log_info("antibot", "unknown antibot command '%s' see 'antibot cmdlist' for a full list", pCommand);
 		return false;
 	}
 	return true;
