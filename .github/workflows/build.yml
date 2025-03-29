@@ -59,12 +59,12 @@ jobs:
     - name: Cache Rust dependencies
       uses: Swatinem/rust-cache@v2
 
-    - name: Build ddnet 18.9.1
+    - name: Build ddnet 683eb4aa57be1dd025c5602881446e2dec2399c7
       run: |
         cd ..
         git clone --recursive https://github.com/ddnet/ddnet.git
         cd ddnet
-        git checkout 18.9.1
+        git checkout 683eb4aa57be1dd025c5602881446e2dec2399c7
         mkdir build
         cd build
         cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} -DCMAKE_BUILD_TYPE=Debug -Werror=dev -DDEV=ON -DANTIBOT=ON ..
