@@ -56,7 +56,7 @@ bool CNetwork::RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup)
 	else
 	{
 		Packer.AddInt(pMsg->m_System ? 1 : 0); // NETMSG_EX, NETMSGTYPE_EX
-		g_UuidManager.PackUuid(MsgId, &Packer); // TODO: THIS WILL SEGFAULT MY ASS
+		g_UuidManager.PackUuid(MsgId, &Packer);
 	}
 	Packer.AddRaw(pMsg->Data(), pMsg->Size());
 
