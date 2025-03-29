@@ -53,7 +53,7 @@ public:
 	virtual void OnCharacterTick(int ClientId);
 	virtual void OnHookAttach(int ClientId, bool Player);
 	virtual void OnEngineTick();
-	virtual void OnEngineClientJoin(int ClientId, bool Sixup);
+	virtual void OnEngineClientJoin(int ClientId);
 	virtual void OnEngineClientDrop(int ClientId, const char *pReason);
 	virtual bool OnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags);
 	virtual bool OnEngineServerMessage(int ClientId, const void *pData, int Size, int Flags);

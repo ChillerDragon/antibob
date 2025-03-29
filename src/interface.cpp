@@ -39,7 +39,7 @@ void AntibotOnDirectInput(int ClientId) { pAntibob->OnDirectInput(ClientId); }
 void AntibotOnCharacterTick(int ClientId) { pAntibob->OnCharacterTick(ClientId); }
 void AntibotOnHookAttach(int ClientId, bool Player) { pAntibob->OnHookAttach(ClientId, Player); }
 void AntibotOnEngineTick(void) { pAntibob->OnEngineTick(); }
-void AntibotOnEngineClientJoin(int ClientId, bool Sixup) { pAntibob->OnEngineClientJoin(ClientId, Sixup); }
+void AntibotOnEngineClientJoin(int ClientId) { pAntibob->OnEngineClientJoin(ClientId); }
 void AntibotOnEngineClientDrop(int ClientId, const char *pReason) { pAntibob->OnEngineClientDrop(ClientId, pReason); }
 bool AntibotOnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags) { return pAntibob->OnEngineClientMessage(ClientId, pData, Size, Flags); }
 bool AntibotOnEngineServerMessage(int ClientId, const void *pData, int Size, int Flags) { return pAntibob->OnEngineServerMessage(ClientId, pData, Size, Flags); }
