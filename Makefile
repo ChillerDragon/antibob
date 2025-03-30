@@ -13,7 +13,7 @@ CXX_FLAGS = \
 	    -Og -g
 
 antibot:
-	$(CXX) src/*.cpp src/bob/*.cpp $(CXX_FLAGS) -o libantibot.so
+	$(CXX) src/*.cpp src/*/*.cpp $(CXX_FLAGS) -o libantibot.so
 
 clean:
 	rm libantibot.so

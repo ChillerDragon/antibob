@@ -12,5 +12,4 @@ public:
 	//
 	// Add new member variables for forks below this comment to avoid merge conflicts.
 	//
-
 };
