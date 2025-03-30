@@ -8,4 +8,9 @@ public:
 
 	int m_ClientId;
 	bool m_Sixup;
+
+	//
+	// Add new member variables for forks below this comment to avoid merge conflicts.
+	//
+
 };
