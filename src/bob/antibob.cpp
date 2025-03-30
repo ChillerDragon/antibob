@@ -125,7 +125,6 @@ void CAntibob::OnPlayerDestroy(int ClientId)
 
 void CAntibob::OnSpawn(int ClientId)
 {
-	SendChatTarget(ClientId, "you spawned");
 }
 
 void CAntibob::OnHammerFireReloading(int ClientId)
@@ -134,7 +133,7 @@ void CAntibob::OnHammerFireReloading(int ClientId)
 
 void CAntibob::OnHammerFire(int ClientId)
 {
-	SendChatTarget(ClientId, "you hammered");
+	// SendChatTarget(ClientId, "you hammered");
 }
 
 void CAntibob::OnHammerHit(int ClientId, int TargetId)
@@ -151,9 +150,9 @@ void CAntibob::OnCharacterTick(int ClientId)
 
 void CAntibob::OnHookAttach(int ClientId, bool Player)
 {
-	char aBuf[512];
-	str_format(aBuf, sizeof(aBuf), "'%s' hooked", ClientName(ClientId));
-	SendChat(-1, TEAM_ALL, aBuf);
+	// char aBuf[512];
+	// str_format(aBuf, sizeof(aBuf), "'%s' hooked", ClientName(ClientId));
+	// SendChat(-1, TEAM_ALL, aBuf);
 }
 
 void CAntibob::OnEngineTick()
