@@ -4,6 +4,7 @@
 #include <antibot/antibot_data.h>
 
 #include <bob/console.h>
+#include <bob/protocol_ex.h>
 
 class CAntibob : public CGameServer
 {
@@ -14,6 +15,13 @@ public:
 #define CONSOLE_COMMAND(name, params, callback, user, help) static void callback(CBobResult *pResult, void *pUserData);
 #include <bob/commands.h>
 #undef CONSOLE_COMMAND
+
+	//
+	// internal helpers
+	//
+
+	void RegisterCommands();
+	void RegisterUuids();
 
 	//
 	// rcon commands

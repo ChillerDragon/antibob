@@ -26,6 +26,29 @@ CAntibob::CAntibob(CAntibotData *pData) :
 }
 
 //
+// internal helpers
+//
+
+void CAntibob::RegisterCommands()
+{
+#define CONSOLE_COMMAND(name, params, callback, user, help) Console()->Register(name, params, callback, user, help);
+#include <bob/commands.h>
+#undef CONSOLE_COMMAND
+
+	std::vector<CBobParam> vParams;
+#define CONSOLE_COMMAND(name, params, callback, user, help) dbg_assert(CBobConsole::ParseParams(vParams, params), "invalid antibot param check commands.h");
+#include <bob/commands.h>
+#undef CONSOLE_COMMAND
+}
+
+void CAntibob::RegisterUuids()
+{
+#define UUID(id, name) g_UuidManager.RegisterName(id, name);
+#include <bob/protocol_ex_msgs.h>
+#undef UUID
+}
+
+//
 // rcon commands
 //
 
@@ -76,15 +99,8 @@ bool CAntibob::OnSayNetMessage7(const protocol7::CNetMsg_Cl_Say *pMsg, int Clien
 void CAntibob::OnInit(CAntibotData *pData)
 {
 	log_info("antibot", "antibob antibot initialized");
-
-#define CONSOLE_COMMAND(name, params, callback, user, help) Console()->Register(name, params, callback, user, help);
-#include <bob/commands.h>
-#undef CONSOLE_COMMAND
-
-	std::vector<CBobParam> vParams;
-#define CONSOLE_COMMAND(name, params, callback, user, help) dbg_assert(CBobConsole::ParseParams(vParams, params), "invalid antibot param check commands.h");
-#include <bob/commands.h>
-#undef CONSOLE_COMMAND
+	RegisterCommands();
+	RegisterUuids();
 }
 
 void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)
