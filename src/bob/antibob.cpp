@@ -1,6 +1,7 @@
 #include <antibot/antibot_data.h>
 #include <base/log.h>
 #include <base/system.h>
+#include <bob/detection_event.h>
 #include <engine/message.h>
 #include <engine/shared/packer.h>
 #include <engine/shared/protocol.h>
@@ -52,7 +53,7 @@ void CAntibob::RegisterUuids()
 // rcon commands
 //
 
-void CAntibob::DumpPlayers(const char *pSearch)
+void CAntibob::RconDump(const char *pSearch)
 {
 	if(!m_pRoundData)
 	{
@@ -62,14 +63,61 @@ void CAntibob::DumpPlayers(const char *pSearch)
 
 	for(int i = 0; i < ANTIBOT_MAX_CLIENTS; i++)
 	{
-		if(!m_apPlayers[i])
+		CAntibotPlayer *pPlayer = m_apPlayers[i];
+		if(!pPlayer)
 			continue;
 
 		const char *pName = m_pRoundData->m_aCharacters[i].m_aName;
 		if(pSearch[0] && !str_find_nocase(pName, pSearch))
 			continue;
 
-		log_info("antibot", "cid=%d name='%s'", i, pName);
+		char aEvents[512];
+		aEvents[0] = '\0';
+		if(pPlayer->m_DetectionEvents.size() != 0)
+			CDetectionEvent::EventsToIdStr(pPlayer->m_DetectionEvents, aEvents, sizeof(aEvents));
+
+		log_info("antibot", "cid=%d name='%s' %s", i, pName, aEvents);
+	}
+}
+
+void CAntibob::RconEvents(int ClientId)
+{
+	if(!m_pRoundData)
+	{
+		log_error("antibot", "missing round data");
+		return;
+	}
+
+	if(ClientId < 0 || ClientId >= ANTIBOT_MAX_CLIENTS)
+	{
+		log_error("antibot", "client id out of range");
+		return;
+	}
+
+	CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
+	if(!pPlayer)
+	{
+		log_info("antibot", "client id %d is not connected", ClientId);
+		return;
+	}
+
+	if(pPlayer->m_DetectionEvents.size() == 0)
+	{
+		log_info("antibot", "player '%s' did not trigger any detections yet", ClientName(ClientId));
+		return;
+	}
+
+	log_info("antibot", "detection events for '%s'", ClientName(ClientId));
+	for(const auto &[EventId, Event] : pPlayer->m_DetectionEvents)
+	{
+		log_info(
+			"antibot",
+			"  event_id=%d name='%s' first_seen=%ds last_seen=%ds num_seen=%d",
+			EventId,
+			Event.ToString(),
+			Event.SecondsSinceFirstTrigger(),
+			Event.SecondsSinceLastTrigger(),
+			Event.m_Amount);
 	}
 }
 
@@ -81,6 +129,8 @@ bool CAntibob::OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const C
 {
 	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
 		Kick(ClientId, "self report");
+	if(str_find_nocase(pMsg->m_pMessage, "i hack"))
+		m_apPlayers[ClientId]->Detect(BOB_DE_SELFREPORT);
 	return false;
 }
 

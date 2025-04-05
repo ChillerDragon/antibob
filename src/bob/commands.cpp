@@ -22,5 +22,11 @@ void CAntibob::ComCmdlist(CBobResult *pResult, void *pUserData)
 void CAntibob::ComDump(CBobResult *pResult, void *pUserData)
 {
 	CAntibob *pSelf = (CAntibob *)pUserData;
-	pSelf->DumpPlayers(pResult->NumArguments() ? pResult->GetString(0) : "");
+	pSelf->RconDump(pResult->NumArguments() ? pResult->GetString(0) : "");
+}
+
+void CAntibob::ComEvents(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+	pSelf->RconEvents(pResult->GetInteger(0));
 }

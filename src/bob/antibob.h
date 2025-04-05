@@ -28,7 +28,8 @@ public:
 	//
 
 	// called on rcon command "antibot dump"
-	virtual void DumpPlayers(const char *pSearch);
+	virtual void RconDump(const char *pSearch);
+	virtual void RconEvents(int ClientId);
 
 	//
 	// antibob special hooks
