@@ -112,12 +112,17 @@ void CAntibob::RconEvents(int ClientId)
 	{
 		log_info(
 			"antibot",
-			"  event_id=%d name='%s' first_seen=%ds last_seen=%ds num_seen=%d",
+			"  event_id=%d name='%s'",
 			EventId,
-			Event.ToString(),
+			Event.ToString());
+		log_info(
+			"antibot",
+			"   first_seen=%ds last_seen=%ds num_seen=%d",
 			Event.SecondsSinceFirstTrigger(),
 			Event.SecondsSinceLastTrigger(),
 			Event.m_Amount);
+		if(Event.m_aInfo[0])
+			log_info("antibot", "   %s", Event.m_aInfo);
 	}
 }
 
@@ -130,7 +135,7 @@ bool CAntibob::OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const C
 	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
 		Kick(ClientId, "self report");
 	if(str_find_nocase(pMsg->m_pMessage, "i hack"))
-		m_apPlayers[ClientId]->Detect(BOB_DE_SELFREPORT);
+		m_apPlayers[ClientId]->Detect(BOB_DE_SELFREPORT, "said 'i hack'");
 	return false;
 }
 

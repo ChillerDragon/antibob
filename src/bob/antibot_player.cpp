@@ -5,7 +5,7 @@ CAntibotPlayer::CAntibotPlayer(int ClientId, bool Sixup) :
 {
 }
 
-void CAntibotPlayer::Detect(int EventId)
+void CAntibotPlayer::Detect(int EventId, const char *pInfo)
 {
-	CDetectionEvent::PushAndStack(m_DetectionEvents, CDetectionEvent(EventId));
+	CDetectionEvent::PushAndStack(m_DetectionEvents, CDetectionEvent(EventId, pInfo));
 }

@@ -15,8 +15,11 @@ enum
 // being detected as cheater by the antibot system
 class CDetectionEvent
 {
+	void Reset();
+
 public:
 	CDetectionEvent(int EventId);
+	CDetectionEvent(int EventId, const char *pInfo);
 
 	// events can be stacked to avoid spamming
 	// the event log
@@ -31,6 +34,10 @@ public:
 	// this number will show up in the rcon command
 	// dump_antibot
 	int m_EventId = BOB_DE_SAMPLE;
+
+	// additional information about the event
+	// might be empty
+	char m_aInfo[1024];
 
 	int SecondsSinceFirstTrigger() const;
 	int SecondsSinceLastTrigger() const;

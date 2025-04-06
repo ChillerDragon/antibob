@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <base/system.h>
 #include <unordered_map>
 
@@ -7,6 +6,21 @@
 CDetectionEvent::CDetectionEvent(int EventId) :
 	m_EventId(EventId)
 {
+	Reset();
+}
+
+CDetectionEvent::CDetectionEvent(int EventId, const char *pInfo) :
+	m_EventId(EventId)
+{
+	Reset();
+
+	if(pInfo)
+		str_copy(m_aInfo, pInfo);
+}
+
+void CDetectionEvent::Reset()
+{
+	m_aInfo[0] = '\0';
 	m_FirstTriggerTime = time_get();
 	m_LastTriggerTime = time_get();
 }
