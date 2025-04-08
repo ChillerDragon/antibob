@@ -19,6 +19,7 @@ public:
 	CBobConsole m_Console;
 	CBobConsole *Console() { return &m_Console; }
 	CBobConfig *Config() const { return &g_BobConfig; }
+	CBobConfigManager m_ConfigManager;
 
 	CAntibotRoundData *m_pRoundData = nullptr;
 	CAntibotPlayer *m_apPlayers[ANTIBOT_MAX_CLIENTS];

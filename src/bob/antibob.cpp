@@ -148,6 +148,8 @@ void CAntibob::OnInit(CAntibotData *pData)
 {
 	log_info("antibot", "antibob antibot initialized");
 	RegisterCommands();
+	m_ConfigManager.OnInit();
+	m_Console.OnInit(&m_ConfigManager);
 }
 
 void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)

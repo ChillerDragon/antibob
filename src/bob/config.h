@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstddef>
+#include <vector>
+
 class CBobConfig
 {
 public:
@@ -20,3 +23,72 @@ public:
 
 #define g_Config g_Config_IS_NOT_SUPPORTED_USE_g_BobConfig_INSTEAD
 extern CBobConfig g_BobConfig;
+
+class CBobConfigVariable
+{
+public:
+	enum class EVarType
+	{
+		INT,
+		STRING,
+	};
+	EVarType m_Type;
+	const char *m_pScriptName;
+	int m_Flags;
+	const char *m_pHelp;
+	CBobConfigVariable(const char *pScriptName, EVarType Type, int Flags, const char *pHelp) :
+		m_pScriptName(pScriptName),
+		m_Type(Type),
+		m_Flags(Flags),
+		m_pHelp(pHelp){};
+};
+
+class CBobIntConfigVariable : public CBobConfigVariable
+{
+public:
+	int *m_pVariable;
+	int m_Default;
+	int m_Min;
+	int m_Max;
+
+	CBobIntConfigVariable(
+		const char *pScriptName,
+		EVarType Type,
+		int Flags,
+		const char *pHelp,
+		int *pVariable,
+		int Default,
+		int Min,
+		int Max) :
+		CBobConfigVariable(pScriptName, Type, Flags, pHelp),
+		m_pVariable(pVariable),
+		m_Default(Default),
+		m_Min(Min),
+		m_Max(Max){};
+};
+
+class CBobStringConfigVariable : public CBobConfigVariable
+{
+public:
+	char *m_pStr;
+	const char *m_pDefault;
+	size_t m_MaxSize;
+
+	CBobStringConfigVariable(const char *pScriptName,
+		EVarType Type,
+		int Flags,
+		const char *pHelp,
+		char *pStr,
+		const char *pDefault,
+		size_t MaxSize);
+};
+
+class CBobConfigManager
+{
+public:
+	std::vector<CBobConfigVariable *> m_vpAllVariables;
+	void OnInit();
+	// returns true if the console command operated on a config
+	bool OnConsoleCommand(const char *pCommand);
+	~CBobConfigManager();
+};

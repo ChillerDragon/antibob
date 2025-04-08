@@ -151,6 +151,11 @@ bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 	return true;
 }
 
+void CBobConsole::OnInit(CBobConfigManager *pConfigManager)
+{
+	m_pConfigManager = pConfigManager;
+}
+
 void CBobConsole::Register(
 	const char *pName,
 	const char *pParams,
@@ -192,7 +197,7 @@ bool CBobConsole::ExecuteCmd(const char *pCommand)
 			return true;
 		}
 	}
-	return false;
+	return m_pConfigManager->OnConsoleCommand(pCommand);
 }
 
 void CBobConsole::PrintCmdHelp(const char *pCommand)
@@ -224,4 +229,52 @@ void CBobConsole::PrintCmdlist()
 	}
 
 	log_info("antibot", "%s", aCommands);
+}
+
+// TODO: this is not matching the ddnet implementation!
+//       whis needs unit tests and has to be corrected
+//       for example "foo bar \\" baz" parses differently
+bool CBobConsole::ParseStringQuotes(const char *pStringInput, char *pOut, int OutSize)
+{
+	// skip initial spaces
+	while(*pStringInput == ' ')
+		++pStringInput;
+	const int InLen = str_length(pStringInput);
+	bool IsQuoted = false;
+	int OutIdx = 0;
+	for(int i = 0; i < InLen; i++)
+	{
+		bool Escaped = i && pStringInput[i - 1] == '\\';
+		if(pStringInput[i] == '"')
+		{
+			if(Escaped)
+			{
+				// overwrite \ with "
+				OutIdx--;
+			}
+			else if(i == 0)
+			{
+				// start of string
+				IsQuoted = true;
+				continue;
+			}
+			else if(IsQuoted)
+			{
+				// end of string
+				break;
+			}
+		}
+		// last character of input
+		if(i + 1 == InLen)
+		{
+			// missing closing "
+			if(IsQuoted)
+				return false;
+		}
+		if(OutIdx >= OutSize - 1)
+			break;
+		pOut[OutIdx++] = pStringInput[i];
+	}
+	pOut[OutIdx] = '\0';
+	return true;
 }

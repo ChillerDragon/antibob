@@ -7,13 +7,18 @@
 #define MACRO_CONFIG_STR(Name, ScriptName, Len, Def, Save, Desc) ;
 #endif
 
+// TODO: this is weird
+#ifndef CFGFLAG_SERVER
+#define CFGFLAG_SERVER 4
+#endif
+
 // example of mirroring a server variable
 // this is not synced automatically. Your autoexec should look like this then:
 //
 // sv_name "foo"
 // antibot sv_name "foo"
 //
-MACRO_CONFIG_STR(SvName, sv_name, 128, "unnamed server", CFGFLAG_SERVER, "Server name")
+MACRO_CONFIG_STR(SvName, sv_name, 128, "unnamed server", CFGFLAG_SERVER, "Server name");
 
 // antibot internal variables are conventionally prefixed with ab
 // short for anti bob

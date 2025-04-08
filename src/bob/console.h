@@ -2,6 +2,8 @@
 
 #include <base/system.h>
 
+#include <bob/config.h>
+
 #include <vector>
 
 #define MAX_ARGS 10
@@ -95,6 +97,9 @@ public:
 	static bool ParseParams(std::vector<CBobParam> &vParams, const char *pParamsText);
 
 	std::vector<CBobCommand> m_vCommands;
+	CBobConfigManager *m_pConfigManager = nullptr;
+
+	void OnInit(CBobConfigManager *pConfigManager);
 
 	void Register(
 		const char *pName,
@@ -103,11 +108,14 @@ public:
 		void *pUser,
 		const char *pHelp);
 
-	// returns true if the command exists
+	// returns true if the command or config exists
 	bool ExecuteCmd(const char *pCommand);
 
 	void PrintCmdHelp(const char *pCommand);
 	void PrintCmdlist();
+
+	// reads a tw console string that might be quoted or not
+	static bool ParseStringQuotes(const char *pStringInput, char *pOut, int OutSize);
 };
 
 // TODO: add custom authorization for antibot commands something like this
