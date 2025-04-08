@@ -21,7 +21,6 @@ enum
 // to be independent in the antibot module
 void BobRegisterUuids(CBobUuidManager *pManager);
 
-
 #define UnpackMessageId USE_BobUnpackMessageId_INSTEAD
 
 // reimplementation of ddnet's UnpackMessageId

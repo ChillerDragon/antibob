@@ -4,6 +4,7 @@
 #include <engine/message.h>
 
 #include <bob/antibot_player.h>
+#include <bob/config.h>
 #include <bob/console.h>
 #include <bob/network.h>
 
@@ -17,6 +18,7 @@ public:
 	CNetwork *Server() { return &m_Network; }
 	CBobConsole m_Console;
 	CBobConsole *Console() { return &m_Console; }
+	CBobConfig *Config() const { return &g_BobConfig; }
 
 	CAntibotRoundData *m_pRoundData = nullptr;
 	CAntibotPlayer *m_apPlayers[ANTIBOT_MAX_CLIENTS];
@@ -29,5 +31,5 @@ public:
 	// antibot callbacks
 	//
 
-	void Kick(int ClientId, const char *pReason) const;
+	void Kick(int ClientId, const char *pReason = nullptr) const;
 };

@@ -35,5 +35,7 @@ void CGameServer::SendChatTarget(int ClientId, const char *pMessage)
 
 void CGameServer::Kick(int ClientId, const char *pReason) const
 {
+	if(!pReason || pReason[0] == '\0')
+		pReason = Config()->m_AbKickReason;
 	m_pData->m_pfnKick(ClientId, pReason, m_pData->m_pUser);
 }

@@ -125,7 +125,8 @@ void CAntibob::RconEvents(int ClientId)
 bool CAntibob::OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
 {
 	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
-		Kick(ClientId, "self report");
+		if(Config()->m_AbAutoKick)
+			Kick(ClientId, "self report");
 	if(str_find_nocase(pMsg->m_pMessage, "i hack"))
 		m_apPlayers[ClientId]->Detect(BOB_DE_SELFREPORT, "said 'i hack'");
 	return false;
