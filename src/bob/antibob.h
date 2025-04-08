@@ -21,7 +21,6 @@ public:
 	//
 
 	void RegisterCommands();
-	void RegisterUuids();
 
 	//
 	// rcon commands

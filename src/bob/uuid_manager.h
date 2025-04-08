@@ -1,6 +1,11 @@
 #pragma once
 
+// included for CUuid, CName and CNameIndexed
+// it sadly exposes the g_UuidManager which should NOT be used
+// the g_BobUuidManager should be used instead
 #include <engine/shared/uuid_manager.h>
+
+#define g_UuidManager DO_NOT_USE_g_UuidManager_USE_g_BobUuidManager_INSTEAD
 
 #include <vector>
 
@@ -24,3 +29,5 @@ public:
 
 	void DebugDump() const;
 };
+
+extern CBobUuidManager g_BobUuidManager;

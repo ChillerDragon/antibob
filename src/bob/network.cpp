@@ -56,7 +56,7 @@ bool CNetwork::RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup)
 	else
 	{
 		Packer.AddInt(pMsg->m_System ? 1 : 0); // NETMSG_EX, NETMSGTYPE_EX
-		g_UuidManager.PackUuid(MsgId, &Packer);
+		g_BobUuidManager.PackUuid(MsgId, &Packer);
 	}
 	Packer.AddRaw(pMsg->Data(), pMsg->Size());
 
@@ -101,9 +101,17 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 	bool Sys;
 	CUuid Uuid;
 
-	int Result = UnpackMessageId(&Msg, &Sys, &Uuid, &Unpacker, &Packer);
+	int Result = BobUnpackMessageId(&Msg, &Sys, &Uuid, &Unpacker, &Packer);
 	if(Result == UNPACKMESSAGE_ERROR)
 		return false;
+
+	if(Sys)
+	{
+		// if(Msg == BOB_NETMSG_PINGEX)
+		// 	log_info("antibot", "got pingex");
+		// else if(Msg == BOB_NETMSG_PONGEX)
+		// 	log_info("antibot", "got pongex");
+	}
 
 	void *pRawMsg = nullptr;
 	if(IsSixup(ClientId))

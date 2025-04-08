@@ -6,7 +6,6 @@
 #include <engine/shared/packer.h>
 #include <engine/shared/protocol.h>
 #include <engine/shared/protocol_ex.h>
-#include <engine/shared/uuid_manager.h>
 #include <game/generated/protocol.h>
 #include <game/generated/protocol7.h>
 #include <game/generated/protocolglue.h>
@@ -40,13 +39,6 @@ void CAntibob::RegisterCommands()
 #define CONSOLE_COMMAND(name, params, callback, user, help) dbg_assert(CBobConsole::ParseParams(vParams, params), "invalid antibot param check commands.h");
 #include <bob/commands.h>
 #undef CONSOLE_COMMAND
-}
-
-void CAntibob::RegisterUuids()
-{
-#define UUID(id, name) g_UuidManager.RegisterName(id, name);
-#include <bob/protocol_ex_msgs.h>
-#undef UUID
 }
 
 //
@@ -155,7 +147,6 @@ void CAntibob::OnInit(CAntibotData *pData)
 {
 	log_info("antibot", "antibob antibot initialized");
 	RegisterCommands();
-	RegisterUuids();
 }
 
 void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)
