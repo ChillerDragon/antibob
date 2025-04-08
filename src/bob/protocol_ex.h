@@ -15,9 +15,14 @@ enum
 #undef UUID
 };
 
+#define RegisterUuids_USE_BobRegisterUuids_INSTEAD
+
 // reimplementation of ddnet's RegisterUuids
 // to be independent in the antibot module
 void BobRegisterUuids(CBobUuidManager *pManager);
+
+
+#define UnpackMessageId USE_BobUnpackMessageId_INSTEAD
 
 // reimplementation of ddnet's UnpackMessageId
 // to be independent in the antibot module
