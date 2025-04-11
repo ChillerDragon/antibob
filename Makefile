@@ -22,7 +22,7 @@ antibot:
 	$(CXX) src/antibob/interface.cpp src/antibob/*/*.cpp $(CXX_FLAGS_MAIN) -o libantibot.so
 
 test:
-	$(CXX) src/antibob/interface.cpp src/test/*.cpp src/test/*/*.cpp src/ddnet/polybob/*.cpp $(CXX_FLAGS_TEST) -I . -L. libantibot.so -o antibob_test
+	$(CXX) src/antibob/interface.cpp src/test/*.cpp src/test/*/*.cpp src/ddnet/polybob/*/*.cpp $(CXX_FLAGS_TEST) -I . -L. libantibot.so -o antibob_test
 
 clean:
 	rm libantibot.so

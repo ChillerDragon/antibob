@@ -1,3 +1,4 @@
 *.so
+antibob_test
 .cache
 compile_commands.json

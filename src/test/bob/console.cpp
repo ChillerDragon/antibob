@@ -1,6 +1,6 @@
 #include <cstdio>
 
-#include <polybob/system.h>
+#include <polybob/base/system.h>
 
 int main()
 {
