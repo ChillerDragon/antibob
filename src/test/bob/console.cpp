@@ -2,6 +2,7 @@
 
 #include <polybob/system.h>
 
-int main() {
+int main()
+{
 	puts("hello world");
 }

@@ -1,6 +1,7 @@
 #pragma once
 
-class CBobTest {
+class CBobTest
+{
 public:
 	bool ExpectEq(int Actual, int Expected);
 };

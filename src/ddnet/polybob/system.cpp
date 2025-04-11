@@ -1,6 +1,8 @@
 #include <polybob/system.h>
 
+#include <cctype>
 #include <chrono>
+#include <cstring>
 
 static int new_tick = -1;
 
@@ -37,6 +39,49 @@ int64_t time_freq()
 	return std::chrono::nanoseconds(1s).count();
 }
 
+int str_length(const char *str)
+{
+	return (int)strlen(str);
+}
+
+int str_isspace(char c)
+{
+	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+}
+
+char str_uppercase(char c)
+{
+	if(c >= 'a' && c <= 'z')
+		return 'A' + (c - 'a');
+	return c;
+}
+
+bool str_isnum(char c)
+{
+	return c >= '0' && c <= '9';
+}
+
+int str_isallnum(const char *str)
+{
+	while(*str)
+	{
+		if(!str_isnum(*str))
+			return 0;
+		str++;
+	}
+	return 1;
+}
+
+int str_isallnum_hex(const char *str)
+{
+	while(*str)
+	{
+		if(!str_isnum(*str) && !(*str >= 'a' && *str <= 'f') && !(*str >= 'A' && *str <= 'F'))
+			return 0;
+		str++;
+	}
+	return 1;
+}
 
 int str_toint(const char *str)
 {
@@ -85,4 +130,130 @@ bool str_tofloat(const char *str, float *out)
 	if(out != nullptr)
 		*out = value;
 	return true;
+}
+
+int str_comp_nocase(const char *a, const char *b)
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	return _stricmp(a, b);
+#else
+	return strcasecmp(a, b);
+#endif
+}
+
+int str_comp_nocase_num(const char *a, const char *b, int num)
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	return _strnicmp(a, b, num);
+#else
+	return strncasecmp(a, b, num);
+#endif
+}
+
+int str_comp(const char *a, const char *b)
+{
+	return strcmp(a, b);
+}
+
+int str_comp_num(const char *a, const char *b, int num)
+{
+	return strncmp(a, b, num);
+}
+
+int str_comp_filenames(const char *a, const char *b)
+{
+	int result;
+
+	for(; *a && *b; ++a, ++b)
+	{
+		if(str_isnum(*a) && str_isnum(*b))
+		{
+			result = 0;
+			do
+			{
+				if(!result)
+					result = *a - *b;
+				++a;
+				++b;
+			} while(str_isnum(*a) && str_isnum(*b));
+
+			if(str_isnum(*a))
+				return 1;
+			else if(str_isnum(*b))
+				return -1;
+			else if(result || *a == '\0' || *b == '\0')
+				return result;
+		}
+
+		result = tolower(*a) - tolower(*b);
+		if(result)
+			return result;
+	}
+	return *a - *b;
+}
+
+const char *str_startswith_nocase(const char *str, const char *prefix)
+{
+	int prefixl = str_length(prefix);
+	if(str_comp_nocase_num(str, prefix, prefixl) == 0)
+	{
+		return str + prefixl;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+const char *str_startswith(const char *str, const char *prefix)
+{
+	int prefixl = str_length(prefix);
+	if(str_comp_num(str, prefix, prefixl) == 0)
+	{
+		return str + prefixl;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+const char *str_endswith_nocase(const char *str, const char *suffix)
+{
+	int strl = str_length(str);
+	int suffixl = str_length(suffix);
+	const char *strsuffix;
+	if(strl < suffixl)
+	{
+		return nullptr;
+	}
+	strsuffix = str + strl - suffixl;
+	if(str_comp_nocase(strsuffix, suffix) == 0)
+	{
+		return strsuffix;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+const char *str_endswith(const char *str, const char *suffix)
+{
+	int strl = str_length(str);
+	int suffixl = str_length(suffix);
+	const char *strsuffix;
+	if(strl < suffixl)
+	{
+		return nullptr;
+	}
+	strsuffix = str + strl - suffixl;
+	if(str_comp(strsuffix, suffix) == 0)
+	{
+		return strsuffix;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
