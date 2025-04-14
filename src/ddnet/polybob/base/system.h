@@ -156,6 +156,8 @@ const char *str_startswith_nocase(const char *str, const char *prefix);
 const char *str_startswith(const char *str, const char *prefix);
 const char *str_endswith_nocase(const char *str, const char *suffix);
 const char *str_endswith(const char *str, const char *suffix);
+const char *str_find_nocase(const char *haystack, const char *needle);
+const char *str_find(const char *haystack, const char *needle);
 
 void str_append(char *dst, const char *src, int dst_size);
 template<int N>
@@ -169,6 +171,32 @@ void str_copy(char (&dst)[N], const char *src)
 {
 	str_copy(dst, src, N);
 }
+
+void str_timestamp(char *buffer, int buffer_size);
+void str_timestamp_format(char *buffer, int buffer_size, const char *format)
+	GNUC_ATTRIBUTE((format(strftime, 3, 0)));
+void str_timestamp_ex(time_t time, char *buffer, int buffer_size, const char *format)
+	GNUC_ATTRIBUTE((format(strftime, 4, 0)));
+bool timestamp_from_str(const char *string, const char *format, time_t *timestamp)
+	GNUC_ATTRIBUTE((format(strftime, 2, 0)));
+
+#define FORMAT_TIME "%H:%M:%S"
+#define FORMAT_SPACE "%Y-%m-%d %H:%M:%S"
+#define FORMAT_NOSPACE "%Y-%m-%d_%H-%M-%S"
+
+enum
+{
+	TIME_DAYS,
+	TIME_HOURS,
+	TIME_MINS,
+	TIME_HOURS_CENTISECS,
+	TIME_MINS_CENTISECS,
+	TIME_SECS_CENTISECS,
+};
+
+int str_time(int64_t centisecs, int format, char *buffer, int buffer_size);
+int str_time_float(float secs, int format, char *buffer, int buffer_size);
+void str_escape(char **dst, const char *src, const char *end);
 
 int str_utf8_tolower(int code);
 int str_utf8_comp_nocase(const char *a, const char *b);
@@ -188,6 +216,55 @@ void str_utf8_copy_num(char *dst, const char *src, int dst_size, int num);
 void str_utf8_stats(const char *str, size_t max_size, size_t max_count, size_t *size, size_t *count);
 size_t str_utf8_offset_bytes_to_chars(const char *str, size_t byte_offset);
 size_t str_utf8_offset_chars_to_bytes(const char *str, size_t char_offset);
+
+enum
+{
+	/**
+	 * Open file for reading.
+	 *
+	 * @see io_open
+	 */
+	IOFLAG_READ = 1,
+	/**
+	 * Open file for writing.
+	 *
+	 * @see io_open
+	 */
+	IOFLAG_WRITE = 2,
+	/**
+	 * Open file for appending at the end.
+	 *
+	 * @see io_open
+	 */
+	IOFLAG_APPEND = 4,
+};
+
+enum ESeekOrigin
+{
+	IOSEEK_START = 0,
+	IOSEEK_CUR = 1,
+	IOSEEK_END = 2,
+};
+
+IOHANDLE io_open(const char *filename, int flags);
+unsigned io_read(IOHANDLE io, void *buffer, unsigned size);
+bool io_read_all(IOHANDLE io, void **result, unsigned *result_len);
+char *io_read_all_str(IOHANDLE io);
+int io_skip(IOHANDLE io, int64_t size);
+int io_seek(IOHANDLE io, int64_t offset, ESeekOrigin origin);
+int64_t io_tell(IOHANDLE io);
+int64_t io_length(IOHANDLE io);
+unsigned io_write(IOHANDLE io, const void *buffer, unsigned size);
+bool io_write_newline(IOHANDLE io);
+int io_close(IOHANDLE io);
+int io_flush(IOHANDLE io);
+int io_sync(IOHANDLE io);
+int io_error(IOHANDLE io);
+IOHANDLE io_stdin();
+IOHANDLE io_stdout();
+IOHANDLE io_stderr();
+IOHANDLE io_current_exe();
+
 
 typedef struct ASYNCIO ASYNCIO;
 ASYNCIO *aio_new(IOHANDLE io);

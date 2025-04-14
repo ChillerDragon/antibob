@@ -159,6 +159,294 @@ bool mem_has_null(const void *block, size_t size)
 	return false;
 }
 
+IOHANDLE io_open(const char *filename, int flags)
+{
+	dbg_assert(flags == IOFLAG_READ || flags == IOFLAG_WRITE || flags == IOFLAG_APPEND, "flags must be read, write or append");
+#if defined(CONF_FAMILY_WINDOWS)
+	const std::wstring wide_filename = windows_utf8_to_wide(filename);
+	DWORD desired_access;
+	DWORD creation_disposition;
+	const char *open_mode;
+	if((flags & IOFLAG_READ) != 0)
+	{
+		desired_access = FILE_READ_DATA;
+		creation_disposition = OPEN_EXISTING;
+		open_mode = "rb";
+	}
+	else if(flags == IOFLAG_WRITE)
+	{
+		desired_access = FILE_WRITE_DATA;
+		creation_disposition = CREATE_ALWAYS;
+		open_mode = "wb";
+	}
+	else if(flags == IOFLAG_APPEND)
+	{
+		desired_access = FILE_APPEND_DATA;
+		creation_disposition = OPEN_ALWAYS;
+		open_mode = "ab";
+	}
+	else
+	{
+		dbg_assert(false, "logic error");
+		return nullptr;
+	}
+	HANDLE handle = CreateFileW(wide_filename.c_str(), desired_access, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, creation_disposition, FILE_ATTRIBUTE_NORMAL, nullptr);
+	if(handle == INVALID_HANDLE_VALUE)
+		return nullptr;
+	const int file_descriptor = _open_osfhandle((intptr_t)handle, 0);
+	dbg_assert(file_descriptor != -1, "_open_osfhandle failure");
+	FILE *file_stream = _fdopen(file_descriptor, open_mode);
+	dbg_assert(file_stream != nullptr, "_fdopen failure");
+	return file_stream;
+#else
+	const char *open_mode;
+	if((flags & IOFLAG_READ) != 0)
+	{
+		open_mode = "rb";
+	}
+	else if(flags == IOFLAG_WRITE)
+	{
+		open_mode = "wb";
+	}
+	else if(flags == IOFLAG_APPEND)
+	{
+		open_mode = "ab";
+	}
+	else
+	{
+		dbg_assert(false, "logic error");
+		return nullptr;
+	}
+	return fopen(filename, open_mode);
+#endif
+}
+
+unsigned io_read(IOHANDLE io, void *buffer, unsigned size)
+{
+	return fread(buffer, 1, size, (FILE *)io);
+}
+
+bool io_read_all(IOHANDLE io, void **result, unsigned *result_len)
+{
+	// Loading files larger than 1 GiB into memory is not supported.
+	constexpr int64_t MAX_FILE_SIZE = (int64_t)1024 * 1024 * 1024;
+
+	int64_t real_len = io_length(io);
+	if(real_len > MAX_FILE_SIZE)
+	{
+		*result = nullptr;
+		*result_len = 0;
+		return false;
+	}
+
+	int64_t len = real_len < 0 ? 1024 : real_len; // use default initial size if we couldn't get the length
+	char *buffer = (char *)malloc(len + 1);
+	int64_t read = io_read(io, buffer, len + 1); // +1 to check if the file size is larger than expected
+	if(read < len)
+	{
+		buffer = (char *)realloc(buffer, read + 1);
+		len = read;
+	}
+	else if(read > len)
+	{
+		int64_t cap = 2 * read;
+		if(cap > MAX_FILE_SIZE)
+		{
+			free(buffer);
+			*result = nullptr;
+			*result_len = 0;
+			return false;
+		}
+		len = read;
+		buffer = (char *)realloc(buffer, cap);
+		while((read = io_read(io, buffer + len, cap - len)) != 0)
+		{
+			len += read;
+			if(len == cap)
+			{
+				cap *= 2;
+				if(cap > MAX_FILE_SIZE)
+				{
+					free(buffer);
+					*result = nullptr;
+					*result_len = 0;
+					return false;
+				}
+				buffer = (char *)realloc(buffer, cap);
+			}
+		}
+		buffer = (char *)realloc(buffer, len + 1);
+	}
+	buffer[len] = 0;
+	*result = buffer;
+	*result_len = len;
+	return true;
+}
+
+char *io_read_all_str(IOHANDLE io)
+{
+	void *buffer;
+	unsigned len;
+	if(!io_read_all(io, &buffer, &len))
+	{
+		return nullptr;
+	}
+	if(mem_has_null(buffer, len))
+	{
+		free(buffer);
+		return nullptr;
+	}
+	return (char *)buffer;
+}
+
+int io_skip(IOHANDLE io, int64_t size)
+{
+	return io_seek(io, size, IOSEEK_CUR);
+}
+
+int io_seek(IOHANDLE io, int64_t offset, ESeekOrigin origin)
+{
+	int real_origin;
+	switch(origin)
+	{
+	case IOSEEK_START:
+		real_origin = SEEK_SET;
+		break;
+	case IOSEEK_CUR:
+		real_origin = SEEK_CUR;
+		break;
+	case IOSEEK_END:
+		real_origin = SEEK_END;
+		break;
+	default:
+		dbg_assert(false, "origin invalid");
+		return -1;
+	}
+#if defined(CONF_FAMILY_WINDOWS)
+	return _fseeki64((FILE *)io, offset, real_origin);
+#else
+	return fseeko((FILE *)io, offset, real_origin);
+#endif
+}
+
+int64_t io_tell(IOHANDLE io)
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	return _ftelli64((FILE *)io);
+#else
+	return ftello((FILE *)io);
+#endif
+}
+
+int64_t io_length(IOHANDLE io)
+{
+	if(io_seek(io, 0, IOSEEK_END) != 0)
+	{
+		return -1;
+	}
+	const int64_t length = io_tell(io);
+	if(io_seek(io, 0, IOSEEK_START) != 0)
+	{
+		return -1;
+	}
+	return length;
+}
+
+unsigned io_write(IOHANDLE io, const void *buffer, unsigned size)
+{
+	return fwrite(buffer, 1, size, (FILE *)io);
+}
+
+bool io_write_newline(IOHANDLE io)
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	return io_write(io, "\r\n", 2) == 2;
+#else
+	return io_write(io, "\n", 1) == 1;
+#endif
+}
+
+int io_close(IOHANDLE io)
+{
+	return fclose((FILE *)io) != 0;
+}
+
+int io_flush(IOHANDLE io)
+{
+	return fflush((FILE *)io);
+}
+
+int io_sync(IOHANDLE io)
+{
+	if(io_flush(io))
+	{
+		return 1;
+	}
+#if defined(CONF_FAMILY_WINDOWS)
+	return FlushFileBuffers((HANDLE)_get_osfhandle(_fileno((FILE *)io))) == FALSE;
+#else
+	return fsync(fileno((FILE *)io)) != 0;
+#endif
+}
+
+int io_error(IOHANDLE io)
+{
+	return ferror((FILE *)io);
+}
+
+IOHANDLE io_stdin()
+{
+	return stdin;
+}
+
+IOHANDLE io_stdout()
+{
+	return stdout;
+}
+
+IOHANDLE io_stderr()
+{
+	return stderr;
+}
+
+IOHANDLE io_current_exe()
+{
+	// From https://stackoverflow.com/a/1024937.
+#if defined(CONF_FAMILY_WINDOWS)
+	wchar_t wide_path[IO_MAX_PATH_LENGTH];
+	if(GetModuleFileNameW(nullptr, wide_path, std::size(wide_path)) == 0 || GetLastError() != ERROR_SUCCESS)
+	{
+		return nullptr;
+	}
+	const std::optional<std::string> path = windows_wide_to_utf8(wide_path);
+	return path.has_value() ? io_open(path.value().c_str(), IOFLAG_READ) : nullptr;
+#elif defined(CONF_PLATFORM_MACOS)
+	char path[IO_MAX_PATH_LENGTH];
+	uint32_t path_size = sizeof(path);
+	if(_NSGetExecutablePath(path, &path_size))
+	{
+		return 0;
+	}
+	return io_open(path, IOFLAG_READ);
+#else
+	static const char *NAMES[] = {
+		"/proc/self/exe", // Linux, Android
+		"/proc/curproc/exe", // NetBSD
+		"/proc/curproc/file", // DragonFly
+	};
+	for(auto &name : NAMES)
+	{
+		IOHANDLE result = io_open(name, IOFLAG_READ);
+		if(result)
+		{
+			return result;
+		}
+	}
+	return 0;
+#endif
+}
+
+
 #define ASYNC_BUFSIZE (8 * 1024)
 #define ASYNC_LOCAL_BUFSIZE (64 * 1024)
 
@@ -513,6 +801,44 @@ const char *str_endswith(const char *str, const char *suffix)
 	}
 }
 
+const char *str_find_nocase(const char *haystack, const char *needle)
+{
+	while(*haystack) /* native implementation */
+	{
+		const char *a = haystack;
+		const char *b = needle;
+		while(*a && *b && tolower((unsigned char)*a) == tolower((unsigned char)*b))
+		{
+			a++;
+			b++;
+		}
+		if(!(*b))
+			return haystack;
+		haystack++;
+	}
+
+	return nullptr;
+}
+
+const char *str_find(const char *haystack, const char *needle)
+{
+	while(*haystack) /* native implementation */
+	{
+		const char *a = haystack;
+		const char *b = needle;
+		while(*a && *b && *a == *b)
+		{
+			a++;
+			b++;
+		}
+		if(!(*b))
+			return haystack;
+		haystack++;
+	}
+
+	return nullptr;
+}
+
 void str_append(char *dst, const char *src, int dst_size)
 {
 	int s = str_length(dst);
@@ -535,6 +861,129 @@ int str_copy(char *dst, const char *src, int dst_size)
 	dst[0] = '\0';
 	strncat(dst, src, dst_size - 1);
 	return str_utf8_fix_truncation(dst);
+}
+
+static struct tm *time_localtime_threadlocal(time_t *time_data)
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	// The result of localtime is thread-local on Windows
+	// https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/localtime-localtime32-localtime64
+	return localtime(time_data);
+#else
+	// Thread-local buffer for the result of localtime_r
+	thread_local struct tm time_info_buf;
+	return localtime_r(time_data, &time_info_buf);
+#endif
+}
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+void str_timestamp_ex(time_t time_data, char *buffer, int buffer_size, const char *format)
+{
+	struct tm *time_info = time_localtime_threadlocal(&time_data);
+	strftime(buffer, buffer_size, format, time_info);
+	buffer[buffer_size - 1] = 0; /* assure null termination */
+}
+
+void str_timestamp_format(char *buffer, int buffer_size, const char *format)
+{
+	time_t time_data;
+	time(&time_data);
+	str_timestamp_ex(time_data, buffer, buffer_size, format);
+}
+
+void str_timestamp(char *buffer, int buffer_size)
+{
+	str_timestamp_format(buffer, buffer_size, FORMAT_NOSPACE);
+}
+
+bool timestamp_from_str(const char *string, const char *format, time_t *timestamp)
+{
+	std::tm tm{};
+	std::istringstream ss(string);
+	ss >> std::get_time(&tm, format);
+	if(ss.fail() || !ss.eof())
+		return false;
+
+	time_t result = mktime(&tm);
+	if(result < 0)
+		return false;
+
+	*timestamp = result;
+	return true;
+}
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
+int str_time(int64_t centisecs, int format, char *buffer, int buffer_size)
+{
+	const int sec = 100;
+	const int min = 60 * sec;
+	const int hour = 60 * min;
+	const int day = 24 * hour;
+
+	if(buffer_size <= 0)
+		return -1;
+
+	if(centisecs < 0)
+		centisecs = 0;
+
+	buffer[0] = 0;
+
+	switch(format)
+	{
+	case TIME_DAYS:
+		if(centisecs >= day)
+			return str_format(buffer, buffer_size, "%" PRId64 "d %02" PRId64 ":%02" PRId64 ":%02" PRId64, centisecs / day,
+				(centisecs % day) / hour, (centisecs % hour) / min, (centisecs % min) / sec);
+		[[fallthrough]];
+	case TIME_HOURS:
+		if(centisecs >= hour)
+			return str_format(buffer, buffer_size, "%02" PRId64 ":%02" PRId64 ":%02" PRId64, centisecs / hour,
+				(centisecs % hour) / min, (centisecs % min) / sec);
+		[[fallthrough]];
+	case TIME_MINS:
+		return str_format(buffer, buffer_size, "%02" PRId64 ":%02" PRId64, centisecs / min,
+			(centisecs % min) / sec);
+	case TIME_HOURS_CENTISECS:
+		if(centisecs >= hour)
+			return str_format(buffer, buffer_size, "%02" PRId64 ":%02" PRId64 ":%02" PRId64 ".%02" PRId64, centisecs / hour,
+				(centisecs % hour) / min, (centisecs % min) / sec, centisecs % sec);
+		[[fallthrough]];
+	case TIME_MINS_CENTISECS:
+		if(centisecs >= min)
+			return str_format(buffer, buffer_size, "%02" PRId64 ":%02" PRId64 ".%02" PRId64, centisecs / min,
+				(centisecs % min) / sec, centisecs % sec);
+		[[fallthrough]];
+	case TIME_SECS_CENTISECS:
+		return str_format(buffer, buffer_size, "%02" PRId64 ".%02" PRId64, (centisecs % min) / sec, centisecs % sec);
+	}
+
+	return -1;
+}
+
+int str_time_float(float secs, int format, char *buffer, int buffer_size)
+{
+	return str_time(llroundf(secs * 1000) / 10, format, buffer, buffer_size);
+}
+
+void str_escape(char **dst, const char *src, const char *end)
+{
+	while(*src && *dst + 1 < end)
+	{
+		if(*src == '"' || *src == '\\') // escape \ and "
+		{
+			if(*dst + 2 < end)
+				*(*dst)++ = '\\';
+			else
+				break;
+		}
+		*(*dst)++ = *src++;
+	}
+	**dst = 0;
 }
 
 int str_utf8_comp_nocase(const char *a, const char *b)
@@ -894,6 +1343,102 @@ size_t str_utf8_offset_chars_to_bytes(const char *str, size_t char_offset)
 			break;
 	}
 	return byte_offset;
+}
+
+static void aio_thread(void *user)
+{
+	ASYNCIO *aio = (ASYNCIO *)user;
+
+	aio->lock.lock();
+	while(true)
+	{
+		struct BUFFERS buffers;
+		int result_io_error;
+		unsigned char local_buffer[ASYNC_LOCAL_BUFSIZE];
+		unsigned int local_buffer_len = 0;
+
+		if(aio->read_pos == aio->write_pos)
+		{
+			if(aio->finish != ASYNCIO_RUNNING)
+			{
+				if(aio->finish == ASYNCIO_CLOSE)
+				{
+					io_close(aio->io);
+				}
+				aio_handle_free_and_unlock(aio);
+				break;
+			}
+			aio->lock.unlock();
+			sphore_wait(&aio->sphore);
+			aio->lock.lock();
+			continue;
+		}
+
+		buffer_ptrs(aio, &buffers);
+		if(buffers.buf1)
+		{
+			if(buffers.len1 > sizeof(local_buffer) - local_buffer_len)
+			{
+				buffers.len1 = sizeof(local_buffer) - local_buffer_len;
+			}
+			mem_copy(local_buffer + local_buffer_len, buffers.buf1, buffers.len1);
+			local_buffer_len += buffers.len1;
+			if(buffers.buf2)
+			{
+				if(buffers.len2 > sizeof(local_buffer) - local_buffer_len)
+				{
+					buffers.len2 = sizeof(local_buffer) - local_buffer_len;
+				}
+				mem_copy(local_buffer + local_buffer_len, buffers.buf2, buffers.len2);
+				local_buffer_len += buffers.len2;
+			}
+		}
+		aio->read_pos = (aio->read_pos + buffers.len1 + buffers.len2) % aio->buffer_size;
+		aio->lock.unlock();
+
+		io_write(aio->io, local_buffer, local_buffer_len);
+		io_flush(aio->io);
+		result_io_error = io_error(aio->io);
+
+		aio->lock.lock();
+		aio->error = result_io_error;
+	}
+}
+
+ASYNCIO *aio_new(IOHANDLE io)
+{
+	ASYNCIO *aio = new ASYNCIO;
+	if(!aio)
+	{
+		return nullptr;
+	}
+	aio->io = io;
+	sphore_init(&aio->sphore);
+	aio->thread = nullptr;
+
+	aio->buffer = (unsigned char *)malloc(ASYNC_BUFSIZE);
+	if(!aio->buffer)
+	{
+		sphore_destroy(&aio->sphore);
+		delete aio;
+		return nullptr;
+	}
+	aio->buffer_size = ASYNC_BUFSIZE;
+	aio->read_pos = 0;
+	aio->write_pos = 0;
+	aio->error = 0;
+	aio->finish = ASYNCIO_RUNNING;
+	aio->refcount = 2;
+
+	aio->thread = thread_init(aio_thread, aio, "aio");
+	if(!aio->thread)
+	{
+		free(aio->buffer);
+		sphore_destroy(&aio->sphore);
+		delete aio;
+		return nullptr;
+	}
+	return aio;
 }
 
 static unsigned int buffer_len(ASYNCIO *aio)
