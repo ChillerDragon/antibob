@@ -37,7 +37,6 @@ test: md5
 		src/antibob/interface.cpp \
 		src/test/*.cpp \
 		src/test/*/*.cpp \
-		$(POLYBOB_SRC) \
 		$(CXX_FLAGS_TEST) -I . -L. libantibot.so -o antibob_test
 
 md5: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engine/external/md5/md5.h
