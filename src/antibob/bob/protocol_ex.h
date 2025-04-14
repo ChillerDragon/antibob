@@ -1,6 +1,6 @@
 #pragma once
 
-#include <game/mapitems_ex.h>
+#include <polybob/game/mapitems_ex.h>
 
 #include <bob/uuid_manager.h>
 

@@ -1,15 +1,15 @@
-#include <antibot/antibot_data.h>
-#include <base/log.h>
-#include <base/system.h>
-#include <bob/detection_event.h>
-#include <engine/message.h>
-#include <engine/shared/packer.h>
-#include <engine/shared/protocol.h>
-#include <engine/shared/protocol_ex.h>
-#include <game/generated/protocol.h>
-#include <game/generated/protocol7.h>
-#include <game/generated/protocolglue.h>
+#include <polybob/antibot/antibot_data.h>
+#include <polybob/base/log.h>
+#include <polybob/base/system.h>
+#include <polybob/engine/message.h>
+#include <polybob/engine/shared/packer.h>
+#include <polybob/engine/shared/protocol.h>
+#include <polybob/engine/shared/protocol_ex.h>
+#include <polybob/game/generated/protocol.h>
+#include <polybob/game/generated/protocol7.h>
+#include <polybob/game/generated/protocolglue.h>
 
+#include <bob/detection_event.h>
 #include <bob/antibot_player.h>
 #include <bob/console.h>
 #include <bob/gameserver.h>

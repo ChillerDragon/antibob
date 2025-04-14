@@ -1,6 +1,6 @@
 #pragma once
 
-#include <base/system.h>
+#include <polybob/base/system.h>
 
 #include <bob/config.h>
 

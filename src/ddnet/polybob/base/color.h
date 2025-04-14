@@ -1,7 +1,7 @@
 #pragma once
 
-#include <base/math.h>
-#include <base/vmath.h>
+#include <polybob/base/math.h>
+#include <polybob/base/vmath.h>
 
 #include <optional>
 

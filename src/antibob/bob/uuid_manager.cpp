@@ -1,7 +1,7 @@
-#include <base/log.h>
-#include <base/system.h>
-#include <engine/shared/packer.h>
-#include <engine/shared/uuid_manager.h>
+#include <polybob/base/log.h>
+#include <polybob/base/system.h>
+#include <polybob/engine/shared/packer.h>
+#include <polybob/engine/shared/uuid_manager.h>
 
 #include <algorithm>
 #include <cstdio>

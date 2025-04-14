@@ -1,19 +1,20 @@
-#include <polybob/base/log.h>
+#include "protocol_ex.h"
+
+#include "uuid_manager.h"
+
 #include <polybob/base/system.h>
 #include <polybob/engine/message.h>
 
-#include <bob/uuid_manager.h>
+#include <new>
 
-#include "protocol_ex.h"
-
-void BobRegisterUuids(CBobUuidManager *pManager)
+void RegisterUuids(CUuidManager *pManager)
 {
 #define UUID(id, name) pManager->RegisterName(id, name);
-#include <bob/protocol_ex_msgs.h>
+#include "protocol_ex_msgs.h"
 #undef UUID
 }
 
-int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CMsgPacker *pPacker)
+int UnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CMsgPacker *pPacker)
 {
 	*pId = 0;
 	*pSys = false;
@@ -39,7 +40,7 @@ int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker,
 		return UNPACKMESSAGE_OK;
 	}
 
-	*pId = g_BobUuidManager.UnpackUuid(pUnpacker, pUuid);
+	*pId = g_UuidManager.UnpackUuid(pUnpacker, pUuid);
 
 	if(*pId == UUID_INVALID || *pId == UUID_UNKNOWN)
 	{
@@ -53,7 +54,7 @@ int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker,
 		case NETMSG_WHATIS:
 		{
 			CUuid Uuid2;
-			int Id2 = g_BobUuidManager.UnpackUuid(pUnpacker, &Uuid2);
+			int Id2 = g_UuidManager.UnpackUuid(pUnpacker, &Uuid2);
 			if(Id2 == UUID_INVALID)
 			{
 				break;
@@ -67,28 +68,34 @@ int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker,
 			{
 				new(pPacker) CMsgPacker(NETMSG_ITIS, true);
 				pPacker->AddRaw(&Uuid2, sizeof(Uuid2));
-				pPacker->AddString(g_BobUuidManager.GetName(Id2), 0);
+				pPacker->AddString(g_UuidManager.GetName(Id2), 0);
 			}
 			return UNPACKMESSAGE_ANSWER;
 		}
 		case NETMSG_IDONTKNOW:
-			// CUuid Uuid2;
-			// g_BobUuidManager.UnpackUuid(pUnpacker, &Uuid2);
-			// if(pUnpacker->Error())
-			// 	break;
-			// char aBuf[UUID_MAXSTRSIZE];
-			// FormatUuid(Uuid2, aBuf, sizeof(aBuf));
-			// log_debug("antibot", "uuid peer: unknown %s", aBuf);
+			// if(g_Config.m_Debug)
+			// {
+			// 	CUuid Uuid2;
+			// 	g_UuidManager.UnpackUuid(pUnpacker, &Uuid2);
+			// 	if(pUnpacker->Error())
+			// 		break;
+			// 	char aBuf[UUID_MAXSTRSIZE];
+			// 	FormatUuid(Uuid2, aBuf, sizeof(aBuf));
+			// 	dbg_msg("uuid", "peer: unknown %s", aBuf);
+			// }
 			break;
 		case NETMSG_ITIS:
-			// CUuid Uuid2;
-			// g_BobUuidManager.UnpackUuid(pUnpacker, &Uuid2);
-			// const char *pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC);
-			// if(pUnpacker->Error())
-			// 	break;
-			// char aBuf[UUID_MAXSTRSIZE];
-			// FormatUuid(Uuid2, aBuf, sizeof(aBuf));
-			// log_debug("antibot", "uuid peer: %s %s", aBuf, pName);
+			// if(g_Config.m_Debug)
+			// {
+			// 	CUuid Uuid2;
+			// 	g_UuidManager.UnpackUuid(pUnpacker, &Uuid2);
+			// 	const char *pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC);
+			// 	if(pUnpacker->Error())
+			// 		break;
+			// 	char aBuf[UUID_MAXSTRSIZE];
+			// 	FormatUuid(Uuid2, aBuf, sizeof(aBuf));
+			// 	dbg_msg("uuid", "peer: %s %s", aBuf, pName);
+			// }
 			break;
 		}
 	}

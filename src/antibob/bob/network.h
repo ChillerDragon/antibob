@@ -1,11 +1,11 @@
 #pragma once
 
-#include <antibot/antibot_data.h>
-#include <base/system.h>
-#include <engine/message.h>
-#include <engine/shared/packer.h>
-#include <game/generated/protocol.h>
-#include <game/generated/protocol7.h>
+#include <polybob/antibot/antibot_data.h>
+#include <polybob/base/system.h>
+#include <polybob/engine/message.h>
+#include <polybob/engine/shared/packer.h>
+#include <polybob/game/generated/protocol.h>
+#include <polybob/game/generated/protocol7.h>
 
 class CAntibotClient
 {

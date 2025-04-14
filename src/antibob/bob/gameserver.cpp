@@ -1,5 +1,5 @@
-#include <engine/shared/protocol.h>
-#include <game/generated/protocol.h>
+#include <polybob/engine/shared/protocol.h>
+#include <polybob/game/generated/protocol.h>
 
 #include <bob/network.h>
 

@@ -1,4 +1,4 @@
-#include <base/log.h>
+#include <polybob/base/log.h>
 #include <bob/antibob.h>
 
 void CAntibob::ComTest(CBobResult *pResult, void *pUserData)

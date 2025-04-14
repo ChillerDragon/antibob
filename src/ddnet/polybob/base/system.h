@@ -162,6 +162,12 @@ const char *str_endswith(const char *str, const char *suffix);
 const char *str_find_nocase(const char *haystack, const char *needle);
 const char *str_find(const char *haystack, const char *needle);
 
+void str_hex(char *dst, int dst_size, const void *data, int data_size);
+void str_hex_cstyle(char *dst, int dst_size, const void *data, int data_size, int bytes_per_line = 12);
+int str_hex_decode(void *dst, int dst_size, const char *src);
+void str_base64(char *dst, int dst_size, const void *data, int data_size);
+int str_base64_decode(void *dst, int dst_size, const char *data);
+
 void str_append(char *dst, const char *src, int dst_size);
 template<int N>
 void str_append(char (&dst)[N], const char *src)
@@ -304,3 +310,31 @@ void sphore_init(SEMAPHORE *sem);
 void sphore_wait(SEMAPHORE *sem);
 void sphore_signal(SEMAPHORE *sem);
 void sphore_destroy(SEMAPHORE *sem);
+
+void set_new_tick();
+int64_t time_get_impl();
+int64_t time_get();
+int64_t time_freq();
+int64_t time_timestamp();
+int time_houroftheday();
+enum ETimeSeason
+{
+	SEASON_SPRING = 0,
+	SEASON_SUMMER,
+	SEASON_AUTUMN,
+	SEASON_WINTER,
+	SEASON_EASTER,
+	SEASON_HALLOWEEN,
+	SEASON_XMAS,
+	SEASON_NEWYEAR
+};
+ETimeSeason time_season();
+
+void generate_password(char *buffer, unsigned length, const unsigned short *random, unsigned random_length);
+[[nodiscard]] int secure_random_init();
+int secure_random_uninit();
+void secure_random_password(char *buffer, unsigned length, unsigned pw_length);
+void secure_random_fill(void *bytes, unsigned length);
+int secure_rand();
+int secure_rand_below(int below);
+

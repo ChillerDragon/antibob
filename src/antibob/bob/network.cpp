@@ -1,8 +1,8 @@
-#include <antibot/antibot_data.h>
-#include <base/log.h>
-#include <base/system.h>
-#include <engine/shared/protocol.h>
-#include <game/generated/protocolglue.h>
+#include <polybob/antibot/antibot_data.h>
+#include <polybob/base/log.h>
+#include <polybob/base/system.h>
+#include <polybob/engine/shared/protocol.h>
+#include <polybob/game/generated/protocolglue.h>
 
 #include "bob/antibob.h"
 #include "network.h"

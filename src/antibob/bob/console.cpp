@@ -1,6 +1,7 @@
+#include <polybob/base/log.h>
+#include <polybob/base/system.h>
+
 #include "console.h"
-#include "base/log.h"
-#include "base/system.h"
 
 int CBobResult::NumRequiredParamaters() const
 {

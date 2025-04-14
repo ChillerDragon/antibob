@@ -1,7 +1,7 @@
 #pragma once
 
-#include <antibot/antibot_data.h>
-#include <engine/message.h>
+#include <polybob/antibot/antibot_data.h>
+#include <polybob/engine/message.h>
 
 #include <bob/antibot_player.h>
 #include <bob/config.h>

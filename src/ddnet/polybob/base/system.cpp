@@ -862,6 +862,259 @@ const char *str_find(const char *haystack, const char *needle)
 	return nullptr;
 }
 
+void str_hex(char *dst, int dst_size, const void *data, int data_size)
+{
+	static const char hex[] = "0123456789ABCDEF";
+	int data_index;
+	int dst_index;
+	for(data_index = 0, dst_index = 0; data_index < data_size && dst_index < dst_size - 3; data_index++)
+	{
+		dst[data_index * 3] = hex[((const unsigned char *)data)[data_index] >> 4];
+		dst[data_index * 3 + 1] = hex[((const unsigned char *)data)[data_index] & 0xf];
+		dst[data_index * 3 + 2] = ' ';
+		dst_index += 3;
+	}
+	dst[dst_index] = '\0';
+}
+
+void str_hex_cstyle(char *dst, int dst_size, const void *data, int data_size, int bytes_per_line)
+{
+	static const char hex[] = "0123456789ABCDEF";
+	int data_index;
+	int dst_index;
+	int remaining_bytes_per_line = bytes_per_line;
+	for(data_index = 0, dst_index = 0; data_index < data_size && dst_index < dst_size - 6; data_index++)
+	{
+		--remaining_bytes_per_line;
+		dst[data_index * 6] = '0';
+		dst[data_index * 6 + 1] = 'x';
+		dst[data_index * 6 + 2] = hex[((const unsigned char *)data)[data_index] >> 4];
+		dst[data_index * 6 + 3] = hex[((const unsigned char *)data)[data_index] & 0xf];
+		dst[data_index * 6 + 4] = ',';
+		if(remaining_bytes_per_line == 0)
+		{
+			dst[data_index * 6 + 5] = '\n';
+			remaining_bytes_per_line = bytes_per_line;
+		}
+		else
+		{
+			dst[data_index * 6 + 5] = ' ';
+		}
+		dst_index += 6;
+	}
+	dst[dst_index] = '\0';
+	// Remove trailing comma and space/newline
+	if(dst_index >= 1)
+		dst[dst_index - 1] = '\0';
+	if(dst_index >= 2)
+		dst[dst_index - 2] = '\0';
+}
+
+static int hexval(char x)
+{
+	switch(x)
+	{
+	case '0': return 0;
+	case '1': return 1;
+	case '2': return 2;
+	case '3': return 3;
+	case '4': return 4;
+	case '5': return 5;
+	case '6': return 6;
+	case '7': return 7;
+	case '8': return 8;
+	case '9': return 9;
+	case 'a':
+	case 'A': return 10;
+	case 'b':
+	case 'B': return 11;
+	case 'c':
+	case 'C': return 12;
+	case 'd':
+	case 'D': return 13;
+	case 'e':
+	case 'E': return 14;
+	case 'f':
+	case 'F': return 15;
+	default: return -1;
+	}
+}
+
+static int byteval(const char *hex, unsigned char *dst)
+{
+	int v1 = hexval(hex[0]);
+	int v2 = hexval(hex[1]);
+
+	if(v1 < 0 || v2 < 0)
+		return 1;
+
+	*dst = v1 * 16 + v2;
+	return 0;
+}
+
+int str_hex_decode(void *dst, int dst_size, const char *src)
+{
+	unsigned char *cdst = (unsigned char *)dst;
+	int slen = str_length(src);
+	int len = slen / 2;
+	int i;
+	if(slen != dst_size * 2)
+		return 2;
+
+	for(i = 0; i < len && dst_size; i++, dst_size--)
+	{
+		if(byteval(src + i * 2, cdst++))
+			return 1;
+	}
+	return 0;
+}
+
+void str_base64(char *dst, int dst_size, const void *data_raw, int data_size)
+{
+	static const char DIGITS[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+	const unsigned char *data = (const unsigned char *)data_raw;
+	unsigned value = 0;
+	int num_bits = 0;
+	int i = 0;
+	int o = 0;
+
+	dst_size -= 1;
+	dst[dst_size] = 0;
+	while(true)
+	{
+		if(num_bits < 6 && i < data_size)
+		{
+			value = (value << 8) | data[i];
+			num_bits += 8;
+			i += 1;
+		}
+		if(o == dst_size)
+		{
+			return;
+		}
+		if(num_bits > 0)
+		{
+			unsigned padded;
+			if(num_bits >= 6)
+			{
+				padded = (value >> (num_bits - 6)) & 0x3f;
+			}
+			else
+			{
+				padded = (value << (6 - num_bits)) & 0x3f;
+			}
+			dst[o] = DIGITS[padded];
+			num_bits -= 6;
+			o += 1;
+		}
+		else if(o % 4 != 0)
+		{
+			dst[o] = '=';
+			o += 1;
+		}
+		else
+		{
+			dst[o] = 0;
+			return;
+		}
+	}
+}
+
+static int base64_digit_value(char digit)
+{
+	if('A' <= digit && digit <= 'Z')
+	{
+		return digit - 'A';
+	}
+	else if('a' <= digit && digit <= 'z')
+	{
+		return digit - 'a' + 26;
+	}
+	else if('0' <= digit && digit <= '9')
+	{
+		return digit - '0' + 52;
+	}
+	else if(digit == '+')
+	{
+		return 62;
+	}
+	else if(digit == '/')
+	{
+		return 63;
+	}
+	return -1;
+}
+
+int str_base64_decode(void *dst_raw, int dst_size, const char *data)
+{
+	unsigned char *dst = (unsigned char *)dst_raw;
+	int data_len = str_length(data);
+
+	int i;
+	int o = 0;
+
+	if(data_len % 4 != 0)
+	{
+		return -3;
+	}
+	if(data_len / 4 * 3 > dst_size)
+	{
+		// Output buffer too small.
+		return -2;
+	}
+	for(i = 0; i < data_len; i += 4)
+	{
+		int num_output_bytes = 3;
+		char copy[4];
+		int d[4];
+		int value;
+		int b;
+		mem_copy(copy, data + i, sizeof(copy));
+		if(i == data_len - 4)
+		{
+			if(copy[3] == '=')
+			{
+				copy[3] = 'A';
+				num_output_bytes = 2;
+				if(copy[2] == '=')
+				{
+					copy[2] = 'A';
+					num_output_bytes = 1;
+				}
+			}
+		}
+		d[0] = base64_digit_value(copy[0]);
+		d[1] = base64_digit_value(copy[1]);
+		d[2] = base64_digit_value(copy[2]);
+		d[3] = base64_digit_value(copy[3]);
+		if(d[0] == -1 || d[1] == -1 || d[2] == -1 || d[3] == -1)
+		{
+			// Invalid digit.
+			return -1;
+		}
+		value = (d[0] << 18) | (d[1] << 12) | (d[2] << 6) | d[3];
+		for(b = 0; b < 3; b++)
+		{
+			unsigned char byte_value = (value >> (16 - 8 * b)) & 0xff;
+			if(b < num_output_bytes)
+			{
+				dst[o] = byte_value;
+				o += 1;
+			}
+			else
+			{
+				if(byte_value != 0)
+				{
+					// Padding not zeroed.
+					return -2;
+				}
+			}
+		}
+	}
+	return o;
+}
+
 void str_append(char *dst, const char *src, int dst_size)
 {
 	int s = str_length(dst);
@@ -1771,3 +2024,169 @@ void sphore_destroy(SEMAPHORE *sem)
 	dbg_assert(sem_destroy(sem) == 0, "sem_destroy failure");
 }
 #endif
+
+struct SECURE_RANDOM_DATA
+{
+	int initialized;
+#if defined(CONF_FAMILY_WINDOWS)
+	HCRYPTPROV provider;
+#else
+	IOHANDLE urandom;
+#endif
+};
+
+static struct SECURE_RANDOM_DATA secure_random_data = {0};
+
+int secure_random_init()
+{
+	if(secure_random_data.initialized)
+	{
+		return 0;
+	}
+#if defined(CONF_FAMILY_WINDOWS)
+	if(CryptAcquireContext(&secure_random_data.provider, nullptr, nullptr, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+	{
+		secure_random_data.initialized = 1;
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+#else
+	secure_random_data.urandom = io_open("/dev/urandom", IOFLAG_READ);
+	if(secure_random_data.urandom)
+	{
+		secure_random_data.initialized = 1;
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+#endif
+}
+
+int secure_random_uninit()
+{
+	if(!secure_random_data.initialized)
+	{
+		return 0;
+	}
+#if defined(CONF_FAMILY_WINDOWS)
+	if(CryptReleaseContext(secure_random_data.provider, 0))
+	{
+		secure_random_data.initialized = 0;
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+#else
+	if(!io_close(secure_random_data.urandom))
+	{
+		secure_random_data.initialized = 0;
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+#endif
+}
+
+void generate_password(char *buffer, unsigned length, const unsigned short *random, unsigned random_length)
+{
+	static const char VALUES[] = "ABCDEFGHKLMNPRSTUVWXYZabcdefghjkmnopqt23456789";
+	static const size_t NUM_VALUES = sizeof(VALUES) - 1; // Disregard the '\0'.
+	unsigned i;
+	dbg_assert(length >= random_length * 2 + 1, "too small buffer");
+	dbg_assert(NUM_VALUES * NUM_VALUES >= 2048, "need at least 2048 possibilities for 2-character sequences");
+
+	buffer[random_length * 2] = 0;
+
+	for(i = 0; i < random_length; i++)
+	{
+		unsigned short random_number = random[i] % 2048;
+		buffer[2 * i + 0] = VALUES[random_number / NUM_VALUES];
+		buffer[2 * i + 1] = VALUES[random_number % NUM_VALUES];
+	}
+}
+
+#define MAX_PASSWORD_LENGTH 128
+
+void secure_random_password(char *buffer, unsigned length, unsigned pw_length)
+{
+	unsigned short random[MAX_PASSWORD_LENGTH / 2];
+	// With 6 characters, we get a password entropy of log(2048) * 6/2 = 33bit.
+	dbg_assert(length >= pw_length + 1, "too small buffer");
+	dbg_assert(pw_length >= 6, "too small password length");
+	dbg_assert(pw_length % 2 == 0, "need an even password length");
+	dbg_assert(pw_length <= MAX_PASSWORD_LENGTH, "too large password length");
+
+	secure_random_fill(random, pw_length);
+
+	generate_password(buffer, length, random, pw_length / 2);
+}
+
+#undef MAX_PASSWORD_LENGTH
+
+void secure_random_fill(void *bytes, unsigned length)
+{
+	if(!secure_random_data.initialized)
+	{
+		dbg_msg("secure", "called secure_random_fill before secure_random_init");
+		dbg_break();
+	}
+#if defined(CONF_FAMILY_WINDOWS)
+	if(!CryptGenRandom(secure_random_data.provider, length, (unsigned char *)bytes))
+	{
+		const DWORD LastError = GetLastError();
+		const std::string ErrorMsg = windows_format_system_message(LastError);
+		dbg_msg("secure", "CryptGenRandom failed: %ld %s", LastError, ErrorMsg.c_str());
+		dbg_break();
+	}
+#else
+	if(length != io_read(secure_random_data.urandom, bytes, length))
+	{
+		dbg_msg("secure", "io_read returned with a short read");
+		dbg_break();
+	}
+#endif
+}
+
+int secure_rand()
+{
+	unsigned int i;
+	secure_random_fill(&i, sizeof(i));
+	return (int)(i % RAND_MAX);
+}
+
+// From https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2.
+static unsigned int find_next_power_of_two_minus_one(unsigned int n)
+{
+	n--;
+	n |= n >> 1;
+	n |= n >> 2;
+	n |= n >> 4;
+	n |= n >> 4;
+	n |= n >> 16;
+	return n;
+}
+
+int secure_rand_below(int below)
+{
+	unsigned int mask = find_next_power_of_two_minus_one(below);
+	dbg_assert(below > 0, "below must be positive");
+	while(true)
+	{
+		unsigned int n;
+		secure_random_fill(&n, sizeof(n));
+		n &= mask;
+		if((int)n < below)
+		{
+			return n;
+		}
+	}
+}

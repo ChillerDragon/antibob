@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gameserver.h"
-#include <antibot/antibot_data.h>
+#include <polybob/antibot/antibot_data.h>
 
 #include <bob/console.h>
 #include <bob/protocol_ex.h>
