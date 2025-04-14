@@ -1,4 +1,4 @@
-#include "uuid_manager.h"
+#include "bob_uuid_manager.h"
 
 #include <polybob/base/hash_ctxt.h>
 #include <polybob/base/system.h>
@@ -116,7 +116,7 @@ static int GetId(int Index)
 	return Index + OFFSET_UUID;
 }
 
-void CUuidManager::RegisterName(int Id, const char *pName)
+void CBobUuidManager::RegisterName(int Id, const char *pName)
 {
 	dbg_assert(GetIndex(Id) == (int)m_vNames.size(), "names must be registered with increasing ID (got=%d want=%d)", GetIndex(Id), (int)m_vNames.size());
 	CName Name;
@@ -132,17 +132,17 @@ void CUuidManager::RegisterName(int Id, const char *pName)
 	m_vNamesSorted.insert(std::lower_bound(m_vNamesSorted.begin(), m_vNamesSorted.end(), NameIndexed), NameIndexed);
 }
 
-CUuid CUuidManager::GetUuid(int Id) const
+CUuid CBobUuidManager::GetUuid(int Id) const
 {
 	return m_vNames[GetIndex(Id)].m_Uuid;
 }
 
-const char *CUuidManager::GetName(int Id) const
+const char *CBobUuidManager::GetName(int Id) const
 {
 	return m_vNames[GetIndex(Id)].m_pName;
 }
 
-int CUuidManager::LookupUuid(CUuid Uuid) const
+int CBobUuidManager::LookupUuid(CUuid Uuid) const
 {
 	CNameIndexed Needle;
 	Needle.m_Uuid = Uuid;
@@ -155,18 +155,18 @@ int CUuidManager::LookupUuid(CUuid Uuid) const
 	return UUID_UNKNOWN;
 }
 
-int CUuidManager::NumUuids() const
+int CBobUuidManager::NumUuids() const
 {
 	return m_vNames.size();
 }
 
-int CUuidManager::UnpackUuid(CUnpacker *pUnpacker) const
+int CBobUuidManager::UnpackUuid(CUnpacker *pUnpacker) const
 {
 	CUuid Temp;
 	return UnpackUuid(pUnpacker, &Temp);
 }
 
-int CUuidManager::UnpackUuid(CUnpacker *pUnpacker, CUuid *pOut) const
+int CBobUuidManager::UnpackUuid(CUnpacker *pUnpacker, CUuid *pOut) const
 {
 	const CUuid *pUuid = (const CUuid *)pUnpacker->GetRaw(sizeof(*pUuid));
 	if(pUuid == nullptr)
@@ -177,13 +177,13 @@ int CUuidManager::UnpackUuid(CUnpacker *pUnpacker, CUuid *pOut) const
 	return LookupUuid(*pUuid);
 }
 
-void CUuidManager::PackUuid(int Id, CPacker *pPacker) const
+void CBobUuidManager::PackUuid(int Id, CPacker *pPacker) const
 {
 	CUuid Uuid = GetUuid(Id);
 	pPacker->AddRaw(&Uuid, sizeof(Uuid));
 }
 
-void CUuidManager::DebugDump() const
+void CBobUuidManager::DebugDump() const
 {
 	for(const auto &Name : m_vNames)
 	{

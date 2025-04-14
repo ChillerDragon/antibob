@@ -1,5 +1,5 @@
 #pragma once
 
-#include <polybob/engine/shared/uuid_manager.h>
+#include <polybob/engine/shared/bob_uuid_manager.h>
 
-void RegisterGameUuids(CUuidManager *pManager);
+void RegisterGameUuids(CBobUuidManager *pManager);

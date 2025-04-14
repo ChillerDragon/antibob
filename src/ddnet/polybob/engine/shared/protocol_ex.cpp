@@ -1,20 +1,20 @@
 #include "protocol_ex.h"
 
-#include "uuid_manager.h"
+#include "bob_uuid_manager.h"
 
 #include <polybob/base/system.h>
 #include <polybob/engine/message.h>
 
 #include <new>
 
-void RegisterUuids(CUuidManager *pManager)
+void RegisterUuids(CBobUuidManager *pManager)
 {
 #define UUID(id, name) pManager->RegisterName(id, name);
 #include "protocol_ex_msgs.h"
 #undef UUID
 }
 
-int UnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CMsgPacker *pPacker)
+int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CMsgPacker *pPacker)
 {
 	*pId = 0;
 	*pSys = false;
@@ -40,7 +40,7 @@ int UnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CM
 		return UNPACKMESSAGE_OK;
 	}
 
-	*pId = g_UuidManager.UnpackUuid(pUnpacker, pUuid);
+	*pId = g_BobUuidManager.UnpackUuid(pUnpacker, pUuid);
 
 	if(*pId == UUID_INVALID || *pId == UUID_UNKNOWN)
 	{
@@ -54,7 +54,7 @@ int UnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CM
 		case NETMSG_WHATIS:
 		{
 			CUuid Uuid2;
-			int Id2 = g_UuidManager.UnpackUuid(pUnpacker, &Uuid2);
+			int Id2 = g_BobUuidManager.UnpackUuid(pUnpacker, &Uuid2);
 			if(Id2 == UUID_INVALID)
 			{
 				break;
@@ -68,7 +68,7 @@ int UnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CM
 			{
 				new(pPacker) CMsgPacker(NETMSG_ITIS, true);
 				pPacker->AddRaw(&Uuid2, sizeof(Uuid2));
-				pPacker->AddString(g_UuidManager.GetName(Id2), 0);
+				pPacker->AddString(g_BobUuidManager.GetName(Id2), 0);
 			}
 			return UNPACKMESSAGE_ANSWER;
 		}
@@ -76,7 +76,7 @@ int UnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CM
 			// if(g_Config.m_Debug)
 			// {
 			// 	CUuid Uuid2;
-			// 	g_UuidManager.UnpackUuid(pUnpacker, &Uuid2);
+			// 	g_BobUuidManager.UnpackUuid(pUnpacker, &Uuid2);
 			// 	if(pUnpacker->Error())
 			// 		break;
 			// 	char aBuf[UUID_MAXSTRSIZE];
@@ -88,7 +88,7 @@ int UnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CM
 			// if(g_Config.m_Debug)
 			// {
 			// 	CUuid Uuid2;
-			// 	g_UuidManager.UnpackUuid(pUnpacker, &Uuid2);
+			// 	g_BobUuidManager.UnpackUuid(pUnpacker, &Uuid2);
 			// 	const char *pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC);
 			// 	if(pUnpacker->Error())
 			// 		break;

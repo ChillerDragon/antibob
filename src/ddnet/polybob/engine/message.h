@@ -1,7 +1,7 @@
 #pragma once
 
+#include <polybob/engine/shared/bob_uuid_manager.h>
 #include <polybob/engine/shared/packer.h>
-#include <polybob/engine/shared/uuid_manager.h>
 
 class CMsgPacker : public CPacker
 {

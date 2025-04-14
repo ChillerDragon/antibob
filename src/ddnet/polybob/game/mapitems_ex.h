@@ -34,4 +34,4 @@ public:
 	int m_Flags;
 };
 
-void RegisterMapItemTypeUuids(class CUuidManager *pManager);
+void RegisterMapItemTypeUuids(class CBobUuidManager *pManager);

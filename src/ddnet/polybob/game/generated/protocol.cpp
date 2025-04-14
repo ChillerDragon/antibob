@@ -1,9 +1,9 @@
 #include "protocol.h"
 
 #include <polybob/base/system.h>
+#include <polybob/engine/shared/bob_uuid_manager.h>
 #include <polybob/engine/shared/packer.h>
 #include <polybob/engine/shared/protocol.h>
-#include <polybob/engine/shared/uuid_manager.h>
 #include <polybob/game/mapitems_ex.h>
 
 CNetObjHandler::CNetObjHandler()
@@ -1349,7 +1349,7 @@ bool CNetObjHandler::TeeHistorianRecordMsg(int Type)
 	}
 }
 
-void RegisterGameUuids(CUuidManager *pManager)
+void RegisterGameUuids(CBobUuidManager *pManager)
 {
 	pManager->RegisterName(NETOBJTYPE_MYOWNOBJECT, "my-own-object@heinrich5991.de");
 	pManager->RegisterName(NETOBJTYPE_DDNETCHARACTER, "character@netobj.ddnet.tw");

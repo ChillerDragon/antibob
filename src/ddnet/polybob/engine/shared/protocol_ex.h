@@ -1,6 +1,6 @@
 #pragma once
 
-#include <polybob/engine/shared/uuid_manager.h>
+#include <polybob/engine/shared/bob_uuid_manager.h>
 
 class CMsgPacker;
 class CUnpacker;
@@ -31,5 +31,5 @@ enum
 	SERVERCAPFLAG_SYNCWEAPONINPUT = 1 << 5,
 };
 
-void RegisterUuids(CUuidManager *pManager);
-int UnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CMsgPacker *pPacker);
+void RegisterUuids(CBobUuidManager *pManager);
+int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CMsgPacker *pPacker);

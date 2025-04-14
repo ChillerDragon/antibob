@@ -1,10 +1,10 @@
 #pragma once
 
-#include "gameserver.h"
 #include <polybob/antibot/antibot_data.h>
+#include <polybob/engine/shared/protocol_ex.h>
 
 #include <bob/console.h>
-#include <bob/protocol_ex.h>
+#include <bob/gameserver.h>
 
 class CAntibob : public CGameServer
 {

@@ -48,7 +48,7 @@ struct CNameIndexed
 class CPacker;
 class CUnpacker;
 
-class CUuidManager
+class CBobUuidManager
 {
 	std::vector<CName> m_vNames;
 	std::vector<CNameIndexed> m_vNamesSorted;
@@ -67,4 +67,4 @@ public:
 	void DebugDump() const;
 };
 
-extern CUuidManager g_UuidManager;
+extern CBobUuidManager g_BobUuidManager;

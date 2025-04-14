@@ -1,12 +1,15 @@
-#include <bob/protocol_ex.h>
-#include <bob/uuid_manager.h>
+#include "bob_uuid_manager.h"
+#include "protocol_ex.h"
+#include "teehistorian_ex.h"
 
 #include <polybob/engine/uuid.h>
 
 static CBobUuidManager CreateGlobalBobUuidManager()
 {
 	CBobUuidManager Manager;
-	BobRegisterUuids(&Manager);
+	RegisterUuids(&Manager);
+	RegisterTeehistorianUuids(&Manager);
+	RegisterGameUuids(&Manager);
 	return Manager;
 }
 

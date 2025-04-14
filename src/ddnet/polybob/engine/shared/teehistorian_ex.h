@@ -1,5 +1,5 @@
-#ifndef ENGINE_SHARED_TEEHISTORIAN_EX_H
-#define ENGINE_SHARED_TEEHISTORIAN_EX_H
+#pragma once
+
 #include "protocol_ex.h"
 
 enum
@@ -11,5 +11,4 @@ enum
 	OFFSET_GAME_UUID
 };
 
-void RegisterTeehistorianUuids(class CUuidManager *pManager);
-#endif // ENGINE_SHARED_TEEHISTORIAN_EX_H
+void RegisterTeehistorianUuids(class CBobUuidManager *pManager);
