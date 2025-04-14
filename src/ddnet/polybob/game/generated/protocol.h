@@ -7,22 +7,22 @@ class CUnpacker;
 
 enum
 {
-	INPUT_STATE_MASK=0x3f
+	INPUT_STATE_MASK = 0x3f
 };
 
 enum
 {
-	FLAG_MISSING=-3,
+	FLAG_MISSING = -3,
 	FLAG_ATSTAND,
 	FLAG_TAKEN,
 
-	SPEC_FREEVIEW=-1,
-	SPEC_FOLLOW=-2,
+	SPEC_FREEVIEW = -1,
+	SPEC_FOLLOW = -2,
 };
 
 enum
 {
-	GAMEINFO_CURVERSION=10,
+	GAMEINFO_CURVERSION = 10,
 };
 
 enum
@@ -140,145 +140,145 @@ enum
 
 enum
 {
-	PLAYERFLAG_PLAYING = 1<<0,
-	PLAYERFLAG_IN_MENU = 1<<1,
-	PLAYERFLAG_CHATTING = 1<<2,
-	PLAYERFLAG_SCOREBOARD = 1<<3,
-	PLAYERFLAG_AIM = 1<<4,
-	PLAYERFLAG_SPEC_CAM = 1<<5,
+	PLAYERFLAG_PLAYING = 1 << 0,
+	PLAYERFLAG_IN_MENU = 1 << 1,
+	PLAYERFLAG_CHATTING = 1 << 2,
+	PLAYERFLAG_SCOREBOARD = 1 << 3,
+	PLAYERFLAG_AIM = 1 << 4,
+	PLAYERFLAG_SPEC_CAM = 1 << 5,
 };
 
 enum
 {
-	GAMEFLAG_TEAMS = 1<<0,
-	GAMEFLAG_FLAGS = 1<<1,
+	GAMEFLAG_TEAMS = 1 << 0,
+	GAMEFLAG_FLAGS = 1 << 1,
 };
 
 enum
 {
-	GAMESTATEFLAG_GAMEOVER = 1<<0,
-	GAMESTATEFLAG_SUDDENDEATH = 1<<1,
-	GAMESTATEFLAG_PAUSED = 1<<2,
-	GAMESTATEFLAG_RACETIME = 1<<3,
+	GAMESTATEFLAG_GAMEOVER = 1 << 0,
+	GAMESTATEFLAG_SUDDENDEATH = 1 << 1,
+	GAMESTATEFLAG_PAUSED = 1 << 2,
+	GAMESTATEFLAG_RACETIME = 1 << 3,
 };
 
 enum
 {
-	CHARACTERFLAG_SOLO = 1<<0,
-	CHARACTERFLAG_JETPACK = 1<<1,
-	CHARACTERFLAG_COLLISION_DISABLED = 1<<2,
-	CHARACTERFLAG_ENDLESS_HOOK = 1<<3,
-	CHARACTERFLAG_ENDLESS_JUMP = 1<<4,
-	CHARACTERFLAG_SUPER = 1<<5,
-	CHARACTERFLAG_HAMMER_HIT_DISABLED = 1<<6,
-	CHARACTERFLAG_SHOTGUN_HIT_DISABLED = 1<<7,
-	CHARACTERFLAG_GRENADE_HIT_DISABLED = 1<<8,
-	CHARACTERFLAG_LASER_HIT_DISABLED = 1<<9,
-	CHARACTERFLAG_HOOK_HIT_DISABLED = 1<<10,
-	CHARACTERFLAG_TELEGUN_GUN = 1<<11,
-	CHARACTERFLAG_TELEGUN_GRENADE = 1<<12,
-	CHARACTERFLAG_TELEGUN_LASER = 1<<13,
-	CHARACTERFLAG_WEAPON_HAMMER = 1<<14,
-	CHARACTERFLAG_WEAPON_GUN = 1<<15,
-	CHARACTERFLAG_WEAPON_SHOTGUN = 1<<16,
-	CHARACTERFLAG_WEAPON_GRENADE = 1<<17,
-	CHARACTERFLAG_WEAPON_LASER = 1<<18,
-	CHARACTERFLAG_WEAPON_NINJA = 1<<19,
-	CHARACTERFLAG_MOVEMENTS_DISABLED = 1<<20,
-	CHARACTERFLAG_IN_FREEZE = 1<<21,
-	CHARACTERFLAG_PRACTICE_MODE = 1<<22,
-	CHARACTERFLAG_LOCK_MODE = 1<<23,
-	CHARACTERFLAG_TEAM0_MODE = 1<<24,
-	CHARACTERFLAG_INVINCIBLE = 1<<25,
+	CHARACTERFLAG_SOLO = 1 << 0,
+	CHARACTERFLAG_JETPACK = 1 << 1,
+	CHARACTERFLAG_COLLISION_DISABLED = 1 << 2,
+	CHARACTERFLAG_ENDLESS_HOOK = 1 << 3,
+	CHARACTERFLAG_ENDLESS_JUMP = 1 << 4,
+	CHARACTERFLAG_SUPER = 1 << 5,
+	CHARACTERFLAG_HAMMER_HIT_DISABLED = 1 << 6,
+	CHARACTERFLAG_SHOTGUN_HIT_DISABLED = 1 << 7,
+	CHARACTERFLAG_GRENADE_HIT_DISABLED = 1 << 8,
+	CHARACTERFLAG_LASER_HIT_DISABLED = 1 << 9,
+	CHARACTERFLAG_HOOK_HIT_DISABLED = 1 << 10,
+	CHARACTERFLAG_TELEGUN_GUN = 1 << 11,
+	CHARACTERFLAG_TELEGUN_GRENADE = 1 << 12,
+	CHARACTERFLAG_TELEGUN_LASER = 1 << 13,
+	CHARACTERFLAG_WEAPON_HAMMER = 1 << 14,
+	CHARACTERFLAG_WEAPON_GUN = 1 << 15,
+	CHARACTERFLAG_WEAPON_SHOTGUN = 1 << 16,
+	CHARACTERFLAG_WEAPON_GRENADE = 1 << 17,
+	CHARACTERFLAG_WEAPON_LASER = 1 << 18,
+	CHARACTERFLAG_WEAPON_NINJA = 1 << 19,
+	CHARACTERFLAG_MOVEMENTS_DISABLED = 1 << 20,
+	CHARACTERFLAG_IN_FREEZE = 1 << 21,
+	CHARACTERFLAG_PRACTICE_MODE = 1 << 22,
+	CHARACTERFLAG_LOCK_MODE = 1 << 23,
+	CHARACTERFLAG_TEAM0_MODE = 1 << 24,
+	CHARACTERFLAG_INVINCIBLE = 1 << 25,
 };
 
 enum
 {
-	GAMEINFOFLAG_TIMESCORE = 1<<0,
-	GAMEINFOFLAG_GAMETYPE_RACE = 1<<1,
-	GAMEINFOFLAG_GAMETYPE_FASTCAP = 1<<2,
-	GAMEINFOFLAG_GAMETYPE_FNG = 1<<3,
-	GAMEINFOFLAG_GAMETYPE_DDRACE = 1<<4,
-	GAMEINFOFLAG_GAMETYPE_DDNET = 1<<5,
-	GAMEINFOFLAG_GAMETYPE_BLOCK_WORLDS = 1<<6,
-	GAMEINFOFLAG_GAMETYPE_VANILLA = 1<<7,
-	GAMEINFOFLAG_GAMETYPE_PLUS = 1<<8,
-	GAMEINFOFLAG_FLAG_STARTS_RACE = 1<<9,
-	GAMEINFOFLAG_RACE = 1<<10,
-	GAMEINFOFLAG_UNLIMITED_AMMO = 1<<11,
-	GAMEINFOFLAG_DDRACE_RECORD_MESSAGE = 1<<12,
-	GAMEINFOFLAG_RACE_RECORD_MESSAGE = 1<<13,
-	GAMEINFOFLAG_ALLOW_EYE_WHEEL = 1<<14,
-	GAMEINFOFLAG_ALLOW_HOOK_COLL = 1<<15,
-	GAMEINFOFLAG_ALLOW_ZOOM = 1<<16,
-	GAMEINFOFLAG_BUG_DDRACE_GHOST = 1<<17,
-	GAMEINFOFLAG_BUG_DDRACE_INPUT = 1<<18,
-	GAMEINFOFLAG_BUG_FNG_LASER_RANGE = 1<<19,
-	GAMEINFOFLAG_BUG_VANILLA_BOUNCE = 1<<20,
-	GAMEINFOFLAG_PREDICT_FNG = 1<<21,
-	GAMEINFOFLAG_PREDICT_DDRACE = 1<<22,
-	GAMEINFOFLAG_PREDICT_DDRACE_TILES = 1<<23,
-	GAMEINFOFLAG_PREDICT_VANILLA = 1<<24,
-	GAMEINFOFLAG_ENTITIES_DDNET = 1<<25,
-	GAMEINFOFLAG_ENTITIES_DDRACE = 1<<26,
-	GAMEINFOFLAG_ENTITIES_RACE = 1<<27,
-	GAMEINFOFLAG_ENTITIES_FNG = 1<<28,
-	GAMEINFOFLAG_ENTITIES_VANILLA = 1<<29,
-	GAMEINFOFLAG_DONT_MASK_ENTITIES = 1<<30,
-	GAMEINFOFLAG_ENTITIES_BW = 1<<31,
+	GAMEINFOFLAG_TIMESCORE = 1 << 0,
+	GAMEINFOFLAG_GAMETYPE_RACE = 1 << 1,
+	GAMEINFOFLAG_GAMETYPE_FASTCAP = 1 << 2,
+	GAMEINFOFLAG_GAMETYPE_FNG = 1 << 3,
+	GAMEINFOFLAG_GAMETYPE_DDRACE = 1 << 4,
+	GAMEINFOFLAG_GAMETYPE_DDNET = 1 << 5,
+	GAMEINFOFLAG_GAMETYPE_BLOCK_WORLDS = 1 << 6,
+	GAMEINFOFLAG_GAMETYPE_VANILLA = 1 << 7,
+	GAMEINFOFLAG_GAMETYPE_PLUS = 1 << 8,
+	GAMEINFOFLAG_FLAG_STARTS_RACE = 1 << 9,
+	GAMEINFOFLAG_RACE = 1 << 10,
+	GAMEINFOFLAG_UNLIMITED_AMMO = 1 << 11,
+	GAMEINFOFLAG_DDRACE_RECORD_MESSAGE = 1 << 12,
+	GAMEINFOFLAG_RACE_RECORD_MESSAGE = 1 << 13,
+	GAMEINFOFLAG_ALLOW_EYE_WHEEL = 1 << 14,
+	GAMEINFOFLAG_ALLOW_HOOK_COLL = 1 << 15,
+	GAMEINFOFLAG_ALLOW_ZOOM = 1 << 16,
+	GAMEINFOFLAG_BUG_DDRACE_GHOST = 1 << 17,
+	GAMEINFOFLAG_BUG_DDRACE_INPUT = 1 << 18,
+	GAMEINFOFLAG_BUG_FNG_LASER_RANGE = 1 << 19,
+	GAMEINFOFLAG_BUG_VANILLA_BOUNCE = 1 << 20,
+	GAMEINFOFLAG_PREDICT_FNG = 1 << 21,
+	GAMEINFOFLAG_PREDICT_DDRACE = 1 << 22,
+	GAMEINFOFLAG_PREDICT_DDRACE_TILES = 1 << 23,
+	GAMEINFOFLAG_PREDICT_VANILLA = 1 << 24,
+	GAMEINFOFLAG_ENTITIES_DDNET = 1 << 25,
+	GAMEINFOFLAG_ENTITIES_DDRACE = 1 << 26,
+	GAMEINFOFLAG_ENTITIES_RACE = 1 << 27,
+	GAMEINFOFLAG_ENTITIES_FNG = 1 << 28,
+	GAMEINFOFLAG_ENTITIES_VANILLA = 1 << 29,
+	GAMEINFOFLAG_DONT_MASK_ENTITIES = 1 << 30,
+	GAMEINFOFLAG_ENTITIES_BW = 1 << 31,
 };
 
 enum
 {
-	GAMEINFOFLAG2_ALLOW_X_SKINS = 1<<0,
-	GAMEINFOFLAG2_GAMETYPE_CITY = 1<<1,
-	GAMEINFOFLAG2_GAMETYPE_FDDRACE = 1<<2,
-	GAMEINFOFLAG2_ENTITIES_FDDRACE = 1<<3,
-	GAMEINFOFLAG2_HUD_HEALTH_ARMOR = 1<<4,
-	GAMEINFOFLAG2_HUD_AMMO = 1<<5,
-	GAMEINFOFLAG2_HUD_DDRACE = 1<<6,
-	GAMEINFOFLAG2_NO_WEAK_HOOK = 1<<7,
-	GAMEINFOFLAG2_NO_SKIN_CHANGE_FOR_FROZEN = 1<<8,
-	GAMEINFOFLAG2_DDRACE_TEAM = 1<<9,
+	GAMEINFOFLAG2_ALLOW_X_SKINS = 1 << 0,
+	GAMEINFOFLAG2_GAMETYPE_CITY = 1 << 1,
+	GAMEINFOFLAG2_GAMETYPE_FDDRACE = 1 << 2,
+	GAMEINFOFLAG2_ENTITIES_FDDRACE = 1 << 3,
+	GAMEINFOFLAG2_HUD_HEALTH_ARMOR = 1 << 4,
+	GAMEINFOFLAG2_HUD_AMMO = 1 << 5,
+	GAMEINFOFLAG2_HUD_DDRACE = 1 << 6,
+	GAMEINFOFLAG2_NO_WEAK_HOOK = 1 << 7,
+	GAMEINFOFLAG2_NO_SKIN_CHANGE_FOR_FROZEN = 1 << 8,
+	GAMEINFOFLAG2_DDRACE_TEAM = 1 << 9,
 };
 
 enum
 {
-	EXPLAYERFLAG_AFK = 1<<0,
-	EXPLAYERFLAG_PAUSED = 1<<1,
-	EXPLAYERFLAG_SPEC = 1<<2,
+	EXPLAYERFLAG_AFK = 1 << 0,
+	EXPLAYERFLAG_PAUSED = 1 << 1,
+	EXPLAYERFLAG_SPEC = 1 << 2,
 };
 
 enum
 {
-	LEGACYPROJECTILEFLAG_CLIENTID_BIT0 = 1<<0,
-	LEGACYPROJECTILEFLAG_CLIENTID_BIT1 = 1<<1,
-	LEGACYPROJECTILEFLAG_CLIENTID_BIT2 = 1<<2,
-	LEGACYPROJECTILEFLAG_CLIENTID_BIT3 = 1<<3,
-	LEGACYPROJECTILEFLAG_CLIENTID_BIT4 = 1<<4,
-	LEGACYPROJECTILEFLAG_CLIENTID_BIT5 = 1<<5,
-	LEGACYPROJECTILEFLAG_CLIENTID_BIT6 = 1<<6,
-	LEGACYPROJECTILEFLAG_CLIENTID_BIT7 = 1<<7,
-	LEGACYPROJECTILEFLAG_NO_OWNER = 1<<8,
-	LEGACYPROJECTILEFLAG_IS_DDNET = 1<<9,
-	LEGACYPROJECTILEFLAG_BOUNCE_HORIZONTAL = 1<<10,
-	LEGACYPROJECTILEFLAG_BOUNCE_VERTICAL = 1<<11,
-	LEGACYPROJECTILEFLAG_EXPLOSIVE = 1<<12,
-	LEGACYPROJECTILEFLAG_FREEZE = 1<<13,
+	LEGACYPROJECTILEFLAG_CLIENTID_BIT0 = 1 << 0,
+	LEGACYPROJECTILEFLAG_CLIENTID_BIT1 = 1 << 1,
+	LEGACYPROJECTILEFLAG_CLIENTID_BIT2 = 1 << 2,
+	LEGACYPROJECTILEFLAG_CLIENTID_BIT3 = 1 << 3,
+	LEGACYPROJECTILEFLAG_CLIENTID_BIT4 = 1 << 4,
+	LEGACYPROJECTILEFLAG_CLIENTID_BIT5 = 1 << 5,
+	LEGACYPROJECTILEFLAG_CLIENTID_BIT6 = 1 << 6,
+	LEGACYPROJECTILEFLAG_CLIENTID_BIT7 = 1 << 7,
+	LEGACYPROJECTILEFLAG_NO_OWNER = 1 << 8,
+	LEGACYPROJECTILEFLAG_IS_DDNET = 1 << 9,
+	LEGACYPROJECTILEFLAG_BOUNCE_HORIZONTAL = 1 << 10,
+	LEGACYPROJECTILEFLAG_BOUNCE_VERTICAL = 1 << 11,
+	LEGACYPROJECTILEFLAG_EXPLOSIVE = 1 << 12,
+	LEGACYPROJECTILEFLAG_FREEZE = 1 << 13,
 };
 
 enum
 {
-	PROJECTILEFLAG_BOUNCE_HORIZONTAL = 1<<0,
-	PROJECTILEFLAG_BOUNCE_VERTICAL = 1<<1,
-	PROJECTILEFLAG_EXPLOSIVE = 1<<2,
-	PROJECTILEFLAG_FREEZE = 1<<3,
-	PROJECTILEFLAG_NORMALIZE_VEL = 1<<4,
+	PROJECTILEFLAG_BOUNCE_HORIZONTAL = 1 << 0,
+	PROJECTILEFLAG_BOUNCE_VERTICAL = 1 << 1,
+	PROJECTILEFLAG_EXPLOSIVE = 1 << 2,
+	PROJECTILEFLAG_FREEZE = 1 << 3,
+	PROJECTILEFLAG_NORMALIZE_VEL = 1 << 4,
 };
 
 enum
 {
-	LASERFLAG_NO_PREDICT = 1<<0,
+	LASERFLAG_NO_PREDICT = 1 << 0,
 };
 
 enum
@@ -308,7 +308,7 @@ enum
 };
 enum
 {
-	__NETOBJTYPE_UUID_HELPER=OFFSET_GAME_UUID-1,
+	__NETOBJTYPE_UUID_HELPER = OFFSET_GAME_UUID - 1,
 	NETOBJTYPE_MYOWNOBJECT,
 	NETOBJTYPE_DDNETCHARACTER,
 	NETOBJTYPE_DDNETPLAYER,
@@ -367,7 +367,7 @@ enum
 
 enum
 {
-	__NETMSGTYPE_UUID_HELPER=OFFSET_NETMSGTYPE_UUID-1,
+	__NETMSGTYPE_UUID_HELPER = OFFSET_NETMSGTYPE_UUID - 1,
 	NETMSGTYPE_SV_MYOWNMESSAGE,
 	NETMSGTYPE_CL_SHOWDISTANCE,
 	NETMSGTYPE_CL_SHOWOTHERS,
@@ -730,7 +730,7 @@ struct CNetMsg_Sv_Motd
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_MOTD;
 	const char *m_pMessage;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pMessage, -1);
@@ -742,7 +742,7 @@ struct CNetMsg_Sv_Broadcast
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_BROADCAST;
 	const char *m_pMessage;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pMessage, -1);
@@ -756,7 +756,7 @@ struct CNetMsg_Sv_Chat
 	int m_Team;
 	int m_ClientId;
 	const char *m_pMessage;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Team);
@@ -773,7 +773,7 @@ struct CNetMsg_Sv_KillMsg
 	int m_Victim;
 	int m_Weapon;
 	int m_ModeSpecial;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Killer);
@@ -788,7 +788,7 @@ struct CNetMsg_Sv_SoundGlobal
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_SOUNDGLOBAL;
 	int m_SoundId;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_SoundId);
@@ -799,7 +799,7 @@ struct CNetMsg_Sv_SoundGlobal
 struct CNetMsg_Sv_TuneParams
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_TUNEPARAMS;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -809,7 +809,7 @@ struct CNetMsg_Sv_TuneParams
 struct CNetMsg_Unused
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_UNUSED;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -819,7 +819,7 @@ struct CNetMsg_Unused
 struct CNetMsg_Sv_ReadyToEnter
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_READYTOENTER;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -830,7 +830,7 @@ struct CNetMsg_Sv_WeaponPickup
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_WEAPONPICKUP;
 	int m_Weapon;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Weapon);
@@ -843,7 +843,7 @@ struct CNetMsg_Sv_Emoticon
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_EMOTICON;
 	int m_ClientId;
 	int m_Emoticon;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ClientId);
@@ -855,7 +855,7 @@ struct CNetMsg_Sv_Emoticon
 struct CNetMsg_Sv_VoteClearOptions
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_VOTECLEAROPTIONS;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -881,7 +881,7 @@ struct CNetMsg_Sv_VoteOptionListAdd
 	const char *m_pDescription12;
 	const char *m_pDescription13;
 	const char *m_pDescription14;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_NumOptions);
@@ -908,7 +908,7 @@ struct CNetMsg_Sv_VoteOptionAdd
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_VOTEOPTIONADD;
 	const char *m_pDescription;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pDescription, -1);
@@ -920,7 +920,7 @@ struct CNetMsg_Sv_VoteOptionRemove
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_VOTEOPTIONREMOVE;
 	const char *m_pDescription;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pDescription, -1);
@@ -934,7 +934,7 @@ struct CNetMsg_Sv_VoteSet
 	int m_Timeout;
 	const char *m_pDescription;
 	const char *m_pReason;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Timeout);
@@ -951,7 +951,7 @@ struct CNetMsg_Sv_VoteStatus
 	int m_No;
 	int m_Pass;
 	int m_Total;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Yes);
@@ -967,7 +967,7 @@ struct CNetMsg_Cl_Say
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_SAY;
 	int m_Team;
 	const char *m_pMessage;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Team);
@@ -980,7 +980,7 @@ struct CNetMsg_Cl_SetTeam
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_SETTEAM;
 	int m_Team;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Team);
@@ -992,7 +992,7 @@ struct CNetMsg_Cl_SetSpectatorMode
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_SETSPECTATORMODE;
 	int m_SpectatorId;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_SpectatorId);
@@ -1010,7 +1010,7 @@ struct CNetMsg_Cl_StartInfo
 	int m_UseCustomColor;
 	int m_ColorBody;
 	int m_ColorFeet;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -1034,7 +1034,7 @@ struct CNetMsg_Cl_ChangeInfo
 	int m_UseCustomColor;
 	int m_ColorBody;
 	int m_ColorFeet;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -1051,7 +1051,7 @@ struct CNetMsg_Cl_ChangeInfo
 struct CNetMsg_Cl_Kill
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_KILL;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -1062,7 +1062,7 @@ struct CNetMsg_Cl_Emoticon
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_EMOTICON;
 	int m_Emoticon;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Emoticon);
@@ -1074,7 +1074,7 @@ struct CNetMsg_Cl_Vote
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_VOTE;
 	int m_Vote;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Vote);
@@ -1088,7 +1088,7 @@ struct CNetMsg_Cl_CallVote
 	const char *m_pType;
 	const char *m_pValue;
 	const char *m_pReason;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pType, -1);
@@ -1101,7 +1101,7 @@ struct CNetMsg_Cl_CallVote
 struct CNetMsg_Cl_IsDDNetLegacy
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_ISDDNETLEGACY;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -1114,7 +1114,7 @@ struct CNetMsg_Sv_DDRaceTimeLegacy
 	int m_Time;
 	int m_Check;
 	int m_Finish;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Time);
@@ -1129,7 +1129,7 @@ struct CNetMsg_Sv_RecordLegacy
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_RECORDLEGACY;
 	int m_ServerTimeBest;
 	int m_PlayerTimeBest;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ServerTimeBest);
@@ -1141,7 +1141,7 @@ struct CNetMsg_Sv_RecordLegacy
 struct CNetMsg_Unused2
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_UNUSED2;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -1151,7 +1151,7 @@ struct CNetMsg_Unused2
 struct CNetMsg_Sv_TeamsStateLegacy
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_TEAMSSTATELEGACY;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -1162,7 +1162,7 @@ struct CNetMsg_Cl_ShowOthersLegacy
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_SHOWOTHERSLEGACY;
 	int m_Show;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Show);
@@ -1174,7 +1174,7 @@ struct CNetMsg_Sv_MyOwnMessage
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_MYOWNMESSAGE;
 	int m_Test;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Test);
@@ -1187,7 +1187,7 @@ struct CNetMsg_Cl_ShowDistance
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_SHOWDISTANCE;
 	int m_X;
 	int m_Y;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_X);
@@ -1200,7 +1200,7 @@ struct CNetMsg_Cl_ShowOthers
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_SHOWOTHERS;
 	int m_Show;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Show);
@@ -1214,7 +1214,7 @@ struct CNetMsg_Cl_CameraInfo
 	int m_Zoom;
 	int m_Deadzone;
 	int m_FollowFactor;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Zoom);
@@ -1227,7 +1227,7 @@ struct CNetMsg_Cl_CameraInfo
 struct CNetMsg_Sv_TeamsState
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_TEAMSSTATE;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -1240,7 +1240,7 @@ struct CNetMsg_Sv_DDRaceTime
 	int m_Time;
 	int m_Check;
 	int m_Finish;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Time);
@@ -1255,7 +1255,7 @@ struct CNetMsg_Sv_Record
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_RECORD;
 	int m_ServerTimeBest;
 	int m_PlayerTimeBest;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ServerTimeBest);
@@ -1269,7 +1269,7 @@ struct CNetMsg_Sv_KillMsgTeam
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_KILLMSGTEAM;
 	int m_Team;
 	int m_First;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Team);
@@ -1282,7 +1282,7 @@ struct CNetMsg_Sv_YourVote
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_YOURVOTE;
 	int m_Voted;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Voted);
@@ -1298,7 +1298,7 @@ struct CNetMsg_Sv_RaceFinish
 	int m_Diff;
 	int m_RecordPersonal;
 	int m_RecordServer;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ClientId);
@@ -1316,7 +1316,7 @@ struct CNetMsg_Sv_CommandInfo
 	const char *m_pName;
 	const char *m_pArgsFormat;
 	const char *m_pHelpText;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -1330,7 +1330,7 @@ struct CNetMsg_Sv_CommandInfoRemove
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_COMMANDINFOREMOVE;
 	const char *m_pName;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -1341,7 +1341,7 @@ struct CNetMsg_Sv_CommandInfoRemove
 struct CNetMsg_Sv_VoteOptionGroupStart
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_VOTEOPTIONGROUPSTART;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -1351,7 +1351,7 @@ struct CNetMsg_Sv_VoteOptionGroupStart
 struct CNetMsg_Sv_VoteOptionGroupEnd
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_VOTEOPTIONGROUPEND;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -1361,7 +1361,7 @@ struct CNetMsg_Sv_VoteOptionGroupEnd
 struct CNetMsg_Sv_CommandInfoGroupStart
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_COMMANDINFOGROUPSTART;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -1371,7 +1371,7 @@ struct CNetMsg_Sv_CommandInfoGroupStart
 struct CNetMsg_Sv_CommandInfoGroupEnd
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_COMMANDINFOGROUPEND;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -1382,7 +1382,7 @@ struct CNetMsg_Sv_ChangeInfoCooldown
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_CHANGEINFOCOOLDOWN;
 	int m_WaitUntil;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_WaitUntil);
@@ -1394,7 +1394,7 @@ struct CNetMsg_Sv_MapSoundGlobal
 {
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_MAPSOUNDGLOBAL;
 	int m_SoundId;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_SoundId);
@@ -1404,7 +1404,7 @@ struct CNetMsg_Sv_MapSoundGlobal
 
 enum
 {
-	SOUND_GUN_FIRE=0,
+	SOUND_GUN_FIRE = 0,
 	SOUND_SHOTGUN_FIRE,
 	SOUND_GRENADE_FIRE,
 	SOUND_HAMMER_FIRE,
@@ -1449,7 +1449,7 @@ enum
 };
 enum
 {
-	WEAPON_HAMMER=0,
+	WEAPON_HAMMER = 0,
 	WEAPON_GUN,
 	WEAPON_SHOTGUN,
 	WEAPON_GRENADE,
@@ -1498,4 +1498,3 @@ public:
 	bool TeeHistorianRecordMsg(int Type);
 	const char *FailedMsgOn() const;
 };
-	

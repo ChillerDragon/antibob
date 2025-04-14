@@ -1,5 +1,5 @@
-#include <polybob/base/log.h>
 #include <bob/antibob.h>
+#include <polybob/base/log.h>
 
 void CAntibob::ComTest(CBobResult *pResult, void *pUserData)
 {

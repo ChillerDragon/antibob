@@ -4,24 +4,23 @@ class CUnpacker;
 #include <polybob/engine/message.h>
 namespace protocol7 {
 
-
 enum
 {
-	INPUT_STATE_MASK=0x3f
+	INPUT_STATE_MASK = 0x3f
 };
 
 enum
 {
-	TEAM_SPECTATORS=-1,
+	TEAM_SPECTATORS = -1,
 	TEAM_RED,
 	TEAM_BLUE,
 	NUM_TEAMS,
 
-	FLAG_MISSING=-3,
+	FLAG_MISSING = -3,
 	FLAG_ATSTAND,
 	FLAG_TAKEN,
 
-	SPEC_FREEVIEW=0,
+	SPEC_FREEVIEW = 0,
 	SPEC_PLAYER,
 	SPEC_FLAGRED,
 	SPEC_FLAGBLUE,
@@ -38,7 +37,7 @@ enum
 
 enum
 {
-	PICKUP_HEALTH=0,
+	PICKUP_HEALTH = 0,
 	PICKUP_ARMOR,
 	PICKUP_GRENADE,
 	PICKUP_SHOTGUN,
@@ -51,7 +50,7 @@ enum
 
 enum
 {
-	EMOTE_NORMAL=0,
+	EMOTE_NORMAL = 0,
 	EMOTE_PAIN,
 	EMOTE_HAPPY,
 	EMOTE_SURPRISE,
@@ -62,7 +61,7 @@ enum
 
 enum
 {
-	EMOTICON_OOP=0,
+	EMOTICON_OOP = 0,
 	EMOTICON_EXCLAMATION,
 	EMOTICON_HEARTS,
 	EMOTICON_DROP,
@@ -83,7 +82,7 @@ enum
 
 enum
 {
-	VOTE_UNKNOWN=0,
+	VOTE_UNKNOWN = 0,
 	VOTE_START_OP,
 	VOTE_START_KICK,
 	VOTE_START_SPEC,
@@ -95,7 +94,7 @@ enum
 
 enum
 {
-	CHAT_NONE=0,
+	CHAT_NONE = 0,
 	CHAT_ALL,
 	CHAT_TEAM,
 	CHAT_WHISPER,
@@ -104,7 +103,7 @@ enum
 
 enum
 {
-	GAMEMSG_TEAM_SWAP=0,
+	GAMEMSG_TEAM_SWAP = 0,
 	GAMEMSG_SPEC_INVALIDID,
 	GAMEMSG_TEAM_SHUFFLE,
 	GAMEMSG_TEAM_BALANCE,
@@ -120,53 +119,53 @@ enum
 
 enum
 {
-	PLAYERFLAG_ADMIN = 1<<0,
-	PLAYERFLAG_CHATTING = 1<<1,
-	PLAYERFLAG_SCOREBOARD = 1<<2,
-	PLAYERFLAG_READY = 1<<3,
-	PLAYERFLAG_DEAD = 1<<4,
-	PLAYERFLAG_WATCHING = 1<<5,
-	PLAYERFLAG_BOT = 1<<6,
-	PLAYERFLAG_AIM = 1<<7,
+	PLAYERFLAG_ADMIN = 1 << 0,
+	PLAYERFLAG_CHATTING = 1 << 1,
+	PLAYERFLAG_SCOREBOARD = 1 << 2,
+	PLAYERFLAG_READY = 1 << 3,
+	PLAYERFLAG_DEAD = 1 << 4,
+	PLAYERFLAG_WATCHING = 1 << 5,
+	PLAYERFLAG_BOT = 1 << 6,
+	PLAYERFLAG_AIM = 1 << 7,
 };
 
 enum
 {
-	GAMEFLAG_TEAMS = 1<<0,
-	GAMEFLAG_FLAGS = 1<<1,
-	GAMEFLAG_SURVIVAL = 1<<2,
-	GAMEFLAG_RACE = 1<<3,
+	GAMEFLAG_TEAMS = 1 << 0,
+	GAMEFLAG_FLAGS = 1 << 1,
+	GAMEFLAG_SURVIVAL = 1 << 2,
+	GAMEFLAG_RACE = 1 << 3,
 };
 
 enum
 {
-	GAMESTATEFLAG_WARMUP = 1<<0,
-	GAMESTATEFLAG_SUDDENDEATH = 1<<1,
-	GAMESTATEFLAG_ROUNDOVER = 1<<2,
-	GAMESTATEFLAG_GAMEOVER = 1<<3,
-	GAMESTATEFLAG_PAUSED = 1<<4,
-	GAMESTATEFLAG_STARTCOUNTDOWN = 1<<5,
+	GAMESTATEFLAG_WARMUP = 1 << 0,
+	GAMESTATEFLAG_SUDDENDEATH = 1 << 1,
+	GAMESTATEFLAG_ROUNDOVER = 1 << 2,
+	GAMESTATEFLAG_GAMEOVER = 1 << 3,
+	GAMESTATEFLAG_PAUSED = 1 << 4,
+	GAMESTATEFLAG_STARTCOUNTDOWN = 1 << 5,
 };
 
 enum
 {
-	COREEVENTFLAG_GROUND_JUMP = 1<<0,
-	COREEVENTFLAG_AIR_JUMP = 1<<1,
-	COREEVENTFLAG_HOOK_ATTACH_PLAYER = 1<<2,
-	COREEVENTFLAG_HOOK_ATTACH_GROUND = 1<<3,
-	COREEVENTFLAG_HOOK_HIT_NOHOOK = 1<<4,
+	COREEVENTFLAG_GROUND_JUMP = 1 << 0,
+	COREEVENTFLAG_AIR_JUMP = 1 << 1,
+	COREEVENTFLAG_HOOK_ATTACH_PLAYER = 1 << 2,
+	COREEVENTFLAG_HOOK_ATTACH_GROUND = 1 << 3,
+	COREEVENTFLAG_HOOK_HIT_NOHOOK = 1 << 4,
 };
 
 enum
 {
-	RACEFLAG_HIDE_KILLMSG = 1<<0,
-	RACEFLAG_FINISHMSG_AS_CHAT = 1<<1,
-	RACEFLAG_KEEP_WANTED_WEAPON = 1<<2,
+	RACEFLAG_HIDE_KILLMSG = 1 << 0,
+	RACEFLAG_FINISHMSG_AS_CHAT = 1 << 1,
+	RACEFLAG_KEEP_WANTED_WEAPON = 1 << 2,
 };
 
 enum
 {
-	NETOBJ_INVALID=0,
+	NETOBJ_INVALID = 0,
 	NETOBJTYPE_PLAYERINPUT,
 	NETOBJTYPE_PROJECTILE,
 	NETOBJTYPE_LASER,
@@ -196,7 +195,7 @@ enum
 
 enum
 {
-	NETMSG_INVALID=0,
+	NETMSG_INVALID = 0,
 	NETMSGTYPE_SV_MOTD,
 	NETMSGTYPE_SV_BROADCAST,
 	NETMSGTYPE_SV_CHAT,
@@ -239,20 +238,26 @@ enum
 	NUM_NETMSGTYPES
 };
 
+template<typename... Ts>
+struct make_void
+{
+	typedef void type;
+};
+template<typename... Ts>
+using void_t = typename make_void<Ts...>::type;
 
-	template<typename... Ts> struct make_void { typedef void type;};
-	template<typename... Ts> using void_t = typename make_void<Ts...>::type;
+template<typename T, typename = void>
+struct is_sixup
+{
+	constexpr static bool value = false;
+};
 
-	template<typename T, typename = void>
-	struct is_sixup {
-		constexpr static bool value = false;
-	};
+template<typename T>
+struct is_sixup<T, void_t<typename T::is_sixup>>
+{
+	constexpr static bool value = true;
+};
 
-	template<typename T>
-	struct is_sixup<T, void_t<typename T::is_sixup>> {
-		constexpr static bool value = true;
-	};
-	
 struct CNetObj_PlayerInput
 {
 	using is_sixup = char;
@@ -494,7 +499,7 @@ struct CNetMsg_Sv_Motd
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_MOTD;
 	const char *m_pMessage;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pMessage, -1);
@@ -507,7 +512,7 @@ struct CNetMsg_Sv_Broadcast
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_BROADCAST;
 	const char *m_pMessage;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pMessage, -1);
@@ -523,7 +528,7 @@ struct CNetMsg_Sv_Chat
 	int m_ClientId;
 	int m_TargetId;
 	const char *m_pMessage;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Mode);
@@ -542,7 +547,7 @@ struct CNetMsg_Sv_Team
 	int m_Team;
 	int m_Silent;
 	int m_CooldownTick;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ClientId);
@@ -561,7 +566,7 @@ struct CNetMsg_Sv_KillMsg
 	int m_Victim;
 	int m_Weapon;
 	int m_ModeSpecial;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Killer);
@@ -576,7 +581,7 @@ struct CNetMsg_Sv_TuneParams
 {
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_TUNEPARAMS;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -587,7 +592,7 @@ struct CNetMsg_Unused
 {
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_UNUSED;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -598,7 +603,7 @@ struct CNetMsg_Sv_ReadyToEnter
 {
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_READYTOENTER;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -610,7 +615,7 @@ struct CNetMsg_Sv_WeaponPickup
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_WEAPONPICKUP;
 	int m_Weapon;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Weapon);
@@ -624,7 +629,7 @@ struct CNetMsg_Sv_Emoticon
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_EMOTICON;
 	int m_ClientId;
 	int m_Emoticon;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ClientId);
@@ -637,7 +642,7 @@ struct CNetMsg_Sv_VoteClearOptions
 {
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_VOTECLEAROPTIONS;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -648,7 +653,7 @@ struct CNetMsg_Sv_VoteOptionListAdd
 {
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_VOTEOPTIONLISTADD;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -660,7 +665,7 @@ struct CNetMsg_Sv_VoteOptionAdd
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_VOTEOPTIONADD;
 	const char *m_pDescription;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pDescription, -1);
@@ -673,7 +678,7 @@ struct CNetMsg_Sv_VoteOptionRemove
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_VOTEOPTIONREMOVE;
 	const char *m_pDescription;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pDescription, -1);
@@ -690,7 +695,7 @@ struct CNetMsg_Sv_VoteSet
 	int m_Timeout;
 	const char *m_pDescription;
 	const char *m_pReason;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ClientId);
@@ -710,7 +715,7 @@ struct CNetMsg_Sv_VoteStatus
 	int m_No;
 	int m_Pass;
 	int m_Total;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Yes);
@@ -731,7 +736,7 @@ struct CNetMsg_Sv_ServerSettings
 	int m_TeamLock;
 	int m_TeamBalance;
 	int m_PlayerSlots;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_KickVote);
@@ -758,7 +763,7 @@ struct CNetMsg_Sv_ClientInfo
 	int m_aUseCustomColors[6];
 	int m_aSkinPartColors[6];
 	int m_Silent;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ClientId);
@@ -799,7 +804,7 @@ struct CNetMsg_Sv_GameInfo
 	int m_TimeLimit;
 	int m_MatchNum;
 	int m_MatchCurrent;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_GameFlags);
@@ -818,7 +823,7 @@ struct CNetMsg_Sv_ClientDrop
 	int m_ClientId;
 	const char *m_pReason;
 	int m_Silent;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ClientId);
@@ -832,7 +837,7 @@ struct CNetMsg_Sv_GameMsg
 {
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_GAMEMSG;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -846,7 +851,7 @@ struct CNetMsg_De_ClientEnter
 	const char *m_pName;
 	int m_ClientId;
 	int m_Team;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -863,7 +868,7 @@ struct CNetMsg_De_ClientLeave
 	const char *m_pName;
 	int m_ClientId;
 	const char *m_pReason;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -880,7 +885,7 @@ struct CNetMsg_Cl_Say
 	int m_Mode;
 	int m_Target;
 	const char *m_pMessage;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Mode);
@@ -895,7 +900,7 @@ struct CNetMsg_Cl_SetTeam
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_SETTEAM;
 	int m_Team;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Team);
@@ -909,7 +914,7 @@ struct CNetMsg_Cl_SetSpectatorMode
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_SETSPECTATORMODE;
 	int m_SpecMode;
 	int m_SpectatorId;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_SpecMode);
@@ -928,7 +933,7 @@ struct CNetMsg_Cl_StartInfo
 	const char *m_apSkinPartNames[6];
 	int m_aUseCustomColors[6];
 	int m_aSkinPartColors[6];
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -960,7 +965,7 @@ struct CNetMsg_Cl_Kill
 {
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_KILL;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -971,7 +976,7 @@ struct CNetMsg_Cl_ReadyChange
 {
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_READYCHANGE;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		return pPacker->Error() != 0;
@@ -983,7 +988,7 @@ struct CNetMsg_Cl_Emoticon
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_EMOTICON;
 	int m_Emoticon;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Emoticon);
@@ -996,7 +1001,7 @@ struct CNetMsg_Cl_Vote
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_VOTE;
 	int m_Vote;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Vote);
@@ -1012,7 +1017,7 @@ struct CNetMsg_Cl_CallVote
 	const char *m_pValue;
 	const char *m_pReason;
 	int m_Force;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pType, -1);
@@ -1031,7 +1036,7 @@ struct CNetMsg_Sv_SkinChange
 	const char *m_apSkinPartNames[6];
 	int m_aUseCustomColors[6];
 	int m_aSkinPartColors[6];
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ClientId);
@@ -1064,7 +1069,7 @@ struct CNetMsg_Cl_SkinChange
 	const char *m_apSkinPartNames[6];
 	int m_aUseCustomColors[6];
 	int m_aSkinPartColors[6];
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_apSkinPartNames[0], -1);
@@ -1098,7 +1103,7 @@ struct CNetMsg_Sv_RaceFinish
 	int m_Diff;
 	int m_RecordPersonal;
 	int m_RecordServer;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_ClientId);
@@ -1115,7 +1120,7 @@ struct CNetMsg_Sv_Checkpoint
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_CHECKPOINT;
 	int m_Diff;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddInt(m_Diff);
@@ -1130,7 +1135,7 @@ struct CNetMsg_Sv_CommandInfo
 	const char *m_pName;
 	const char *m_pArgsFormat;
 	const char *m_pHelpText;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -1145,7 +1150,7 @@ struct CNetMsg_Sv_CommandInfoRemove
 	using is_sixup = char;
 	static constexpr int ms_MsgId = NETMSGTYPE_SV_COMMANDINFOREMOVE;
 	const char *m_pName;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -1159,7 +1164,7 @@ struct CNetMsg_Cl_Command
 	static constexpr int ms_MsgId = NETMSGTYPE_CL_COMMAND;
 	const char *m_pName;
 	const char *m_pArguments;
-	
+
 	bool Pack(CMsgPacker *pPacker) const
 	{
 		pPacker->AddString(m_pName, -1);
@@ -1170,7 +1175,7 @@ struct CNetMsg_Cl_Command
 
 enum
 {
-	SOUND_GUN_FIRE=0,
+	SOUND_GUN_FIRE = 0,
 	SOUND_SHOTGUN_FIRE,
 	SOUND_GRENADE_FIRE,
 	SOUND_HAMMER_FIRE,
@@ -1215,7 +1220,7 @@ enum
 };
 enum
 {
-	WEAPON_HAMMER=0,
+	WEAPON_HAMMER = 0,
 	WEAPON_GUN,
 	WEAPON_SHOTGUN,
 	WEAPON_GRENADE,
@@ -1224,33 +1229,31 @@ enum
 	NUM_WEAPONS
 };
 
+class CNetObjHandler
+{
+	const char *m_pMsgFailedOn;
+	char m_aMsgData[1024];
+	const char *m_pObjFailedOn;
+	int m_NumObjFailures;
+	bool CheckInt(const char *pErrorMsg, int Value, int Min, int Max);
+	bool CheckFlag(const char *pErrorMsg, int Value, int Mask);
 
-	class CNetObjHandler
-	{
-		const char *m_pMsgFailedOn;
-		char m_aMsgData[1024];
-		const char *m_pObjFailedOn;
-		int m_NumObjFailures;
-		bool CheckInt(const char *pErrorMsg, int Value, int Min, int Max);
-		bool CheckFlag(const char *pErrorMsg, int Value, int Mask);
+	static const char *ms_apObjNames[];
+	static int ms_aObjSizes[];
+	static const char *ms_apMsgNames[];
 
-		static const char *ms_apObjNames[];
-		static int ms_aObjSizes[];
-		static const char *ms_apMsgNames[];
+public:
+	CNetObjHandler();
 
-	public:
-		CNetObjHandler();
+	int ValidateObj(int Type, const void *pData, int Size);
+	const char *GetObjName(int Type) const;
+	int GetObjSize(int Type) const;
+	const char *FailedObjOn() const;
+	int NumObjFailures() const;
 
-		int ValidateObj(int Type, const void *pData, int Size);
-		const char *GetObjName(int Type) const;
-		int GetObjSize(int Type) const;
-		const char *FailedObjOn() const;
-		int NumObjFailures() const;
+	const char *GetMsgName(int Type) const;
+	void *SecureUnpackMsg(int Type, CUnpacker *pUnpacker);
+	const char *FailedMsgOn() const;
+};
 
-		const char *GetMsgName(int Type) const;
-		void *SecureUnpackMsg(int Type, CUnpacker *pUnpacker);
-		const char *FailedMsgOn() const;
-	};
-
-	
-}
+} // namespace protocol7

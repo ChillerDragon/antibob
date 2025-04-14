@@ -274,7 +274,6 @@ IOHANDLE io_stdout();
 IOHANDLE io_stderr();
 IOHANDLE io_current_exe();
 
-
 typedef struct ASYNCIO ASYNCIO;
 ASYNCIO *aio_new(IOHANDLE io);
 void aio_lock(ASYNCIO *aio);
@@ -337,4 +336,3 @@ void secure_random_password(char *buffer, unsigned length, unsigned pw_length);
 void secure_random_fill(void *bytes, unsigned length);
 int secure_rand();
 int secure_rand_below(int below);
-

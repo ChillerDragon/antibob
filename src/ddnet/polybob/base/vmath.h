@@ -386,4 +386,3 @@ typedef vector4_base<float> vec4;
 typedef vector4_base<bool> bvec4;
 typedef vector4_base<int> ivec4;
 typedef vector4_base<uint8_t> ubvec4;
-

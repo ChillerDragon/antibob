@@ -78,7 +78,6 @@
 #error NOT IMPLEMENTED
 #endif
 
-
 std::atomic_bool dbg_assert_failing = false;
 DBG_ASSERT_HANDLER dbg_assert_handler;
 
@@ -445,7 +444,6 @@ IOHANDLE io_current_exe()
 	return 0;
 #endif
 }
-
 
 #define ASYNC_BUFSIZE (8 * 1024)
 #define ASYNC_LOCAL_BUFSIZE (64 * 1024)

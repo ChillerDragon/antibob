@@ -24,11 +24,21 @@ static const int min_int = 0x80000000;
 
 int CNetObjHandler::ClampInt(const char *pErrorMsg, int Value, int Min, int Max)
 {
-	if(Value < Min) { m_pObjCorrectedOn = pErrorMsg; m_NumObjCorrections++; return Min; }
-	if(Value > Max) { m_pObjCorrectedOn = pErrorMsg; m_NumObjCorrections++; return Max; }
+	if(Value < Min)
+	{
+		m_pObjCorrectedOn = pErrorMsg;
+		m_NumObjCorrections++;
+		return Min;
+	}
+	if(Value > Max)
+	{
+		m_pObjCorrectedOn = pErrorMsg;
+		m_NumObjCorrections++;
+		return Max;
+	}
 	return Value;
 }
-	
+
 const char *CNetObjHandler::ms_apObjNames[] = {
 	"EX/UUID",
 	"PlayerInput",
@@ -51,8 +61,7 @@ const char *CNetObjHandler::ms_apObjNames[] = {
 	"SoundGlobal",
 	"SoundWorld",
 	"DamageInd",
-	""
-};
+	""};
 
 const char *CNetObjHandler::ms_apExObjNames[] = {
 	"invalid",
@@ -72,8 +81,7 @@ const char *CNetObjHandler::ms_apExObjNames[] = {
 	"SwitchState",
 	"EntityEx",
 	"MapSoundWorld",
-	""
-};
+	""};
 
 int CNetObjHandler::ms_aObjSizes[] = {
 	0,
@@ -97,8 +105,7 @@ int CNetObjHandler::ms_aObjSizes[] = {
 	sizeof(CNetEvent_SoundGlobal),
 	sizeof(CNetEvent_SoundWorld),
 	sizeof(CNetEvent_DamageInd),
-	0
-};
+	0};
 
 int CNetObjHandler::ms_aUnpackedObjSizes[] = {
 	16,
@@ -177,8 +184,7 @@ const char *CNetObjHandler::ms_apMsgNames[] = {
 	"Unused2",
 	"Sv_TeamsStateLegacy",
 	"Cl_ShowOthersLegacy",
-	""
-};
+	""};
 
 const char *CNetObjHandler::ms_apExMsgNames[] = {
 	"invalid",
@@ -200,8 +206,7 @@ const char *CNetObjHandler::ms_apExMsgNames[] = {
 	"Sv_CommandInfoGroupEnd",
 	"Sv_ChangeInfoCooldown",
 	"Sv_MapSoundGlobal",
-	""
-};
+	""};
 
 const char *CNetObjHandler::GetObjName(int Type) const
 {
@@ -218,7 +223,8 @@ const char *CNetObjHandler::GetObjName(int Type) const
 
 int CNetObjHandler::GetObjSize(int Type) const
 {
-	if(Type < 0 || Type >= NUM_NETOBJTYPES) return 0;
+	if(Type < 0 || Type >= NUM_NETOBJTYPES)
+		return 0;
 	return ms_aObjSizes[Type];
 }
 
@@ -247,7 +253,7 @@ const char *CNetObjHandler::GetMsgName(int Type) const
 	}
 	return "(out of range)";
 }
-	
+
 void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 {
 	m_pObjFailedOn = 0;
@@ -262,7 +268,7 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		}
 		break;
 	}
-	
+
 	case NETOBJTYPE_PLAYERINPUT:
 	{
 		CNetObj_PlayerInput *pData = (CNetObj_PlayerInput *)m_aUnpackedData;
@@ -277,8 +283,9 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_NextWeapon = pUnpacker->GetUncompressedInt();
 		pData->m_PrevWeapon = pUnpacker->GetUncompressedInt();
 		pData->m_PlayerFlags = ClampInt("m_PlayerFlags", pData->m_PlayerFlags, 0, 256);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_PROJECTILE:
 	{
 		CNetObj_Projectile *pData = (CNetObj_Projectile *)m_aUnpackedData;
@@ -288,9 +295,10 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_VelY = pUnpacker->GetUncompressedInt();
 		pData->m_Type = pUnpacker->GetUncompressedInt();
 		pData->m_StartTick = pUnpacker->GetUncompressedInt();
-		pData->m_Type = ClampInt("m_Type", pData->m_Type, 0, NUM_WEAPONS-1);
-	} break;
-	
+		pData->m_Type = ClampInt("m_Type", pData->m_Type, 0, NUM_WEAPONS - 1);
+	}
+	break;
+
 	case NETOBJTYPE_LASER:
 	{
 		CNetObj_Laser *pData = (CNetObj_Laser *)m_aUnpackedData;
@@ -299,8 +307,9 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_FromX = pUnpacker->GetUncompressedInt();
 		pData->m_FromY = pUnpacker->GetUncompressedInt();
 		pData->m_StartTick = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_PICKUP:
 	{
 		CNetObj_Pickup *pData = (CNetObj_Pickup *)m_aUnpackedData;
@@ -310,8 +319,9 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_Subtype = pUnpacker->GetUncompressedInt();
 		pData->m_Type = ClampInt("m_Type", pData->m_Type, 0, max_int);
 		pData->m_Subtype = ClampInt("m_Subtype", pData->m_Subtype, 0, max_int);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_FLAG:
 	{
 		CNetObj_Flag *pData = (CNetObj_Flag *)m_aUnpackedData;
@@ -319,8 +329,9 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_Y = pUnpacker->GetUncompressedInt();
 		pData->m_Team = pUnpacker->GetUncompressedInt();
 		pData->m_Team = ClampInt("m_Team", pData->m_Team, TEAM_RED, TEAM_BLUE);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_GAMEINFO:
 	{
 		CNetObj_GameInfo *pData = (CNetObj_GameInfo *)m_aUnpackedData;
@@ -339,8 +350,9 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_TimeLimit = ClampInt("m_TimeLimit", pData->m_TimeLimit, 0, max_int);
 		pData->m_RoundNum = ClampInt("m_RoundNum", pData->m_RoundNum, 0, max_int);
 		pData->m_RoundCurrent = ClampInt("m_RoundCurrent", pData->m_RoundCurrent, 0, max_int);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_GAMEDATA:
 	{
 		CNetObj_GameData *pData = (CNetObj_GameData *)m_aUnpackedData;
@@ -348,10 +360,11 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_TeamscoreBlue = pUnpacker->GetUncompressedInt();
 		pData->m_FlagCarrierRed = pUnpacker->GetUncompressedInt();
 		pData->m_FlagCarrierBlue = pUnpacker->GetUncompressedInt();
-		pData->m_FlagCarrierRed = ClampInt("m_FlagCarrierRed", pData->m_FlagCarrierRed, FLAG_MISSING, MAX_CLIENTS-1);
-		pData->m_FlagCarrierBlue = ClampInt("m_FlagCarrierBlue", pData->m_FlagCarrierBlue, FLAG_MISSING, MAX_CLIENTS-1);
-	} break;
-	
+		pData->m_FlagCarrierRed = ClampInt("m_FlagCarrierRed", pData->m_FlagCarrierRed, FLAG_MISSING, MAX_CLIENTS - 1);
+		pData->m_FlagCarrierBlue = ClampInt("m_FlagCarrierBlue", pData->m_FlagCarrierBlue, FLAG_MISSING, MAX_CLIENTS - 1);
+	}
+	break;
+
 	case NETOBJTYPE_CHARACTERCORE:
 	{
 		CNetObj_CharacterCore *pData = (CNetObj_CharacterCore *)m_aUnpackedData;
@@ -372,10 +385,11 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_HookDy = pUnpacker->GetUncompressedInt();
 		pData->m_Direction = ClampInt("m_Direction", pData->m_Direction, -1, 1);
 		pData->m_Jumped = ClampInt("m_Jumped", pData->m_Jumped, 0, 3);
-		pData->m_HookedPlayer = ClampInt("m_HookedPlayer", pData->m_HookedPlayer, -1, MAX_CLIENTS-1);
+		pData->m_HookedPlayer = ClampInt("m_HookedPlayer", pData->m_HookedPlayer, -1, MAX_CLIENTS - 1);
 		pData->m_HookState = ClampInt("m_HookState", pData->m_HookState, -1, 5);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_CHARACTER:
 	{
 		CNetObj_Character *pData = (CNetObj_Character *)m_aUnpackedData;
@@ -403,17 +417,18 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_AttackTick = pUnpacker->GetUncompressedInt();
 		pData->m_Direction = ClampInt("m_Direction", pData->m_Direction, -1, 1);
 		pData->m_Jumped = ClampInt("m_Jumped", pData->m_Jumped, 0, 3);
-		pData->m_HookedPlayer = ClampInt("m_HookedPlayer", pData->m_HookedPlayer, -1, MAX_CLIENTS-1);
+		pData->m_HookedPlayer = ClampInt("m_HookedPlayer", pData->m_HookedPlayer, -1, MAX_CLIENTS - 1);
 		pData->m_HookState = ClampInt("m_HookState", pData->m_HookState, -1, 5);
 		pData->m_PlayerFlags = ClampInt("m_PlayerFlags", pData->m_PlayerFlags, 0, 256);
 		pData->m_Health = ClampInt("m_Health", pData->m_Health, 0, 10);
 		pData->m_Armor = ClampInt("m_Armor", pData->m_Armor, 0, 10);
 		pData->m_AmmoCount = ClampInt("m_AmmoCount", pData->m_AmmoCount, -1, 10);
-		pData->m_Weapon = ClampInt("m_Weapon", pData->m_Weapon, -1, NUM_WEAPONS-1);
+		pData->m_Weapon = ClampInt("m_Weapon", pData->m_Weapon, -1, NUM_WEAPONS - 1);
 		pData->m_Emote = ClampInt("m_Emote", pData->m_Emote, 0, 6);
 		pData->m_AttackTick = ClampInt("m_AttackTick", pData->m_AttackTick, 0, max_int);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_PLAYERINFO:
 	{
 		CNetObj_PlayerInfo *pData = (CNetObj_PlayerInfo *)m_aUnpackedData;
@@ -423,10 +438,11 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_Score = pUnpacker->GetUncompressedInt();
 		pData->m_Latency = pUnpacker->GetUncompressedInt();
 		pData->m_Local = ClampInt("m_Local", pData->m_Local, 0, 1);
-		pData->m_ClientId = ClampInt("m_ClientId", pData->m_ClientId, 0, MAX_CLIENTS-1);
+		pData->m_ClientId = ClampInt("m_ClientId", pData->m_ClientId, 0, MAX_CLIENTS - 1);
 		pData->m_Team = ClampInt("m_Team", pData->m_Team, TEAM_SPECTATORS, TEAM_BLUE);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_CLIENTINFO:
 	{
 		CNetObj_ClientInfo *pData = (CNetObj_ClientInfo *)m_aUnpackedData;
@@ -448,23 +464,26 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_ColorBody = pUnpacker->GetUncompressedInt();
 		pData->m_ColorFeet = pUnpacker->GetUncompressedInt();
 		pData->m_UseCustomColor = ClampInt("m_UseCustomColor", pData->m_UseCustomColor, 0, 1);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_SPECTATORINFO:
 	{
 		CNetObj_SpectatorInfo *pData = (CNetObj_SpectatorInfo *)m_aUnpackedData;
 		pData->m_SpectatorId = pUnpacker->GetUncompressedInt();
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
-		pData->m_SpectatorId = ClampInt("m_SpectatorId", pData->m_SpectatorId, SPEC_FREEVIEW, MAX_CLIENTS-1);
-	} break;
-	
+		pData->m_SpectatorId = ClampInt("m_SpectatorId", pData->m_SpectatorId, SPEC_FREEVIEW, MAX_CLIENTS - 1);
+	}
+	break;
+
 	case NETOBJTYPE_MYOWNOBJECT:
 	{
 		CNetObj_MyOwnObject *pData = (CNetObj_MyOwnObject *)m_aUnpackedData;
 		pData->m_Test = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_DDNETCHARACTER:
 	{
 		CNetObj_DDNetCharacter *pData = (CNetObj_DDNetCharacter *)m_aUnpackedData;
@@ -480,27 +499,30 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_TargetY = pUnpacker->GetUncompressedIntOrDefault(0);
 		pData->m_TuneZoneOverride = pUnpacker->GetUncompressedIntOrDefault(-1);
 		pData->m_Jumps = ClampInt("m_Jumps", pData->m_Jumps, -1, 255);
-		pData->m_StrongWeakId = ClampInt("m_StrongWeakId", pData->m_StrongWeakId, 0, MAX_CLIENTS-1);
+		pData->m_StrongWeakId = ClampInt("m_StrongWeakId", pData->m_StrongWeakId, 0, MAX_CLIENTS - 1);
 		pData->m_JumpedTotal = ClampInt("m_JumpedTotal", pData->m_JumpedTotal, -1, 255);
-		pData->m_TuneZoneOverride = ClampInt("m_TuneZoneOverride", pData->m_TuneZoneOverride, -1, NUM_TUNEZONES-1);
-	} break;
-	
+		pData->m_TuneZoneOverride = ClampInt("m_TuneZoneOverride", pData->m_TuneZoneOverride, -1, NUM_TUNEZONES - 1);
+	}
+	break;
+
 	case NETOBJTYPE_DDNETPLAYER:
 	{
 		CNetObj_DDNetPlayer *pData = (CNetObj_DDNetPlayer *)m_aUnpackedData;
 		pData->m_Flags = pUnpacker->GetUncompressedInt();
 		pData->m_AuthLevel = pUnpacker->GetUncompressedInt();
 		pData->m_AuthLevel = ClampInt("m_AuthLevel", pData->m_AuthLevel, AUTHED_NO, AUTHED_ADMIN);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_GAMEINFOEX:
 	{
 		CNetObj_GameInfoEx *pData = (CNetObj_GameInfoEx *)m_aUnpackedData;
 		pData->m_Flags = pUnpacker->GetUncompressedIntOrDefault(0);
 		pData->m_Version = pUnpacker->GetUncompressedIntOrDefault(0);
 		pData->m_Flags2 = pUnpacker->GetUncompressedIntOrDefault(0);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_DDRACEPROJECTILE:
 	{
 		CNetObj_DDRaceProjectile *pData = (CNetObj_DDRaceProjectile *)m_aUnpackedData;
@@ -510,9 +532,10 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_Data = pUnpacker->GetUncompressedInt();
 		pData->m_Type = pUnpacker->GetUncompressedInt();
 		pData->m_StartTick = pUnpacker->GetUncompressedInt();
-		pData->m_Type = ClampInt("m_Type", pData->m_Type, 0, NUM_WEAPONS-1);
-	} break;
-	
+		pData->m_Type = ClampInt("m_Type", pData->m_Type, 0, NUM_WEAPONS - 1);
+	}
+	break;
+
 	case NETOBJTYPE_DDNETLASER:
 	{
 		CNetObj_DDNetLaser *pData = (CNetObj_DDNetLaser *)m_aUnpackedData;
@@ -526,9 +549,10 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_SwitchNumber = pUnpacker->GetUncompressedIntOrDefault(-1);
 		pData->m_Subtype = pUnpacker->GetUncompressedIntOrDefault(-1);
 		pData->m_Flags = pUnpacker->GetUncompressedIntOrDefault(0);
-		pData->m_Owner = ClampInt("m_Owner", pData->m_Owner, -1, MAX_CLIENTS-1);
-	} break;
-	
+		pData->m_Owner = ClampInt("m_Owner", pData->m_Owner, -1, MAX_CLIENTS - 1);
+	}
+	break;
+
 	case NETOBJTYPE_DDNETPROJECTILE:
 	{
 		CNetObj_DDNetProjectile *pData = (CNetObj_DDNetProjectile *)m_aUnpackedData;
@@ -542,10 +566,11 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_SwitchNumber = pUnpacker->GetUncompressedInt();
 		pData->m_TuneZone = pUnpacker->GetUncompressedInt();
 		pData->m_Flags = pUnpacker->GetUncompressedInt();
-		pData->m_Type = ClampInt("m_Type", pData->m_Type, 0, NUM_WEAPONS-1);
-		pData->m_Owner = ClampInt("m_Owner", pData->m_Owner, -1, MAX_CLIENTS-1);
-	} break;
-	
+		pData->m_Type = ClampInt("m_Type", pData->m_Type, 0, NUM_WEAPONS - 1);
+		pData->m_Owner = ClampInt("m_Owner", pData->m_Owner, -1, MAX_CLIENTS - 1);
+	}
+	break;
+
 	case NETOBJTYPE_DDNETPICKUP:
 	{
 		CNetObj_DDNetPickup *pData = (CNetObj_DDNetPickup *)m_aUnpackedData;
@@ -556,8 +581,9 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_SwitchNumber = pUnpacker->GetUncompressedInt();
 		pData->m_Type = ClampInt("m_Type", pData->m_Type, 0, max_int);
 		pData->m_Subtype = ClampInt("m_Subtype", pData->m_Subtype, 0, max_int);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_DDNETSPECTATORINFO:
 	{
 		CNetObj_DDNetSpectatorInfo *pData = (CNetObj_DDNetSpectatorInfo *)m_aUnpackedData;
@@ -570,99 +596,112 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_Zoom = ClampInt("m_Zoom", pData->m_Zoom, 0, max_int);
 		pData->m_Deadzone = ClampInt("m_Deadzone", pData->m_Deadzone, 0, max_int);
 		pData->m_FollowFactor = ClampInt("m_FollowFactor", pData->m_FollowFactor, 0, max_int);
-		pData->m_SpectatorCount = ClampInt("m_SpectatorCount", pData->m_SpectatorCount, 0, MAX_CLIENTS-1);
-	} break;
-	
+		pData->m_SpectatorCount = ClampInt("m_SpectatorCount", pData->m_SpectatorCount, 0, MAX_CLIENTS - 1);
+	}
+	break;
+
 	case NETEVENTTYPE_COMMON:
 	{
 		CNetEvent_Common *pData = (CNetEvent_Common *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETEVENTTYPE_EXPLOSION:
 	{
 		CNetEvent_Explosion *pData = (CNetEvent_Explosion *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETEVENTTYPE_SPAWN:
 	{
 		CNetEvent_Spawn *pData = (CNetEvent_Spawn *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETEVENTTYPE_HAMMERHIT:
 	{
 		CNetEvent_HammerHit *pData = (CNetEvent_HammerHit *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETEVENTTYPE_DEATH:
 	{
 		CNetEvent_Death *pData = (CNetEvent_Death *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
 		pData->m_ClientId = pUnpacker->GetUncompressedInt();
-		pData->m_ClientId = ClampInt("m_ClientId", pData->m_ClientId, 0, MAX_CLIENTS-1);
-	} break;
-	
+		pData->m_ClientId = ClampInt("m_ClientId", pData->m_ClientId, 0, MAX_CLIENTS - 1);
+	}
+	break;
+
 	case NETEVENTTYPE_SOUNDGLOBAL:
 	{
 		CNetEvent_SoundGlobal *pData = (CNetEvent_SoundGlobal *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
 		pData->m_SoundId = pUnpacker->GetUncompressedInt();
-		pData->m_SoundId = ClampInt("m_SoundId", pData->m_SoundId, 0, NUM_SOUNDS-1);
-	} break;
-	
+		pData->m_SoundId = ClampInt("m_SoundId", pData->m_SoundId, 0, NUM_SOUNDS - 1);
+	}
+	break;
+
 	case NETEVENTTYPE_SOUNDWORLD:
 	{
 		CNetEvent_SoundWorld *pData = (CNetEvent_SoundWorld *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
 		pData->m_SoundId = pUnpacker->GetUncompressedInt();
-		pData->m_SoundId = ClampInt("m_SoundId", pData->m_SoundId, 0, NUM_SOUNDS-1);
-	} break;
-	
+		pData->m_SoundId = ClampInt("m_SoundId", pData->m_SoundId, 0, NUM_SOUNDS - 1);
+	}
+	break;
+
 	case NETEVENTTYPE_DAMAGEIND:
 	{
 		CNetEvent_DamageInd *pData = (CNetEvent_DamageInd *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
 		pData->m_Angle = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETEVENTTYPE_BIRTHDAY:
 	{
 		CNetEvent_Birthday *pData = (CNetEvent_Birthday *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETEVENTTYPE_FINISH:
 	{
 		CNetEvent_Finish *pData = (CNetEvent_Finish *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_MYOWNEVENT:
 	{
 		CNetObj_MyOwnEvent *pData = (CNetObj_MyOwnEvent *)m_aUnpackedData;
 		pData->m_Test = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_SPECCHAR:
 	{
 		CNetObj_SpecChar *pData = (CNetObj_SpecChar *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_SWITCHSTATE:
 	{
 		CNetObj_SwitchState *pData = (CNetObj_SwitchState *)m_aUnpackedData;
@@ -683,66 +722,79 @@ void *CNetObjHandler::SecureUnpackObj(int Type, CUnpacker *pUnpacker)
 		pData->m_aEndTicks[1] = pUnpacker->GetUncompressedIntOrDefault(0);
 		pData->m_aEndTicks[2] = pUnpacker->GetUncompressedIntOrDefault(0);
 		pData->m_aEndTicks[3] = pUnpacker->GetUncompressedIntOrDefault(0);
-	} break;
-	
+	}
+	break;
+
 	case NETOBJTYPE_ENTITYEX:
 	{
 		CNetObj_EntityEx *pData = (CNetObj_EntityEx *)m_aUnpackedData;
 		pData->m_SwitchNumber = pUnpacker->GetUncompressedInt();
 		pData->m_Layer = pUnpacker->GetUncompressedInt();
 		pData->m_EntityClass = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	case NETEVENTTYPE_MAPSOUNDWORLD:
 	{
 		CNetEvent_MapSoundWorld *pData = (CNetEvent_MapSoundWorld *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetUncompressedInt();
 		pData->m_Y = pUnpacker->GetUncompressedInt();
 		pData->m_SoundId = pUnpacker->GetUncompressedInt();
-	} break;
-	
+	}
+	break;
+
 	default:
 		m_pObjFailedOn = "(type out of range)";
 		break;
 	}
-	
+
 	if(pUnpacker->Error())
 		m_pObjFailedOn = "(unpack error)";
-	
+
 	if(m_pObjFailedOn)
 		return 0;
 	m_pObjFailedOn = "";
 	return m_aUnpackedData;
 }
-	
+
 void *CNetObjHandler::SecureUnpackMsg(int Type, CUnpacker *pUnpacker)
 {
 	m_pMsgFailedOn = 0;
 	switch(Type)
 	{
-	
 	case NETMSGTYPE_SV_MOTD:
 	{
 		CNetMsg_Sv_Motd *pData = (CNetMsg_Sv_Motd *)m_aUnpackedData;
 		pData->m_pMessage = pUnpacker->GetString();
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_BROADCAST:
 	{
 		CNetMsg_Sv_Broadcast *pData = (CNetMsg_Sv_Broadcast *)m_aUnpackedData;
 		pData->m_pMessage = pUnpacker->GetString();
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_CHAT:
 	{
 		CNetMsg_Sv_Chat *pData = (CNetMsg_Sv_Chat *)m_aUnpackedData;
 		pData->m_Team = pUnpacker->GetInt();
 		pData->m_ClientId = pUnpacker->GetInt();
 		pData->m_pMessage = pUnpacker->GetString(CUnpacker::SANITIZE_CC);
-		if(pData->m_Team < -2 || pData->m_Team > 3) { m_pMsgFailedOn = "m_Team"; break; }
-		if(pData->m_ClientId < -1 || pData->m_ClientId > MAX_CLIENTS-1) { m_pMsgFailedOn = "m_ClientId"; break; }
-	} break;
-	
+		if(pData->m_Team < -2 || pData->m_Team > 3)
+		{
+			m_pMsgFailedOn = "m_Team";
+			break;
+		}
+		if(pData->m_ClientId < -1 || pData->m_ClientId > MAX_CLIENTS - 1)
+		{
+			m_pMsgFailedOn = "m_ClientId";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_KILLMSG:
 	{
 		CNetMsg_Sv_KillMsg *pData = (CNetMsg_Sv_KillMsg *)m_aUnpackedData;
@@ -750,101 +802,149 @@ void *CNetObjHandler::SecureUnpackMsg(int Type, CUnpacker *pUnpacker)
 		pData->m_Victim = pUnpacker->GetInt();
 		pData->m_Weapon = pUnpacker->GetInt();
 		pData->m_ModeSpecial = pUnpacker->GetInt();
-		if(pData->m_Killer < 0 || pData->m_Killer > MAX_CLIENTS-1) { m_pMsgFailedOn = "m_Killer"; break; }
-		if(pData->m_Victim < 0 || pData->m_Victim > MAX_CLIENTS-1) { m_pMsgFailedOn = "m_Victim"; break; }
-		if(pData->m_Weapon < WEAPON_GAME || pData->m_Weapon > NUM_WEAPONS-1) { m_pMsgFailedOn = "m_Weapon"; break; }
-	} break;
-	
+		if(pData->m_Killer < 0 || pData->m_Killer > MAX_CLIENTS - 1)
+		{
+			m_pMsgFailedOn = "m_Killer";
+			break;
+		}
+		if(pData->m_Victim < 0 || pData->m_Victim > MAX_CLIENTS - 1)
+		{
+			m_pMsgFailedOn = "m_Victim";
+			break;
+		}
+		if(pData->m_Weapon < WEAPON_GAME || pData->m_Weapon > NUM_WEAPONS - 1)
+		{
+			m_pMsgFailedOn = "m_Weapon";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_SOUNDGLOBAL:
 	{
 		CNetMsg_Sv_SoundGlobal *pData = (CNetMsg_Sv_SoundGlobal *)m_aUnpackedData;
 		pData->m_SoundId = pUnpacker->GetInt();
-		if(pData->m_SoundId < 0 || pData->m_SoundId > NUM_SOUNDS-1) { m_pMsgFailedOn = "m_SoundId"; break; }
-	} break;
-	
+		if(pData->m_SoundId < 0 || pData->m_SoundId > NUM_SOUNDS - 1)
+		{
+			m_pMsgFailedOn = "m_SoundId";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_TUNEPARAMS:
 	{
 		CNetMsg_Sv_TuneParams *pData = (CNetMsg_Sv_TuneParams *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_UNUSED:
 	{
 		CNetMsg_Unused *pData = (CNetMsg_Unused *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_READYTOENTER:
 	{
 		CNetMsg_Sv_ReadyToEnter *pData = (CNetMsg_Sv_ReadyToEnter *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_WEAPONPICKUP:
 	{
 		CNetMsg_Sv_WeaponPickup *pData = (CNetMsg_Sv_WeaponPickup *)m_aUnpackedData;
 		pData->m_Weapon = pUnpacker->GetInt();
-		if(pData->m_Weapon < 0 || pData->m_Weapon > NUM_WEAPONS-1) { m_pMsgFailedOn = "m_Weapon"; break; }
-	} break;
-	
+		if(pData->m_Weapon < 0 || pData->m_Weapon > NUM_WEAPONS - 1)
+		{
+			m_pMsgFailedOn = "m_Weapon";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_EMOTICON:
 	{
 		CNetMsg_Sv_Emoticon *pData = (CNetMsg_Sv_Emoticon *)m_aUnpackedData;
 		pData->m_ClientId = pUnpacker->GetInt();
 		pData->m_Emoticon = pUnpacker->GetInt();
-		if(pData->m_ClientId < 0 || pData->m_ClientId > MAX_CLIENTS-1) { m_pMsgFailedOn = "m_ClientId"; break; }
-		if(pData->m_Emoticon < 0 || pData->m_Emoticon > NUM_EMOTICONS-1) { m_pMsgFailedOn = "m_Emoticon"; break; }
-	} break;
-	
+		if(pData->m_ClientId < 0 || pData->m_ClientId > MAX_CLIENTS - 1)
+		{
+			m_pMsgFailedOn = "m_ClientId";
+			break;
+		}
+		if(pData->m_Emoticon < 0 || pData->m_Emoticon > NUM_EMOTICONS - 1)
+		{
+			m_pMsgFailedOn = "m_Emoticon";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_VOTECLEAROPTIONS:
 	{
 		CNetMsg_Sv_VoteClearOptions *pData = (CNetMsg_Sv_VoteClearOptions *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_VOTEOPTIONLISTADD:
 	{
 		CNetMsg_Sv_VoteOptionListAdd *pData = (CNetMsg_Sv_VoteOptionListAdd *)m_aUnpackedData;
 		pData->m_NumOptions = pUnpacker->GetInt();
-		pData->m_pDescription0 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription1 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription2 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription3 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription4 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription5 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription6 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription7 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription8 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription9 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription10 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription11 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription12 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription13 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pDescription14 = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		if(pData->m_NumOptions < 1 || pData->m_NumOptions > 15) { m_pMsgFailedOn = "m_NumOptions"; break; }
-	} break;
-	
+		pData->m_pDescription0 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription1 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription2 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription3 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription4 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription5 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription6 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription7 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription8 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription9 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription10 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription11 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription12 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription13 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pDescription14 = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		if(pData->m_NumOptions < 1 || pData->m_NumOptions > 15)
+		{
+			m_pMsgFailedOn = "m_NumOptions";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_VOTEOPTIONADD:
 	{
 		CNetMsg_Sv_VoteOptionAdd *pData = (CNetMsg_Sv_VoteOptionAdd *)m_aUnpackedData;
-		pData->m_pDescription = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-	} break;
-	
+		pData->m_pDescription = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+	}
+	break;
+
 	case NETMSGTYPE_SV_VOTEOPTIONREMOVE:
 	{
 		CNetMsg_Sv_VoteOptionRemove *pData = (CNetMsg_Sv_VoteOptionRemove *)m_aUnpackedData;
-		pData->m_pDescription = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-	} break;
-	
+		pData->m_pDescription = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+	}
+	break;
+
 	case NETMSGTYPE_SV_VOTESET:
 	{
 		CNetMsg_Sv_VoteSet *pData = (CNetMsg_Sv_VoteSet *)m_aUnpackedData;
 		pData->m_Timeout = pUnpacker->GetInt();
-		pData->m_pDescription = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pReason = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		if(pData->m_Timeout < 0 || pData->m_Timeout > max_int) { m_pMsgFailedOn = "m_Timeout"; break; }
-	} break;
-	
+		pData->m_pDescription = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pReason = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		if(pData->m_Timeout < 0 || pData->m_Timeout > max_int)
+		{
+			m_pMsgFailedOn = "m_Timeout";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_VOTESTATUS:
 	{
 		CNetMsg_Sv_VoteStatus *pData = (CNetMsg_Sv_VoteStatus *)m_aUnpackedData;
@@ -852,195 +952,292 @@ void *CNetObjHandler::SecureUnpackMsg(int Type, CUnpacker *pUnpacker)
 		pData->m_No = pUnpacker->GetInt();
 		pData->m_Pass = pUnpacker->GetInt();
 		pData->m_Total = pUnpacker->GetInt();
-		if(pData->m_Yes < 0 || pData->m_Yes > MAX_CLIENTS) { m_pMsgFailedOn = "m_Yes"; break; }
-		if(pData->m_No < 0 || pData->m_No > MAX_CLIENTS) { m_pMsgFailedOn = "m_No"; break; }
-		if(pData->m_Pass < 0 || pData->m_Pass > MAX_CLIENTS) { m_pMsgFailedOn = "m_Pass"; break; }
-		if(pData->m_Total < 0 || pData->m_Total > MAX_CLIENTS) { m_pMsgFailedOn = "m_Total"; break; }
-	} break;
-	
+		if(pData->m_Yes < 0 || pData->m_Yes > MAX_CLIENTS)
+		{
+			m_pMsgFailedOn = "m_Yes";
+			break;
+		}
+		if(pData->m_No < 0 || pData->m_No > MAX_CLIENTS)
+		{
+			m_pMsgFailedOn = "m_No";
+			break;
+		}
+		if(pData->m_Pass < 0 || pData->m_Pass > MAX_CLIENTS)
+		{
+			m_pMsgFailedOn = "m_Pass";
+			break;
+		}
+		if(pData->m_Total < 0 || pData->m_Total > MAX_CLIENTS)
+		{
+			m_pMsgFailedOn = "m_Total";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_CL_SAY:
 	{
 		CNetMsg_Cl_Say *pData = (CNetMsg_Cl_Say *)m_aUnpackedData;
 		pData->m_Team = pUnpacker->GetInt();
 		pData->m_pMessage = pUnpacker->GetString(CUnpacker::SANITIZE_CC);
-		if(pData->m_Team < 0 || pData->m_Team > 1) { m_pMsgFailedOn = "m_Team"; break; }
-	} break;
-	
+		if(pData->m_Team < 0 || pData->m_Team > 1)
+		{
+			m_pMsgFailedOn = "m_Team";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_CL_SETTEAM:
 	{
 		CNetMsg_Cl_SetTeam *pData = (CNetMsg_Cl_SetTeam *)m_aUnpackedData;
 		pData->m_Team = pUnpacker->GetInt();
-		if(pData->m_Team < TEAM_SPECTATORS || pData->m_Team > TEAM_BLUE) { m_pMsgFailedOn = "m_Team"; break; }
-	} break;
-	
+		if(pData->m_Team < TEAM_SPECTATORS || pData->m_Team > TEAM_BLUE)
+		{
+			m_pMsgFailedOn = "m_Team";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_CL_SETSPECTATORMODE:
 	{
 		CNetMsg_Cl_SetSpectatorMode *pData = (CNetMsg_Cl_SetSpectatorMode *)m_aUnpackedData;
 		pData->m_SpectatorId = pUnpacker->GetInt();
-		if(pData->m_SpectatorId < SPEC_FREEVIEW || pData->m_SpectatorId > MAX_CLIENTS-1) { m_pMsgFailedOn = "m_SpectatorId"; break; }
-	} break;
-	
+		if(pData->m_SpectatorId < SPEC_FREEVIEW || pData->m_SpectatorId > MAX_CLIENTS - 1)
+		{
+			m_pMsgFailedOn = "m_SpectatorId";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_CL_STARTINFO:
 	{
 		CNetMsg_Cl_StartInfo *pData = (CNetMsg_Cl_StartInfo *)m_aUnpackedData;
-		pData->m_pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pClan = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pClan = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
 		pData->m_Country = pUnpacker->GetInt();
-		pData->m_pSkin = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pSkin = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
 		pData->m_UseCustomColor = pUnpacker->GetInt();
 		pData->m_ColorBody = pUnpacker->GetInt();
 		pData->m_ColorFeet = pUnpacker->GetInt();
-		if(pData->m_UseCustomColor < 0 || pData->m_UseCustomColor > 1) { m_pMsgFailedOn = "m_UseCustomColor"; break; }
-	} break;
-	
+		if(pData->m_UseCustomColor < 0 || pData->m_UseCustomColor > 1)
+		{
+			m_pMsgFailedOn = "m_UseCustomColor";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_CL_CHANGEINFO:
 	{
 		CNetMsg_Cl_ChangeInfo *pData = (CNetMsg_Cl_ChangeInfo *)m_aUnpackedData;
-		pData->m_pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pClan = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pClan = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
 		pData->m_Country = pUnpacker->GetInt();
-		pData->m_pSkin = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pSkin = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
 		pData->m_UseCustomColor = pUnpacker->GetInt();
 		pData->m_ColorBody = pUnpacker->GetInt();
 		pData->m_ColorFeet = pUnpacker->GetInt();
-		if(pData->m_UseCustomColor < 0 || pData->m_UseCustomColor > 1) { m_pMsgFailedOn = "m_UseCustomColor"; break; }
-	} break;
-	
+		if(pData->m_UseCustomColor < 0 || pData->m_UseCustomColor > 1)
+		{
+			m_pMsgFailedOn = "m_UseCustomColor";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_CL_KILL:
 	{
 		CNetMsg_Cl_Kill *pData = (CNetMsg_Cl_Kill *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_CL_EMOTICON:
 	{
 		CNetMsg_Cl_Emoticon *pData = (CNetMsg_Cl_Emoticon *)m_aUnpackedData;
 		pData->m_Emoticon = pUnpacker->GetInt();
-		if(pData->m_Emoticon < 0 || pData->m_Emoticon > NUM_EMOTICONS-1) { m_pMsgFailedOn = "m_Emoticon"; break; }
-	} break;
-	
+		if(pData->m_Emoticon < 0 || pData->m_Emoticon > NUM_EMOTICONS - 1)
+		{
+			m_pMsgFailedOn = "m_Emoticon";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_CL_VOTE:
 	{
 		CNetMsg_Cl_Vote *pData = (CNetMsg_Cl_Vote *)m_aUnpackedData;
 		pData->m_Vote = pUnpacker->GetInt();
-		if(pData->m_Vote < -1 || pData->m_Vote > 1) { m_pMsgFailedOn = "m_Vote"; break; }
-	} break;
-	
+		if(pData->m_Vote < -1 || pData->m_Vote > 1)
+		{
+			m_pMsgFailedOn = "m_Vote";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_CL_CALLVOTE:
 	{
 		CNetMsg_Cl_CallVote *pData = (CNetMsg_Cl_CallVote *)m_aUnpackedData;
-		pData->m_pType = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pValue = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pReason = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-	} break;
-	
+		pData->m_pType = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pValue = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pReason = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+	}
+	break;
+
 	case NETMSGTYPE_CL_ISDDNETLEGACY:
 	{
 		CNetMsg_Cl_IsDDNetLegacy *pData = (CNetMsg_Cl_IsDDNetLegacy *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_DDRACETIMELEGACY:
 	{
 		CNetMsg_Sv_DDRaceTimeLegacy *pData = (CNetMsg_Sv_DDRaceTimeLegacy *)m_aUnpackedData;
 		pData->m_Time = pUnpacker->GetInt();
 		pData->m_Check = pUnpacker->GetInt();
 		pData->m_Finish = pUnpacker->GetInt();
-		if(pData->m_Finish < 0 || pData->m_Finish > 1) { m_pMsgFailedOn = "m_Finish"; break; }
-	} break;
-	
+		if(pData->m_Finish < 0 || pData->m_Finish > 1)
+		{
+			m_pMsgFailedOn = "m_Finish";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_RECORDLEGACY:
 	{
 		CNetMsg_Sv_RecordLegacy *pData = (CNetMsg_Sv_RecordLegacy *)m_aUnpackedData;
 		pData->m_ServerTimeBest = pUnpacker->GetInt();
 		pData->m_PlayerTimeBest = pUnpacker->GetInt();
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_UNUSED2:
 	{
 		CNetMsg_Unused2 *pData = (CNetMsg_Unused2 *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_TEAMSSTATELEGACY:
 	{
 		CNetMsg_Sv_TeamsStateLegacy *pData = (CNetMsg_Sv_TeamsStateLegacy *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_CL_SHOWOTHERSLEGACY:
 	{
 		CNetMsg_Cl_ShowOthersLegacy *pData = (CNetMsg_Cl_ShowOthersLegacy *)m_aUnpackedData;
 		pData->m_Show = pUnpacker->GetInt();
-		if(pData->m_Show < 0 || pData->m_Show > 1) { m_pMsgFailedOn = "m_Show"; break; }
-	} break;
-	
+		if(pData->m_Show < 0 || pData->m_Show > 1)
+		{
+			m_pMsgFailedOn = "m_Show";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_MYOWNMESSAGE:
 	{
 		CNetMsg_Sv_MyOwnMessage *pData = (CNetMsg_Sv_MyOwnMessage *)m_aUnpackedData;
 		pData->m_Test = pUnpacker->GetInt();
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_CL_SHOWDISTANCE:
 	{
 		CNetMsg_Cl_ShowDistance *pData = (CNetMsg_Cl_ShowDistance *)m_aUnpackedData;
 		pData->m_X = pUnpacker->GetInt();
 		pData->m_Y = pUnpacker->GetInt();
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_CL_SHOWOTHERS:
 	{
 		CNetMsg_Cl_ShowOthers *pData = (CNetMsg_Cl_ShowOthers *)m_aUnpackedData;
 		pData->m_Show = pUnpacker->GetInt();
-		if(pData->m_Show < 0 || pData->m_Show > 2) { m_pMsgFailedOn = "m_Show"; break; }
-	} break;
-	
+		if(pData->m_Show < 0 || pData->m_Show > 2)
+		{
+			m_pMsgFailedOn = "m_Show";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_CL_CAMERAINFO:
 	{
 		CNetMsg_Cl_CameraInfo *pData = (CNetMsg_Cl_CameraInfo *)m_aUnpackedData;
 		pData->m_Zoom = pUnpacker->GetInt();
 		pData->m_Deadzone = pUnpacker->GetInt();
 		pData->m_FollowFactor = pUnpacker->GetInt();
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_TEAMSSTATE:
 	{
 		CNetMsg_Sv_TeamsState *pData = (CNetMsg_Sv_TeamsState *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_DDRACETIME:
 	{
 		CNetMsg_Sv_DDRaceTime *pData = (CNetMsg_Sv_DDRaceTime *)m_aUnpackedData;
 		pData->m_Time = pUnpacker->GetInt();
 		pData->m_Check = pUnpacker->GetInt();
 		pData->m_Finish = pUnpacker->GetInt();
-		if(pData->m_Finish < 0 || pData->m_Finish > 1) { m_pMsgFailedOn = "m_Finish"; break; }
-	} break;
-	
+		if(pData->m_Finish < 0 || pData->m_Finish > 1)
+		{
+			m_pMsgFailedOn = "m_Finish";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_RECORD:
 	{
 		CNetMsg_Sv_Record *pData = (CNetMsg_Sv_Record *)m_aUnpackedData;
 		pData->m_ServerTimeBest = pUnpacker->GetInt();
 		pData->m_PlayerTimeBest = pUnpacker->GetInt();
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_KILLMSGTEAM:
 	{
 		CNetMsg_Sv_KillMsgTeam *pData = (CNetMsg_Sv_KillMsgTeam *)m_aUnpackedData;
 		pData->m_Team = pUnpacker->GetInt();
 		pData->m_First = pUnpacker->GetInt();
-		if(pData->m_Team < 0 || pData->m_Team > MAX_CLIENTS-1) { m_pMsgFailedOn = "m_Team"; break; }
-		if(pData->m_First < -1 || pData->m_First > MAX_CLIENTS-1) { m_pMsgFailedOn = "m_First"; break; }
-	} break;
-	
+		if(pData->m_Team < 0 || pData->m_Team > MAX_CLIENTS - 1)
+		{
+			m_pMsgFailedOn = "m_Team";
+			break;
+		}
+		if(pData->m_First < -1 || pData->m_First > MAX_CLIENTS - 1)
+		{
+			m_pMsgFailedOn = "m_First";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_YOURVOTE:
 	{
 		CNetMsg_Sv_YourVote *pData = (CNetMsg_Sv_YourVote *)m_aUnpackedData;
 		pData->m_Voted = pUnpacker->GetInt();
-		if(pData->m_Voted < -1 || pData->m_Voted > 1) { m_pMsgFailedOn = "m_Voted"; break; }
-	} break;
-	
+		if(pData->m_Voted < -1 || pData->m_Voted > 1)
+		{
+			m_pMsgFailedOn = "m_Voted";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_RACEFINISH:
 	{
 		CNetMsg_Sv_RaceFinish *pData = (CNetMsg_Sv_RaceFinish *)m_aUnpackedData;
@@ -1049,80 +1246,100 @@ void *CNetObjHandler::SecureUnpackMsg(int Type, CUnpacker *pUnpacker)
 		pData->m_Diff = pUnpacker->GetInt();
 		pData->m_RecordPersonal = pUnpacker->GetInt();
 		pData->m_RecordServer = pUnpacker->GetIntOrDefault(0);
-		if(pData->m_ClientId < 0 || pData->m_ClientId > MAX_CLIENTS-1) { m_pMsgFailedOn = "m_ClientId"; break; }
-		if(pData->m_RecordPersonal < 0 || pData->m_RecordPersonal > 1) { m_pMsgFailedOn = "m_RecordPersonal"; break; }
-		if(pData->m_RecordServer < 0 || pData->m_RecordServer > 1) { m_pMsgFailedOn = "m_RecordServer"; break; }
-	} break;
-	
+		if(pData->m_ClientId < 0 || pData->m_ClientId > MAX_CLIENTS - 1)
+		{
+			m_pMsgFailedOn = "m_ClientId";
+			break;
+		}
+		if(pData->m_RecordPersonal < 0 || pData->m_RecordPersonal > 1)
+		{
+			m_pMsgFailedOn = "m_RecordPersonal";
+			break;
+		}
+		if(pData->m_RecordServer < 0 || pData->m_RecordServer > 1)
+		{
+			m_pMsgFailedOn = "m_RecordServer";
+			break;
+		}
+	}
+	break;
+
 	case NETMSGTYPE_SV_COMMANDINFO:
 	{
 		CNetMsg_Sv_CommandInfo *pData = (CNetMsg_Sv_CommandInfo *)m_aUnpackedData;
-		pData->m_pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pArgsFormat = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-		pData->m_pHelpText = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-	} break;
-	
+		pData->m_pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pArgsFormat = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+		pData->m_pHelpText = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+	}
+	break;
+
 	case NETMSGTYPE_SV_COMMANDINFOREMOVE:
 	{
 		CNetMsg_Sv_CommandInfoRemove *pData = (CNetMsg_Sv_CommandInfoRemove *)m_aUnpackedData;
-		pData->m_pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC|CUnpacker::SKIP_START_WHITESPACES);
-	} break;
-	
+		pData->m_pName = pUnpacker->GetString(CUnpacker::SANITIZE_CC | CUnpacker::SKIP_START_WHITESPACES);
+	}
+	break;
+
 	case NETMSGTYPE_SV_VOTEOPTIONGROUPSTART:
 	{
 		CNetMsg_Sv_VoteOptionGroupStart *pData = (CNetMsg_Sv_VoteOptionGroupStart *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_VOTEOPTIONGROUPEND:
 	{
 		CNetMsg_Sv_VoteOptionGroupEnd *pData = (CNetMsg_Sv_VoteOptionGroupEnd *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_COMMANDINFOGROUPSTART:
 	{
 		CNetMsg_Sv_CommandInfoGroupStart *pData = (CNetMsg_Sv_CommandInfoGroupStart *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_COMMANDINFOGROUPEND:
 	{
 		CNetMsg_Sv_CommandInfoGroupEnd *pData = (CNetMsg_Sv_CommandInfoGroupEnd *)m_aUnpackedData;
 		(void)pData;
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_CHANGEINFOCOOLDOWN:
 	{
 		CNetMsg_Sv_ChangeInfoCooldown *pData = (CNetMsg_Sv_ChangeInfoCooldown *)m_aUnpackedData;
 		pData->m_WaitUntil = pUnpacker->GetInt();
-	} break;
-	
+	}
+	break;
+
 	case NETMSGTYPE_SV_MAPSOUNDGLOBAL:
 	{
 		CNetMsg_Sv_MapSoundGlobal *pData = (CNetMsg_Sv_MapSoundGlobal *)m_aUnpackedData;
 		pData->m_SoundId = pUnpacker->GetInt();
-	} break;
-	
+	}
+	break;
+
 	default:
 		m_pMsgFailedOn = "(type out of range)";
 		break;
 	}
-	
+
 	if(pUnpacker->Error())
 		m_pMsgFailedOn = "(unpack error)";
-	
+
 	if(m_pMsgFailedOn)
 		return 0;
 	m_pMsgFailedOn = "";
 	return m_aUnpackedData;
 }
-	
+
 bool CNetObjHandler::TeeHistorianRecordMsg(int Type)
 {
 	switch(Type)
 	{
-	
 	case NETMSGTYPE_CL_SAY:
 	case NETMSGTYPE_CL_VOTE:
 	case NETMSGTYPE_CL_CALLVOTE:
@@ -1131,10 +1348,9 @@ bool CNetObjHandler::TeeHistorianRecordMsg(int Type)
 		return true;
 	}
 }
-	
+
 void RegisterGameUuids(CUuidManager *pManager)
 {
-	
 	pManager->RegisterName(NETOBJTYPE_MYOWNOBJECT, "my-own-object@heinrich5991.de");
 	pManager->RegisterName(NETOBJTYPE_DDNETCHARACTER, "character@netobj.ddnet.tw");
 	pManager->RegisterName(NETOBJTYPE_DDNETPLAYER, "player@netobj.ddnet.tw");
@@ -1172,4 +1388,3 @@ void RegisterGameUuids(CUuidManager *pManager)
 
 	RegisterMapItemTypeUuids(pManager);
 }
-	

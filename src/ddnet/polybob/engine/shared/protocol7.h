@@ -60,4 +60,3 @@ enum
 };
 
 } // namespace protocol7
-

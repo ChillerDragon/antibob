@@ -1,7 +1,7 @@
 #define ANTIBOTAPI DYNAMIC_EXPORT
 
-#include <polybob/antibot/antibot_interface.h>
 #include <bob/antibob.h>
+#include <polybob/antibot/antibot_interface.h>
 
 #include <cstring>
 

@@ -310,4 +310,3 @@ constexpr T color_invert(const T &col)
 
 template<typename T>
 std::optional<T> color_parse(const char *pStr);
-

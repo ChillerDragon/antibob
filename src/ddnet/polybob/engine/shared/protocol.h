@@ -134,4 +134,3 @@ enum
 };
 
 typedef std::bitset<MAX_CLIENTS> CClientMask;
-

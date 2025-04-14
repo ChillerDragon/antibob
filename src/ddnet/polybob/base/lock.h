@@ -130,4 +130,3 @@ public:
 private:
 	CLock &m_Lock;
 };
-

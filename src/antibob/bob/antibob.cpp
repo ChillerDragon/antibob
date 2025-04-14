@@ -9,9 +9,9 @@
 #include <polybob/game/generated/protocol7.h>
 #include <polybob/game/generated/protocolglue.h>
 
-#include <bob/detection_event.h>
 #include <bob/antibot_player.h>
 #include <bob/console.h>
+#include <bob/detection_event.h>
 #include <bob/gameserver.h>
 
 #include <cstdio>
