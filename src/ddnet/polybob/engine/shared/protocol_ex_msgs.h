@@ -40,3 +40,7 @@ UUID(NETMSG_RECONNECT, "reconnect@ddnet.org")
 UUID(NETMSG_MAPLIST_ADD, "sv-maplist-add@ddnet.org")
 UUID(NETMSG_MAPLIST_GROUP_START, "sv-maplist-start@ddnet.org")
 UUID(NETMSG_MAPLIST_GROUP_END, "sv-maplist-end@ddnet.org")
+
+//
+// add more uuids below if you need them for your antibob module
+//
