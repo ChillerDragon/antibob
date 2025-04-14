@@ -141,6 +141,9 @@ inline int str_format_opt(char *buffer, int buffer_size, const char *format, int
 #define str_format str_format_opt
 #endif
 
+void str_sanitize_cc(char *str);
+void str_sanitize(char *str);
+
 int str_isspace(char c);
 char str_uppercase(char c);
 bool str_isnum(char c);

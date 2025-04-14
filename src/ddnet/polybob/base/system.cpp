@@ -587,6 +587,29 @@ int str_format(char *buffer, int buffer_size, const char *format, ...)
 #define str_format str_format_opt
 #endif
 
+void str_sanitize_cc(char *str_in)
+{
+	unsigned char *str = (unsigned char *)str_in;
+	while(*str)
+	{
+		if(*str < 32)
+			*str = ' ';
+		str++;
+	}
+}
+
+/* makes sure that the string only contains the characters between 32 and 255 + \r\n\t */
+void str_sanitize(char *str_in)
+{
+	unsigned char *str = (unsigned char *)str_in;
+	while(*str)
+	{
+		if(*str < 32 && !(*str == '\r') && !(*str == '\n') && !(*str == '\t'))
+			*str = ' ';
+		str++;
+	}
+}
+
 int str_isspace(char c)
 {
 	return c == ' ' || c == '\n' || c == '\r' || c == '\t';

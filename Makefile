@@ -28,6 +28,8 @@ test:
 		src/test/*/*.cpp \
 		src/ddnet/polybob/*/*.cpp \
 		src/ddnet/polybob/base/unicode/*.cpp \
+		src/ddnet/polybob/game/generated/*.cpp \
+		src/ddnet/polybob/engine/shared/*.cpp \
 		$(CXX_FLAGS_TEST) -I . -L. libantibot.so -o antibob_test
 
 clean:
