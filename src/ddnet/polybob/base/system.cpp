@@ -1,8 +1,230 @@
-#include <polybob/base/system.h>
-
+#include <atomic>
 #include <cctype>
+#include <charconv>
 #include <chrono>
+#include <cinttypes>
+#include <cmath>
+#include <cstdarg>
+#include <cstdio>
 #include <cstring>
+#include <iomanip> // std::get_time
+#include <iterator> // std::size
+#include <sstream> // std::istringstream
+#include <string_view>
+
+#include "lock.h"
+#include "logger.h"
+#include "system.h"
+
+#include <sys/types.h>
+
+#if defined(CONF_WEBSOCKETS)
+#include <engine/shared/websockets.h>
+#endif
+
+#if defined(CONF_FAMILY_UNIX)
+#include <csignal>
+#include <locale>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/utsname.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+/* unix net includes */
+#include <arpa/inet.h>
+#include <cerrno>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <pthread.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+
+#include <dirent.h>
+
+#if defined(CONF_PLATFORM_MACOS)
+// some lock and pthread functions are already defined in headers
+// included from Carbon.h
+// this prevents having duplicate definitions of those
+#define _lock_set_user_
+#define _task_user_
+
+#include <Carbon/Carbon.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <mach-o/dyld.h>
+#include <mach/mach_time.h>
+
+#if defined(__MAC_10_10) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_10
+#include <pthread/qos.h>
+#endif
+#endif
+
+#elif defined(CONF_FAMILY_WINDOWS)
+#include <windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+
+#include <cerrno>
+#include <cfenv>
+#include <io.h>
+#include <objbase.h>
+#include <process.h>
+#include <share.h>
+#include <shellapi.h>
+#include <shlobj.h> // SHChangeNotify
+#include <shlwapi.h>
+#include <wincrypt.h>
+#else
+#error NOT IMPLEMENTED
+#endif
+
+
+std::atomic_bool dbg_assert_failing = false;
+DBG_ASSERT_HANDLER dbg_assert_handler;
+
+bool dbg_assert_has_failed()
+{
+	return dbg_assert_failing.load(std::memory_order_acquire);
+}
+
+void dbg_assert_imp(const char *filename, int line, const char *fmt, ...)
+{
+	const bool already_failing = dbg_assert_has_failed();
+	dbg_assert_failing.store(true, std::memory_order_release);
+	char msg[512];
+	va_list args;
+	va_start(args, fmt);
+	str_format_v(msg, sizeof(msg), fmt, args);
+	char error[512];
+	str_format(error, sizeof(error), "%s(%d): %s", filename, line, msg);
+	va_end(args);
+	log_error("assert", "%s", error);
+	if(!already_failing)
+	{
+		DBG_ASSERT_HANDLER handler = dbg_assert_handler;
+		if(handler)
+			handler(error);
+	}
+	log_global_logger_finish();
+	dbg_break();
+}
+
+void dbg_break()
+{
+#ifdef __GNUC__
+	__builtin_trap();
+#else
+	abort();
+#endif
+}
+
+void dbg_assert_set_handler(DBG_ASSERT_HANDLER handler)
+{
+	dbg_assert_handler = std::move(handler);
+}
+
+void dbg_msg(const char *sys, const char *fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+	log_log_v(LEVEL_INFO, sys, fmt, args);
+	va_end(args);
+}
+
+void mem_copy(void *dest, const void *source, size_t size)
+{
+	memcpy(dest, source, size);
+}
+
+void mem_move(void *dest, const void *source, size_t size)
+{
+	memmove(dest, source, size);
+}
+
+int mem_comp(const void *a, const void *b, size_t size)
+{
+	return memcmp(a, b, size);
+}
+
+bool mem_has_null(const void *block, size_t size)
+{
+	const unsigned char *bytes = (const unsigned char *)block;
+	for(size_t i = 0; i < size; i++)
+	{
+		if(bytes[i] == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+#define ASYNC_BUFSIZE (8 * 1024)
+#define ASYNC_LOCAL_BUFSIZE (64 * 1024)
+
+struct ASYNCIO
+{
+	CLock lock;
+	IOHANDLE io;
+	SEMAPHORE sphore;
+	void *thread;
+
+	unsigned char *buffer;
+	unsigned int buffer_size;
+	unsigned int read_pos;
+	unsigned int write_pos;
+
+	int error;
+	unsigned char finish;
+	unsigned char refcount;
+};
+
+enum
+{
+	ASYNCIO_RUNNING,
+	ASYNCIO_CLOSE,
+	ASYNCIO_EXIT,
+};
+
+struct BUFFERS
+{
+	unsigned char *buf1;
+	unsigned int len1;
+	unsigned char *buf2;
+	unsigned int len2;
+};
+
+static void buffer_ptrs(ASYNCIO *aio, struct BUFFERS *buffers)
+{
+	mem_zero(buffers, sizeof(*buffers));
+	if(aio->read_pos < aio->write_pos)
+	{
+		buffers->buf1 = aio->buffer + aio->read_pos;
+		buffers->len1 = aio->write_pos - aio->read_pos;
+	}
+	else if(aio->read_pos > aio->write_pos)
+	{
+		buffers->buf1 = aio->buffer + aio->read_pos;
+		buffers->len1 = aio->buffer_size - aio->read_pos;
+		buffers->buf2 = aio->buffer;
+		buffers->len2 = aio->write_pos;
+	}
+}
+
+static void aio_handle_free_and_unlock(ASYNCIO *aio) RELEASE(aio->lock)
+{
+	int do_free;
+	aio->refcount--;
+
+	do_free = aio->refcount == 0;
+	aio->lock.unlock();
+	if(do_free)
+	{
+		free(aio->buffer);
+		sphore_destroy(&aio->sphore);
+		delete aio;
+	}
+}
 
 static int new_tick = -1;
 
@@ -43,6 +265,39 @@ int str_length(const char *str)
 {
 	return (int)strlen(str);
 }
+
+int str_format_v(char *buffer, int buffer_size, const char *format, va_list args)
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	_vsprintf_p(buffer, buffer_size, format, args);
+	buffer[buffer_size - 1] = 0; /* assure null termination */
+#else
+	vsnprintf(buffer, buffer_size, format, args);
+	/* null termination is assured by definition of vsnprintf */
+#endif
+	return str_utf8_fix_truncation(buffer);
+}
+
+int str_format_int(char *buffer, size_t buffer_size, int value)
+{
+	buffer[0] = '\0'; // Fix false positive clang-analyzer-core.UndefinedBinaryOperatorResult when using result
+	auto result = std::to_chars(buffer, buffer + buffer_size - 1, value);
+	result.ptr[0] = '\0';
+	return result.ptr - buffer;
+}
+
+#undef str_format
+int str_format(char *buffer, int buffer_size, const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	int length = str_format_v(buffer, buffer_size, format, args);
+	va_end(args);
+	return length;
+}
+#if !defined(CONF_DEBUG)
+#define str_format str_format_opt
+#endif
 
 int str_isspace(char c)
 {
@@ -640,3 +895,311 @@ size_t str_utf8_offset_chars_to_bytes(const char *str, size_t char_offset)
 	}
 	return byte_offset;
 }
+
+static unsigned int buffer_len(ASYNCIO *aio)
+{
+	if(aio->write_pos >= aio->read_pos)
+	{
+		return aio->write_pos - aio->read_pos;
+	}
+	else
+	{
+		return aio->buffer_size + aio->write_pos - aio->read_pos;
+	}
+}
+
+static unsigned int next_buffer_size(unsigned int cur_size, unsigned int need_size)
+{
+	while(cur_size < need_size)
+	{
+		cur_size *= 2;
+	}
+	return cur_size;
+}
+
+void aio_lock(ASYNCIO *aio) ACQUIRE(aio->lock)
+{
+	aio->lock.lock();
+}
+
+void aio_unlock(ASYNCIO *aio) RELEASE(aio->lock)
+{
+	aio->lock.unlock();
+	sphore_signal(&aio->sphore);
+}
+
+void aio_write_unlocked(ASYNCIO *aio, const void *buffer, unsigned size)
+{
+	unsigned int remaining;
+	remaining = aio->buffer_size - buffer_len(aio);
+
+	// Don't allow full queue to distinguish between empty and full queue.
+	if(size < remaining)
+	{
+		unsigned int remaining_contiguous = aio->buffer_size - aio->write_pos;
+		if(size > remaining_contiguous)
+		{
+			mem_copy(aio->buffer + aio->write_pos, buffer, remaining_contiguous);
+			size -= remaining_contiguous;
+			buffer = ((unsigned char *)buffer) + remaining_contiguous;
+			aio->write_pos = 0;
+		}
+		mem_copy(aio->buffer + aio->write_pos, buffer, size);
+		aio->write_pos = (aio->write_pos + size) % aio->buffer_size;
+	}
+	else
+	{
+		// Add 1 so the new buffer isn't completely filled.
+		unsigned int new_written = buffer_len(aio) + size + 1;
+		unsigned int next_size = next_buffer_size(aio->buffer_size, new_written);
+		unsigned int next_len = 0;
+		unsigned char *next_buffer = (unsigned char *)malloc(next_size);
+
+		struct BUFFERS buffers;
+		buffer_ptrs(aio, &buffers);
+		if(buffers.buf1)
+		{
+			mem_copy(next_buffer + next_len, buffers.buf1, buffers.len1);
+			next_len += buffers.len1;
+			if(buffers.buf2)
+			{
+				mem_copy(next_buffer + next_len, buffers.buf2, buffers.len2);
+				next_len += buffers.len2;
+			}
+		}
+		mem_copy(next_buffer + next_len, buffer, size);
+		next_len += size;
+
+		free(aio->buffer);
+		aio->buffer = next_buffer;
+		aio->buffer_size = next_size;
+		aio->read_pos = 0;
+		aio->write_pos = next_len;
+	}
+}
+
+void aio_write(ASYNCIO *aio, const void *buffer, unsigned size)
+{
+	aio_lock(aio);
+	aio_write_unlocked(aio, buffer, size);
+	aio_unlock(aio);
+}
+
+void aio_write_newline_unlocked(ASYNCIO *aio)
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	aio_write_unlocked(aio, "\r\n", 2);
+#else
+	aio_write_unlocked(aio, "\n", 1);
+#endif
+}
+
+void aio_write_newline(ASYNCIO *aio)
+{
+	aio_lock(aio);
+	aio_write_newline_unlocked(aio);
+	aio_unlock(aio);
+}
+
+int aio_error(ASYNCIO *aio)
+{
+	CLockScope ls(aio->lock);
+	return aio->error;
+}
+
+void aio_close(ASYNCIO *aio)
+{
+	{
+		CLockScope ls(aio->lock);
+		aio->finish = ASYNCIO_CLOSE;
+	}
+	sphore_signal(&aio->sphore);
+}
+
+void aio_wait(ASYNCIO *aio)
+{
+	void *thread;
+	{
+		CLockScope ls(aio->lock);
+		thread = aio->thread;
+		aio->thread = nullptr;
+		if(aio->finish == ASYNCIO_RUNNING)
+		{
+			aio->finish = ASYNCIO_EXIT;
+		}
+	}
+	sphore_signal(&aio->sphore);
+	thread_wait(thread);
+}
+
+void aio_free(ASYNCIO *aio)
+{
+	aio->lock.lock();
+	if(aio->thread)
+	{
+		thread_detach(aio->thread);
+		aio->thread = nullptr;
+	}
+	aio_handle_free_and_unlock(aio);
+}
+
+struct THREAD_RUN
+{
+	void (*threadfunc)(void *);
+	void *u;
+};
+
+#if defined(CONF_FAMILY_UNIX)
+static void *thread_run(void *user)
+#elif defined(CONF_FAMILY_WINDOWS)
+static unsigned long __stdcall thread_run(void *user)
+#else
+#error not implemented
+#endif
+{
+#if defined(CONF_FAMILY_WINDOWS)
+	CWindowsComLifecycle WindowsComLifecycle(false);
+#endif
+	struct THREAD_RUN *data = (THREAD_RUN *)user;
+	void (*threadfunc)(void *) = data->threadfunc;
+	void *u = data->u;
+	free(data);
+	threadfunc(u);
+	return 0;
+}
+
+void *thread_init(void (*threadfunc)(void *), void *u, const char *name)
+{
+	struct THREAD_RUN *data = (THREAD_RUN *)malloc(sizeof(*data));
+	data->threadfunc = threadfunc;
+	data->u = u;
+#if defined(CONF_FAMILY_UNIX)
+	{
+		pthread_attr_t attr;
+		dbg_assert(pthread_attr_init(&attr) == 0, "pthread_attr_init failure");
+#if defined(CONF_PLATFORM_MACOS) && defined(__MAC_10_10) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_10
+		dbg_assert(pthread_attr_set_qos_class_np(&attr, QOS_CLASS_USER_INTERACTIVE, 0) == 0, "pthread_attr_set_qos_class_np failure");
+#endif
+		pthread_t id;
+		dbg_assert(pthread_create(&id, &attr, thread_run, data) == 0, "pthread_create failure");
+		return (void *)id;
+	}
+#elif defined(CONF_FAMILY_WINDOWS)
+	HANDLE thread = CreateThread(nullptr, 0, thread_run, data, 0, nullptr);
+	dbg_assert(thread != nullptr, "CreateThread failure");
+	// TODO: Set thread name using SetThreadDescription (would require minimum Windows 10 version 1607)
+	return thread;
+#else
+#error not implemented
+#endif
+}
+
+void thread_wait(void *thread)
+{
+#if defined(CONF_FAMILY_UNIX)
+	dbg_assert(pthread_join((pthread_t)thread, nullptr) == 0, "pthread_join failure");
+#elif defined(CONF_FAMILY_WINDOWS)
+	dbg_assert(WaitForSingleObject((HANDLE)thread, INFINITE) == WAIT_OBJECT_0, "WaitForSingleObject failure");
+	dbg_assert(CloseHandle(thread), "CloseHandle failure");
+#else
+#error not implemented
+#endif
+}
+
+void thread_yield()
+{
+#if defined(CONF_FAMILY_UNIX)
+	dbg_assert(sched_yield() == 0, "sched_yield failure");
+#elif defined(CONF_FAMILY_WINDOWS)
+	Sleep(0);
+#else
+#error not implemented
+#endif
+}
+
+void thread_detach(void *thread)
+{
+#if defined(CONF_FAMILY_UNIX)
+	dbg_assert(pthread_detach((pthread_t)thread) == 0, "pthread_detach failure");
+#elif defined(CONF_FAMILY_WINDOWS)
+	dbg_assert(CloseHandle(thread), "CloseHandle failure");
+#else
+#error not implemented
+#endif
+}
+
+void thread_init_and_detach(void (*threadfunc)(void *), void *u, const char *name)
+{
+	void *thread = thread_init(threadfunc, u, name);
+	thread_detach(thread);
+}
+
+#if defined(CONF_FAMILY_WINDOWS)
+void sphore_init(SEMAPHORE *sem)
+{
+	*sem = CreateSemaphoreW(nullptr, 0, std::numeric_limits<LONG>::max(), nullptr);
+	dbg_assert(*sem != nullptr, "CreateSemaphoreW failure");
+}
+void sphore_wait(SEMAPHORE *sem)
+{
+	dbg_assert(WaitForSingleObject((HANDLE)*sem, INFINITE) == WAIT_OBJECT_0, "WaitForSingleObject failure");
+}
+void sphore_signal(SEMAPHORE *sem)
+{
+	dbg_assert(ReleaseSemaphore((HANDLE)*sem, 1, nullptr), "ReleaseSemaphore failure");
+}
+void sphore_destroy(SEMAPHORE *sem)
+{
+	dbg_assert(CloseHandle((HANDLE)*sem), "CloseHandle failure");
+}
+#elif defined(CONF_PLATFORM_MACOS)
+void sphore_init(SEMAPHORE *sem)
+{
+	char aBuf[64];
+	str_format(aBuf, sizeof(aBuf), "/%d.%p", pid(), (void *)sem);
+	*sem = sem_open(aBuf, O_CREAT | O_EXCL, S_IRWXU | S_IRWXG, 0);
+	dbg_assert(*sem != SEM_FAILED, "sem_open failure, errno=%d, name='%s'", errno, aBuf);
+}
+void sphore_wait(SEMAPHORE *sem)
+{
+	while(true)
+	{
+		if(sem_wait(*sem) == 0)
+			break;
+		dbg_assert(errno == EINTR, "sem_wait failure");
+	}
+}
+void sphore_signal(SEMAPHORE *sem)
+{
+	dbg_assert(sem_post(*sem) == 0, "sem_post failure");
+}
+void sphore_destroy(SEMAPHORE *sem)
+{
+	dbg_assert(sem_close(*sem) == 0, "sem_close failure");
+	char aBuf[64];
+	str_format(aBuf, sizeof(aBuf), "/%d.%p", pid(), (void *)sem);
+	dbg_assert(sem_unlink(aBuf) == 0, "sem_unlink failure");
+}
+#elif defined(CONF_FAMILY_UNIX)
+void sphore_init(SEMAPHORE *sem)
+{
+	dbg_assert(sem_init(sem, 0, 0) == 0, "sem_init failure");
+}
+void sphore_wait(SEMAPHORE *sem)
+{
+	while(true)
+	{
+		if(sem_wait(sem) == 0)
+			break;
+		dbg_assert(errno == EINTR, "sem_wait failure");
+	}
+}
+void sphore_signal(SEMAPHORE *sem)
+{
+	dbg_assert(sem_post(sem) == 0, "sem_post failure");
+}
+void sphore_destroy(SEMAPHORE *sem)
+{
+	dbg_assert(sem_destroy(sem) == 0, "sem_destroy failure");
+}
+#endif
