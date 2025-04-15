@@ -1,33 +1,38 @@
 CXX := clang++
 CC := clang
-CXX_FLAGS_BASE = \
+CXXFLAGS := \
 	    -std=c++17 \
 	    -Isrc/antibob \
 	    -rdynamic \
 	    -fPIC \
 	    -Og -g
-CXX_FLAGS_MAIN = \
-	    $(CXX_FLAGS_BASE) \
-	    -shared
 CXX_FLAGS_TEST = \
-	    $(CXX_FLAGS_BASE) \
+	    $(CXXFLAGS) \
 	    -Isrc/ddnet \
 	    -Isrc/test
 
-POLYBOB_SRC = \
+POLYBOB_SRCS := $(wildcard \
 	      src/ddnet/polybob/*/*.cpp \
 	      src/ddnet/polybob/base/unicode/*.cpp \
 	      src/ddnet/polybob/game/generated/*.cpp \
-	      src/ddnet/polybob/engine/shared/*.cpp
+	      src/ddnet/polybob/engine/shared/*.cpp)
+POLYBOB_OBJS := $(patsubst %.cpp,build/objs/polybob/%.o,$(POLYBOB_SRCS))
 
-antibot: md5
+antibot: md5 $(POLYBOB_OBJS)
 	$(CXX) \
 		src/antibob/interface.cpp \
 		src/antibob/*/*.cpp \
-		$(POLYBOB_SRC) \
+		$(POLYBOB_OBJS) \
 		-Isrc/ddnet \
 		build/*.o \
-		$(CXX_FLAGS_MAIN) -o libantibot.so
+		$(CXXFLAGS) \
+		-rdynamic \
+		-shared \
+		-o libantibot.so
+
+build/objs/polybob/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
 
 test: md5
 	$(CXX) \
@@ -51,6 +56,7 @@ run_test: test
 clean:
 	rm -rf build
 	rm libantibot.so
+	rm antibot_test
 
 .PHONY: test clean
 
