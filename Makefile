@@ -55,8 +55,8 @@ run_test: test
 
 clean:
 	rm -rf build
-	rm libantibot.so
-	rm antibot_test
+	rm -f libantibot.so
+	rm -f antibot_test
 
 .PHONY: test clean
 
