@@ -1,6 +1,3 @@
-SHELL  := env DDNET_DIR=$(DDNET_DIR) $(SHELL)
-DDNET_DIR ?= ../ddnet
-
 CXX := clang++
 CC := clang
 CXX_FLAGS_BASE = \
@@ -38,6 +35,9 @@ test: md5
 		src/test/*.cpp \
 		src/test/*/*.cpp \
 		$(CXX_FLAGS_TEST) -I . -L. libantibot.so -o antibob_test
+
+run_test: test
+	LD_LIBRARY_PATH=. ./antibob_test
 
 md5: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engine/external/md5/md5.h
 	mkdir -p build

@@ -7,10 +7,12 @@ to build your own antibot module.
 ## features
 
 - Makefile
+- tests
 - github CI
 - OOP wrapper around antibot api
 - console command system like in ddnet ``antibot cmdlist``
 - helper methods for sending chat messages (including automatic 0.6/0.7 translation)
+- fully self contained and batteries included (no ddnet source code needed)
 
 You can explore the most interesting code at [src/antibot.cpp](https://github.com/ChillerDragon/antibob/blob/master/src/bob/antibob.cpp)
 the rest are just helpers that you should not have to worry about until you run into their limits.
@@ -18,28 +20,11 @@ All sample use cases are shown in antibot.cpp already.
 
 ## compile
 
-By default it expects the ddnet source code in the same
-directory as antibot
-
 ```
-git clone --recursive git@github.com:ddnet/ddnet
 git clone git@github.com:ChillerDragon/antibob
 cd antibob
 make
 ```
-
-But you can also provide the path to your server source as argument to make
-
-```
-git clone --recursive git@github.com:ddnet-insta/ddnet-insta /tmp/ddnet-insta
-git clone git@github.com:ChillerDragon/antibob
-cd antibob
-make DDNET_DIR=/tmp/ddnet-insta
-```
-
-You might have to create a build/ directory in your DDNET_DIR
-and build the server to get the generated network code which will
-be accessible to antibob
 
 ## run
 
@@ -53,11 +38,35 @@ For development I like to symlink the libantibot.so into the servers build
 directory. But be careful it will be overwritten once the server is rebuild.
 
 ```
+# assumes that you have the ddnet/ repo next to the antibob/ repo
+#
+# sources/
+# ├── antibob
+# └── ddnet
+#
+
+# build antibob
 cd antibob
 make
-cd ../ddnet/build
+
+# navigate to ddnet repo
+cd ../ddnet
+
+# build ddnet server with antibot on
+mkdir -p build
+cd build
+cmake .. -DANTIBOT=ON
 make
+
+# delete null antibot built with the server
+rm libantibot.so
+
+# replace it with symlink into antibob
+# so recompiling antibob and restarting the ddnet server
+# loads the new antibob automatically
 ln ../../antibob/libantibot.so .
+
+# verify it prints antibob not null antibot
 ./DDNet-Server | grep antibot
 ```
 
