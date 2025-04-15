@@ -36,15 +36,17 @@ test: md5
 		src/test/*/*.cpp \
 		$(CXX_FLAGS_TEST) -I . -L. libantibot.so -o antibob_test
 
-run_test: test
-	LD_LIBRARY_PATH=. ./antibob_test
-
-md5: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engine/external/md5/md5.h
+build/md5.o: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engine/external/md5/md5.h
 	mkdir -p build
 	$(CC) \
 		src/ddnet/polybob/engine/external/md5/md5.c \
 		-c \
 		-o build/md5.o
+
+md5: build/md5.o
+
+run_test: test
+	LD_LIBRARY_PATH=. ./antibob_test
 
 clean:
 	rm -rf build
