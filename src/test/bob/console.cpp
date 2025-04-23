@@ -1,9 +1,11 @@
-#include <cstdio>
+#include "bobtest.h"
 
 #include <polybob/base/system.h>
 #include <polybob/game/generated/protocolglue.h>
 
 int main()
 {
-	puts("hello world");
+	CBobTest BobTest;
+	EXPECT_STREQ("foo", "foo");
+	EXPECT_EQ(10, 5 + 5);
 }
