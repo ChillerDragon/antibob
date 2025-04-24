@@ -17,24 +17,25 @@ POLYBOB_SRCS := $(wildcard \
 	      src/ddnet/polybob/game/generated/*.cpp \
 	      src/ddnet/polybob/engine/shared/*.cpp)
 POLYBOB_OBJS := $(patsubst %.cpp,build/objs/polybob/%.o,$(POLYBOB_SRCS))
+POLYBOB_HEADERS := $(patsubst %.cpp,%.h,$(POLYBOB_SRCS))
 
-antibot: md5 $(POLYBOB_OBJS)
+libantibot.so: build/md5.o $(POLYBOB_OBJS)
 	$(CXX) \
 		src/antibob/interface.cpp \
 		src/antibob/*/*.cpp \
 		$(POLYBOB_OBJS) \
 		-Isrc/ddnet \
-		build/*.o \
+		build/md5.o \
 		$(CXXFLAGS) \
 		-rdynamic \
 		-shared \
 		-o libantibot.so
 
-build/objs/polybob/%.o: %.cpp
+build/objs/polybob/%.o: %.cpp %.h
 	@mkdir -p $(dir $@)
 	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
 
-test: md5
+test: build/md5.o
 	$(CXX) \
 		src/antibob/interface.cpp \
 		src/test/*.cpp \
@@ -47,8 +48,6 @@ build/md5.o: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engin
 		src/ddnet/polybob/engine/external/md5/md5.c \
 		-c \
 		-o build/md5.o
-
-md5: build/md5.o
 
 run_test: test
 	LD_LIBRARY_PATH=. ./antibob_test
