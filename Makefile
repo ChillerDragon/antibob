@@ -22,6 +22,9 @@ ANTIBOB_OBJS := $(patsubst %.cpp,build/objs/antibob/%.o,$(ANTIBOB_SRCS))
 BOBTEST_SRCS := $(wildcard src/test/*.cpp)
 BOBTEST_OBJS := $(patsubst %.cpp,build/objs/bobtest/%.o,$(BOBTEST_SRCS))
 
+TESTS_SRCS := $(wildcard src/test/bob/*.cpp)
+TESTS_BINARIES := $(patsubst src/test/bob/%.cpp,build/%_bob_test,$(TESTS_SRCS))
+
 libantibot.so: build/md5.o $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
 	$(CXX) \
 		$(ANTIBOB_OBJS) \
@@ -57,16 +60,16 @@ build/objs/bobtest/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-test: build/md5.o libantibot.so $(BOBTEST_OBJS)
+build/%_bob_test: src/test/bob/%.cpp build/md5.o libantibot.so $(BOBTEST_OBJS)
 	$(CXX) \
 		$(BOBTEST_OBJS) \
-		src/test/*/*.cpp \
+		$< \
 		-Isrc/test \
 		$(CXXFLAGS) \
 		-I . \
 		-L. \
 		libantibot.so \
-		-o antibob_test
+		-o $@
 
 build/md5.o: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engine/external/md5/md5.h
 	mkdir -p build
@@ -75,13 +78,15 @@ build/md5.o: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engin
 		-c \
 		-o build/md5.o
 
-run_test: test
-	LD_LIBRARY_PATH=. ./antibob_test
+tests: $(TESTS_BINARIES)
+
+run_tests: tests
+	$(foreach var,$(TESTS_BINARIES),LD_LIBRARY_PATH=. $(var);)
 
 clean:
 	rm -rf build
 	rm -f libantibot.so
 	rm -f antibot_test
 
-.PHONY: test clean
+.PHONY: run_tests clean
 
