@@ -19,6 +19,9 @@ ANTIBOB_SRCS := $(wildcard \
 	      src/antibob/*/*.cpp)
 ANTIBOB_OBJS := $(patsubst %.cpp,build/objs/antibob/%.o,$(ANTIBOB_SRCS))
 
+BOBTEST_SRCS := $(wildcard src/test/*.cpp)
+BOBTEST_OBJS := $(patsubst %.cpp,build/objs/bobtest/%.o,$(BOBTEST_SRCS))
+
 libantibot.so: build/md5.o $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
 	$(CXX) \
 		$(ANTIBOB_OBJS) \
@@ -46,9 +49,17 @@ build/objs/polybob/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-test: build/md5.o libantibot.so
+build/objs/bobtest/%.o: %.cpp %.h
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+build/objs/bobtest/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+test: build/md5.o libantibot.so $(BOBTEST_OBJS)
 	$(CXX) \
-		src/test/*.cpp \
+		$(BOBTEST_OBJS) \
 		src/test/*/*.cpp \
 		-Isrc/test \
 		$(CXXFLAGS) \
