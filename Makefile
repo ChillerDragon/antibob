@@ -19,10 +19,14 @@ POLYBOB_SRCS := $(wildcard \
 POLYBOB_OBJS := $(patsubst %.cpp,build/objs/polybob/%.o,$(POLYBOB_SRCS))
 POLYBOB_HEADERS := $(patsubst %.cpp,%.h,$(POLYBOB_SRCS))
 
-libantibot.so: build/md5.o $(POLYBOB_OBJS)
+ANTIBOB_SRCS := $(wildcard \
+	      src/antibob/interface.cpp \
+	      src/antibob/*/*.cpp)
+ANTIBOB_OBJS := $(patsubst %.cpp,build/objs/antibob/%.o,$(ANTIBOB_SRCS))
+
+libantibot.so: build/md5.o $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
 	$(CXX) \
-		src/antibob/interface.cpp \
-		src/antibob/*/*.cpp \
+		$(ANTIBOB_OBJS) \
 		$(POLYBOB_OBJS) \
 		-Isrc/ddnet \
 		build/md5.o \
@@ -30,6 +34,14 @@ libantibot.so: build/md5.o $(POLYBOB_OBJS)
 		-rdynamic \
 		-shared \
 		-o libantibot.so
+
+build/objs/antibob/%.o: %.cpp %.h
+	@mkdir -p $(dir $@)
+	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
+
+build/objs/antibob/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
 
 build/objs/polybob/%.o: %.cpp %.h
 	@mkdir -p $(dir $@)
