@@ -31,6 +31,10 @@ libantibot.so: build/md5.o $(POLYBOB_OBJS)
 		-shared \
 		-o libantibot.so
 
+build/objs/polybob/%.o: %.cpp %.h
+	@mkdir -p $(dir $@)
+	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
+
 build/objs/polybob/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
