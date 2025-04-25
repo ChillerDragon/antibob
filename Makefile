@@ -3,13 +3,9 @@ CC := clang
 CXXFLAGS := \
 	    -std=c++17 \
 	    -Isrc/antibob \
-	    -rdynamic \
+	    -Isrc/ddnet \
 	    -fPIC \
 	    -Og -g
-CXX_FLAGS_TEST = \
-	    $(CXXFLAGS) \
-	    -Isrc/ddnet \
-	    -Isrc/test
 
 POLYBOB_SRCS := $(wildcard \
 	      src/ddnet/polybob/*/*.cpp \
@@ -17,7 +13,6 @@ POLYBOB_SRCS := $(wildcard \
 	      src/ddnet/polybob/game/generated/*.cpp \
 	      src/ddnet/polybob/engine/shared/*.cpp)
 POLYBOB_OBJS := $(patsubst %.cpp,build/objs/polybob/%.o,$(POLYBOB_SRCS))
-POLYBOB_HEADERS := $(patsubst %.cpp,%.h,$(POLYBOB_SRCS))
 
 ANTIBOB_SRCS := $(wildcard \
 	      src/antibob/interface.cpp \
@@ -37,26 +32,30 @@ libantibot.so: build/md5.o $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
 
 build/objs/antibob/%.o: %.cpp %.h
 	@mkdir -p $(dir $@)
-	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 build/objs/antibob/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 build/objs/polybob/%.o: %.cpp %.h
 	@mkdir -p $(dir $@)
-	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 build/objs/polybob/%.o: %.cpp
 	@mkdir -p $(dir $@)
-	$(CXX) -Isrc/antibob -Isrc/ddnet -fPIC -Og -g -std=c++17 -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 test: build/md5.o libantibot.so
 	$(CXX) \
-		src/antibob/interface.cpp \
 		src/test/*.cpp \
 		src/test/*/*.cpp \
-		$(CXX_FLAGS_TEST) -I . -L. libantibot.so -o antibob_test
+		-Isrc/test \
+		$(CXXFLAGS) \
+		-I . \
+		-L. \
+		libantibot.so \
+		-o antibob_test
 
 build/md5.o: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engine/external/md5/md5.h
 	mkdir -p build
