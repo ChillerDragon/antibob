@@ -9,6 +9,7 @@ CONSOLE_COMMAND("help", "s[command]", ComCmdHelp, this, "prints details for a gi
 CONSOLE_COMMAND("cmdlist", "", ComCmdlist, this, "lists all antibot commands (see also help)")
 CONSOLE_COMMAND("dump", "?r[search]", ComDump, this, "shows current antibot data for all players")
 CONSOLE_COMMAND("events", "i[client id]", ComEvents, this, "shows details about triggered detections for a given player")
+CONSOLE_COMMAND("version", "", ComVersion, this, "shows version of the antibob module")
 
 //
 // Add new commands for forks below this comment to avoid merge conflicts.

@@ -1,4 +1,5 @@
 #include <bob/antibob.h>
+#include <bob/version.h>
 #include <polybob/base/log.h>
 
 void CAntibob::ComTest(CBobResult *pResult, void *pUserData)
@@ -29,4 +30,9 @@ void CAntibob::ComEvents(CBobResult *pResult, void *pUserData)
 {
 	CAntibob *pSelf = (CAntibob *)pUserData;
 	pSelf->RconEvents(pResult->GetInteger(0));
+}
+
+void CAntibob::ComVersion(CBobResult *pResult, void *pUserData)
+{
+	log_info("antibot", "antibob v" ANTIBOB_VERSION " git revision hash: %s", GIT_SHORTREV_HASH);
 }

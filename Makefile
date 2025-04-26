@@ -25,7 +25,7 @@ BOBTEST_OBJS := $(patsubst %.cpp,build/objs/bobtest/%.o,$(BOBTEST_SRCS))
 TESTS_SRCS := $(wildcard src/test/bob/*.cpp)
 TESTS_BINARIES := $(patsubst src/test/bob/%.cpp,build/%_bob_test,$(TESTS_SRCS))
 
-libantibot.so: build/md5.o $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
+libantibot.so: build/md5.o git_hash $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
 	$(CXX) \
 		$(ANTIBOB_OBJS) \
 		$(POLYBOB_OBJS) \
@@ -60,7 +60,7 @@ build/objs/bobtest/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-build/%_bob_test: src/test/bob/%.cpp build/md5.o libantibot.so $(BOBTEST_OBJS)
+build/%_bob_test: src/test/bob/%.cpp build/md5.o git_hash libantibot.so $(BOBTEST_OBJS)
 	$(CXX) \
 		$(BOBTEST_OBJS) \
 		$< \
@@ -70,6 +70,15 @@ build/%_bob_test: src/test/bob/%.cpp build/md5.o libantibot.so $(BOBTEST_OBJS)
 		-L. \
 		libantibot.so \
 		-o $@
+
+GIT_HASH := $(shell git rev-parse --short=16 HEAD)
+
+git_hash: build/src/antibob/bob/generated/git_revision.cpp
+
+build/src/antibob/bob/generated/git_revision.cpp:
+	mkdir -p build/src/antibob/bob/generated
+	echo "const char *GIT_SHORTREV_HASH = \"$(GIT_HASH)\";" > \
+		build/src/antibob/bob/generated/git_revision.cpp
 
 build/md5.o: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engine/external/md5/md5.h
 	mkdir -p build

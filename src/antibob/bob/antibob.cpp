@@ -13,6 +13,7 @@
 #include <bob/console.h>
 #include <bob/detection_event.h>
 #include <bob/gameserver.h>
+#include <bob/version.h>
 
 #include <cstdio>
 #include <cstring>
@@ -147,6 +148,7 @@ bool CAntibob::OnSayNetMessage7(const protocol7::CNetMsg_Cl_Say *pMsg, int Clien
 void CAntibob::OnInit(CAntibotData *pData)
 {
 	log_info("antibot", "antibob antibot initialized");
+	log_info("antibot", "git revision hash: %s", GIT_SHORTREV_HASH);
 	RegisterCommands();
 	m_ConfigManager.OnInit();
 	m_Console.OnInit(&m_ConfigManager);
