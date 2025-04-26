@@ -70,7 +70,7 @@ move_file() {
 			exit 1
 		fi
 	else
-		if diff -u --color=auto "$tmpfile" "$dst"
+		if ! diff -u --color=auto "$tmpfile" "$dst"
 		then
 			ERROR=1
 		fi
