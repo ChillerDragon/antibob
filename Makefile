@@ -78,7 +78,7 @@ GIT_HASH := $(shell git rev-parse --short=16 HEAD)
 
 build/src/antibob/bob/generated/git_revision.cpp:
 	mkdir -p build/src/antibob/bob/generated
-	echo "const char *GIT_SHORTREV_HASH = \"$(GIT_HASH)\";" > \
+	echo "const char *BOB_GIT_SHORTREV_HASH = \"$(GIT_HASH)\";" > \
 		build/src/antibob/bob/generated/git_revision.cpp
 
 build/md5.o: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engine/external/md5/md5.h

@@ -34,5 +34,5 @@ void CAntibob::ComEvents(CBobResult *pResult, void *pUserData)
 
 void CAntibob::ComVersion(CBobResult *pResult, void *pUserData)
 {
-	log_info("antibot", "antibob v" ANTIBOB_VERSION " git revision hash: %s", GIT_SHORTREV_HASH);
+	log_info("antibot", "antibob v" ANTIBOB_VERSION " git revision hash: %s", BOB_GIT_SHORTREV_HASH);
 }
