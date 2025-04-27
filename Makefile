@@ -26,14 +26,14 @@ TESTS_SRCS := $(wildcard src/test/bob/*.cpp)
 TESTS_BINARIES := $(patsubst src/test/bob/%.cpp,build/%_bob_test,$(TESTS_SRCS))
 
 DEPENDENCIES := build/md5.o \
-		build/src/antibob/bob/generated/git_revision.cpp
+		build/objs/generated/git_revision.o
 
 libantibot.so: $(DEPENDENCIES) $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
 	$(CXX) \
 		$(ANTIBOB_OBJS) \
 		$(POLYBOB_OBJS) \
+		$(DEPENDENCIES) \
 		-Isrc/ddnet \
-		build/md5.o \
 		$(CXXFLAGS) \
 		-rdynamic \
 		-shared \
@@ -75,6 +75,10 @@ build/%_bob_test: src/test/bob/%.cpp libantibot.so $(DEPENDENCIES) $(BOBTEST_OBJ
 		-o $@
 
 GIT_HASH := $(shell git rev-parse --short=16 HEAD)
+
+build/objs/generated/%.o: build/src/antibob/bob/generated/%.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 build/src/antibob/bob/generated/git_revision.cpp:
 	mkdir -p build/src/antibob/bob/generated
