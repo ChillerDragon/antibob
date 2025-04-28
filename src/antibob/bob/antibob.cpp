@@ -123,7 +123,7 @@ void CAntibob::RconEvents(int ClientId)
 // antibob special hooks
 //
 
-bool CAntibob::OnSayNetMessage(const antibob::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
+bool CAntibob::OnSayNetMessage(const polybob::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
 {
 	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
 		if(Config()->m_AbAutoKick)
@@ -133,9 +133,9 @@ bool CAntibob::OnSayNetMessage(const antibob::CNetMsg_Cl_Say *pMsg, int ClientId
 	return false;
 }
 
-bool CAntibob::OnSayNetMessage7(const antibob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
+bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
 {
-	if(pMsg->m_Mode == antibob::protocol7::CHAT_WHISPER)
+	if(pMsg->m_Mode == polybob::protocol7::CHAT_WHISPER)
 		if(str_find_nocase(pMsg->m_pMessage, "i use a cheat"))
 			Kick(ClientId, "self report");
 	return false;

@@ -1,6 +1,6 @@
 #include "protocolglue.h"
 
-namespace antibob {
+namespace polybob {
 
 const int gs_Msg_SixToSeven[50] = {
 	0, 1, 2, 3, 5, -1, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 24, 25, 26, 27, -1, 28, 30, 31, 32, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 35, 37, 38, -1, -1, -1, -1, -1, -1};
@@ -11,4 +11,4 @@ const int gs_Obj_SixToSeven[21] = {
 const int gs_Obj_SevenToSix[25] = {
 	0, 1, 2, 3, 4, 5, 7, -1, -1, 8, 9, 10, 12, -1, -1, -1, 13, 14, 15, 16, 17, 19, -1, -1, -1};
 
-} // namespace antibob
+} // namespace polybob

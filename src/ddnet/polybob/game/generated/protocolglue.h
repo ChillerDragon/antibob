@@ -1,6 +1,6 @@
 #pragma once
 
-namespace antibob {
+namespace polybob {
 
 extern const int gs_Msg_SixToSeven[50];
 inline int Msg_SixToSeven(int a)
@@ -31,4 +31,4 @@ inline int Obj_SevenToSix(int a)
 	return gs_Obj_SevenToSix[a];
 }
 
-} // namespace antibob
+} // namespace polybob

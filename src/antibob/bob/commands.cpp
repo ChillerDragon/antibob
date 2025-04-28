@@ -5,7 +5,7 @@
 void CAntibob::ComTest(CBobResult *pResult, void *pUserData)
 {
 	CAntibob *pSelf = (CAntibob *)pUserData;
-	pSelf->SendChat(-1, antibob::TEAM_ALL, "HELLO FROM TEST COMAMNDDO");
+	pSelf->SendChat(-1, polybob::TEAM_ALL, "HELLO FROM TEST COMAMNDDO");
 }
 
 void CAntibob::ComCmdHelp(CBobResult *pResult, void *pUserData)

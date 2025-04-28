@@ -5,7 +5,7 @@ class CUnpacker;
 
 #include <polybob/engine/shared/teehistorian_ex.h>
 
-namespace antibob {
+namespace polybob {
 
 enum
 {
@@ -1501,4 +1501,4 @@ public:
 	const char *FailedMsgOn() const;
 };
 
-} // namespace antibob
+} // namespace polybob

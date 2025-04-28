@@ -2,7 +2,7 @@
 
 enum
 {
-	__MAPITEMTYPE_UUID_HELPER = antibob::OFFSET_MAPITEMTYPE_UUID - 1,
+	__MAPITEMTYPE_UUID_HELPER = polybob::OFFSET_MAPITEMTYPE_UUID - 1,
 #define UUID(id, name) id,
 #include "mapitems_ex_types.h"
 #undef UUID

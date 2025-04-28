@@ -9,7 +9,7 @@ static CBobUuidManager CreateGlobalBobUuidManager()
 	CBobUuidManager Manager;
 	RegisterUuids(&Manager);
 	RegisterTeehistorianUuids(&Manager);
-	antibob::RegisterGameUuids(&Manager);
+	polybob::RegisterGameUuids(&Manager);
 	return Manager;
 }
 

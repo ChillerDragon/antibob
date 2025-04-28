@@ -2,7 +2,7 @@
 #include <polybob/base/system.h>
 #include <polybob/engine/shared/packer.h>
 #include <polybob/engine/shared/protocol.h>
-namespace antibob {
+namespace polybob {
 namespace protocol7 {
 CNetObjHandler::CNetObjHandler()
 {
@@ -1089,4 +1089,4 @@ void *CNetObjHandler::SecureUnpackMsg(int Type, CUnpacker *pUnpacker)
 	return m_aMsgData;
 };
 } // namespace protocol7
-} // namespace antibob
+} // namespace polybob

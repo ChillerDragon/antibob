@@ -6,7 +6,7 @@
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/game/mapitems_ex.h>
 
-namespace antibob {
+namespace polybob {
 
 CNetObjHandler::CNetObjHandler()
 {
@@ -1391,4 +1391,4 @@ void RegisterGameUuids(CBobUuidManager *pManager)
 	RegisterMapItemTypeUuids(pManager);
 }
 
-} // namespace antibob
+} // namespace polybob

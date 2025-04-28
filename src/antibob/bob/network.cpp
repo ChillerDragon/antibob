@@ -23,15 +23,15 @@ bool CNetwork::RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup)
 		{
 			if(MsgId >= OFFSET_UUID)
 				;
-			else if(MsgId >= antibob::NETMSG_MAP_CHANGE && MsgId <= antibob::NETMSG_MAP_DATA)
+			else if(MsgId >= polybob::NETMSG_MAP_CHANGE && MsgId <= polybob::NETMSG_MAP_DATA)
 				;
-			else if(MsgId >= antibob::NETMSG_CON_READY && MsgId <= antibob::NETMSG_INPUTTIMING)
+			else if(MsgId >= polybob::NETMSG_CON_READY && MsgId <= polybob::NETMSG_INPUTTIMING)
 				MsgId += 1;
-			else if(MsgId == antibob::NETMSG_RCON_LINE)
-				MsgId = antibob::protocol7::NETMSG_RCON_LINE;
-			else if(MsgId >= antibob::NETMSG_PING && MsgId <= antibob::NETMSG_PING_REPLY)
+			else if(MsgId == polybob::NETMSG_RCON_LINE)
+				MsgId = polybob::protocol7::NETMSG_RCON_LINE;
+			else if(MsgId >= polybob::NETMSG_PING && MsgId <= polybob::NETMSG_PING_REPLY)
 				MsgId += 4;
-			else if(MsgId >= antibob::NETMSG_RCON_CMD_ADD && MsgId <= antibob::NETMSG_RCON_CMD_REM)
+			else if(MsgId >= polybob::NETMSG_RCON_CMD_ADD && MsgId <= polybob::NETMSG_RCON_CMD_REM)
 				MsgId -= 11;
 			else
 			{
@@ -42,7 +42,7 @@ bool CNetwork::RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup)
 		else
 		{
 			if(MsgId >= 0 && MsgId < OFFSET_UUID)
-				MsgId = antibob::Msg_SixToSeven(MsgId);
+				MsgId = polybob::Msg_SixToSeven(MsgId);
 
 			if(MsgId < 0)
 				return false;
@@ -91,7 +91,7 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 	if(!pAntibob->m_apPlayers[ClientId])
 		return false;
 
-	CMsgPacker Packer(antibob::NETMSG_EX);
+	CMsgPacker Packer(polybob::NETMSG_EX);
 	Packer.Reset();
 
 	CUnpacker Unpacker;
@@ -124,13 +124,13 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 
 	if(IsSixup(ClientId))
 	{
-		if(Msg == antibob::protocol7::NETMSGTYPE_CL_SAY)
-			pAntibob->OnSayNetMessage7(static_cast<antibob::protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+		if(Msg == polybob::protocol7::NETMSGTYPE_CL_SAY)
+			pAntibob->OnSayNetMessage7(static_cast<polybob::protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
 	}
 	else
 	{
-		if(Msg == antibob::NETMSGTYPE_CL_SAY)
-			pAntibob->OnSayNetMessage(static_cast<antibob::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+		if(Msg == polybob::NETMSGTYPE_CL_SAY)
+			pAntibob->OnSayNetMessage(static_cast<polybob::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
 	}
 
 	return false;

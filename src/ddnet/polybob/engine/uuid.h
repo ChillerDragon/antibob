@@ -2,6 +2,6 @@
 
 #include <polybob/engine/shared/bob_uuid_manager.h>
 
-namespace antibob {
+namespace polybob {
 void RegisterGameUuids(CBobUuidManager *pManager);
 }

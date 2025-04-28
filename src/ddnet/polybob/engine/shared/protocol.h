@@ -1,7 +1,7 @@
 #include <bitset>
 #include <polybob/engine/shared/protocol7.h>
 
-namespace antibob {
+namespace polybob {
 
 /*
 	Connection diagram - How the initialization works.
@@ -137,4 +137,4 @@ enum
 
 typedef std::bitset<MAX_CLIENTS> CClientMask;
 
-} // namespace antibob
+} // namespace polybob

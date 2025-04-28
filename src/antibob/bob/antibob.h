@@ -35,10 +35,10 @@ public:
 	//
 
 	// return true to drop the message
-	bool OnSayNetMessage(const antibob::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker);
+	bool OnSayNetMessage(const polybob::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker);
 
 	// return true to drop the message
-	bool OnSayNetMessage7(const antibob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker);
+	bool OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker);
 
 	//
 	// ddnet antibot interface hooks

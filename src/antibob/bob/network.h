@@ -34,8 +34,8 @@ class CNetwork
 
 public:
 	CAntibotClient m_aClients[ANTIBOT_MAX_CLIENTS];
-	antibob::CNetObjHandler m_NetObjHandler;
-	antibob::protocol7::CNetObjHandler m_NetObjHandler7;
+	polybob::CNetObjHandler m_NetObjHandler;
+	polybob::protocol7::CNetObjHandler m_NetObjHandler7;
 
 	void OnInit(CAntibotData *pData);
 	void OnClientConnect(int ClientId, bool Sixup);
@@ -51,7 +51,7 @@ public:
 	static bool RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup);
 	bool SendMsg(CMsgPacker *pMsg, int Flags, int ClientId);
 
-	template<class T, typename std::enable_if<!antibob::protocol7::is_sixup<T>::value, int>::type = 0>
+	template<class T, typename std::enable_if<!polybob::protocol7::is_sixup<T>::value, int>::type = 0>
 	int SendPackMsg(const T *pMsg, int Flags, int ClientId)
 	{
 		int Result = 0;
@@ -72,16 +72,16 @@ public:
 	int SendPackMsgOne(const T *pMsg, int Flags, int ClientId)
 	{
 		dbg_assert(ClientId != -1, "SendPackMsgOne called with -1");
-		CMsgPacker Packer(T::ms_MsgId, false, antibob::protocol7::is_sixup<T>::value);
+		CMsgPacker Packer(T::ms_MsgId, false, polybob::protocol7::is_sixup<T>::value);
 
 		if(pMsg->Pack(&Packer))
 			return -1;
 		return SendMsg(&Packer, Flags, ClientId);
 	}
 
-	int SendPackMsgTranslate(const antibob::CNetMsg_Sv_Chat *pMsg, int Flags, int ClientId)
+	int SendPackMsgTranslate(const polybob::CNetMsg_Sv_Chat *pMsg, int Flags, int ClientId)
 	{
-		antibob::CNetMsg_Sv_Chat MsgCopy;
+		polybob::CNetMsg_Sv_Chat MsgCopy;
 		mem_copy(&MsgCopy, pMsg, sizeof(MsgCopy));
 
 		// TODO: do not crash 0.6 vanilla clients
@@ -97,10 +97,10 @@ public:
 
 		if(IsSixup(ClientId))
 		{
-			antibob::protocol7::CNetMsg_Sv_Chat Msg7;
+			polybob::protocol7::CNetMsg_Sv_Chat Msg7;
 			Msg7.m_ClientId = MsgCopy.m_ClientId;
 			Msg7.m_pMessage = MsgCopy.m_pMessage;
-			Msg7.m_Mode = MsgCopy.m_Team > 0 ? antibob::protocol7::CHAT_TEAM : antibob::protocol7::CHAT_ALL;
+			Msg7.m_Mode = MsgCopy.m_Team > 0 ? polybob::protocol7::CHAT_TEAM : polybob::protocol7::CHAT_ALL;
 			Msg7.m_TargetId = -1;
 			return SendPackMsgOne(&Msg7, Flags, ClientId);
 		}
