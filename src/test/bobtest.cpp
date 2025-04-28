@@ -4,6 +4,18 @@
 
 #include "bobtest.h"
 
+bool CBobTest::ExpectNe(int Actual, int Expected, const char *pFilename, int LineNumber)
+{
+	if(Actual != Expected)
+		return true;
+
+	m_NumErrors++;
+	fprintf(stderr, "[assert] expect not equal failed in %s:%d\n", pFilename, LineNumber);
+	fprintf(stderr, "[assert]   expected not: %d\n", Expected);
+	fprintf(stderr, "[assert]            got: %d\n", Actual);
+	return false;
+}
+
 bool CBobTest::ExpectEq(int Actual, int Expected, const char *pFilename, int LineNumber)
 {
 	if(Actual == Expected)
