@@ -1,5 +1,4 @@
-#ifndef BASE_HASH_CTXT_H
-#define BASE_HASH_CTXT_H
+#pragma once
 
 #include "hash.h"
 #include <cstdint>
@@ -31,5 +30,3 @@ SHA256_DIGEST sha256_finish(SHA256_CTX *ctxt);
 void md5_init(MD5_CTX *ctxt);
 void md5_update(MD5_CTX *ctxt, const void *data, size_t data_len);
 MD5_DIGEST md5_finish(MD5_CTX *ctxt);
-
-#endif // BASE_HASH_CTXT_H

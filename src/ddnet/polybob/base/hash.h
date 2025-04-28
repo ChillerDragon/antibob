@@ -1,5 +1,4 @@
-#ifndef BASE_HASH_H
-#define BASE_HASH_H
+#pragma once
 
 #include <cstddef> // size_t
 
@@ -49,5 +48,3 @@ inline bool operator!=(const MD5_DIGEST &that, const MD5_DIGEST &other)
 {
 	return !(that == other);
 }
-
-#endif // BASE_HASH_H
