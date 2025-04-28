@@ -3,7 +3,7 @@
 #include <polybob/engine/shared/bob_uuid_manager.h>
 #include <polybob/engine/shared/packer.h>
 
-class CMsgPacker : public CPacker
+class CMsgPacker : public polybob::CPacker
 {
 public:
 	int m_MsgId;

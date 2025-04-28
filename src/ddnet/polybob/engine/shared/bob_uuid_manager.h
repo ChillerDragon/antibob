@@ -45,8 +45,10 @@ struct CNameIndexed
 	bool operator==(const CNameIndexed &Other) const { return m_Uuid == Other.m_Uuid; }
 };
 
+namespace polybob {
 class CPacker;
 class CUnpacker;
+}
 
 class CBobUuidManager
 {
@@ -60,9 +62,9 @@ public:
 	int LookupUuid(CUuid Uuid) const;
 	int NumUuids() const;
 
-	int UnpackUuid(CUnpacker *pUnpacker) const;
-	int UnpackUuid(CUnpacker *pUnpacker, CUuid *pOut) const;
-	void PackUuid(int Id, CPacker *pPacker) const;
+	int UnpackUuid(polybob::CUnpacker *pUnpacker) const;
+	int UnpackUuid(polybob::CUnpacker *pUnpacker, CUuid *pOut) const;
+	void PackUuid(int Id, polybob::CPacker *pPacker) const;
 
 	void DebugDump() const;
 };

@@ -3,6 +3,8 @@
 #include "compression.h"
 #include "packer.h"
 
+namespace polybob {
+
 CAbstractPacker::CAbstractPacker(unsigned char *pBuffer, size_t Size) :
 	m_pBuffer(pBuffer),
 	m_BufferSize(Size)
@@ -215,4 +217,6 @@ const unsigned char *CUnpacker::GetRaw(int Size)
 	// "unpack" the data
 	m_pCurrent += Size;
 	return pPtr;
+}
+
 }

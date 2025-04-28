@@ -160,13 +160,13 @@ int CBobUuidManager::NumUuids() const
 	return m_vNames.size();
 }
 
-int CBobUuidManager::UnpackUuid(CUnpacker *pUnpacker) const
+int CBobUuidManager::UnpackUuid(polybob::CUnpacker *pUnpacker) const
 {
 	CUuid Temp;
 	return UnpackUuid(pUnpacker, &Temp);
 }
 
-int CBobUuidManager::UnpackUuid(CUnpacker *pUnpacker, CUuid *pOut) const
+int CBobUuidManager::UnpackUuid(polybob::CUnpacker *pUnpacker, CUuid *pOut) const
 {
 	const CUuid *pUuid = (const CUuid *)pUnpacker->GetRaw(sizeof(*pUuid));
 	if(pUuid == nullptr)
@@ -177,7 +177,7 @@ int CBobUuidManager::UnpackUuid(CUnpacker *pUnpacker, CUuid *pOut) const
 	return LookupUuid(*pUuid);
 }
 
-void CBobUuidManager::PackUuid(int Id, CPacker *pPacker) const
+void CBobUuidManager::PackUuid(int Id, polybob::CPacker *pPacker) const
 {
 	CUuid Uuid = GetUuid(Id);
 	pPacker->AddRaw(&Uuid, sizeof(Uuid));

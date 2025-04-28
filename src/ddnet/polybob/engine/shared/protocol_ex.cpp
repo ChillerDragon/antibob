@@ -14,7 +14,7 @@ void RegisterUuids(CBobUuidManager *pManager)
 #undef UUID
 }
 
-int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CMsgPacker *pPacker)
+int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, polybob::CUnpacker *pUnpacker, CMsgPacker *pPacker)
 {
 	*pId = 0;
 	*pSys = false;

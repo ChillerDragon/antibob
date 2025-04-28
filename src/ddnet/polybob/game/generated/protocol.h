@@ -1,11 +1,12 @@
 #pragma once
 
-class CUnpacker;
 #include <polybob/engine/message.h>
 
 #include <polybob/engine/shared/teehistorian_ex.h>
 
 namespace polybob {
+
+class CUnpacker;
 
 enum
 {

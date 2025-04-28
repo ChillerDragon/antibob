@@ -12,7 +12,7 @@ void CNetwork::OnInit(CAntibotData *pData)
 	m_pData = pData;
 }
 
-bool CNetwork::RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup)
+bool CNetwork::RepackMsg(const CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup)
 {
 	int MsgId = pMsg->m_MsgId;
 	Packer.Reset();
@@ -65,7 +65,7 @@ bool CNetwork::RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup)
 
 bool CNetwork::SendMsg(CMsgPacker *pMsg, int Flags, int ClientId)
 {
-	CPacker Packer;
+	polybob::CPacker Packer;
 	if(!RepackMsg(pMsg, Packer, m_aClients[ClientId].m_Sixup))
 		return false;
 
@@ -94,7 +94,7 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 	CMsgPacker Packer(polybob::NETMSG_EX);
 	Packer.Reset();
 
-	CUnpacker Unpacker;
+	polybob::CUnpacker Unpacker;
 	Unpacker.Reset(pData, Size);
 
 	int Msg;

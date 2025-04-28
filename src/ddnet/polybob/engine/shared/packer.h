@@ -2,6 +2,8 @@
 
 #include <cstddef>
 
+namespace polybob {
+
 /**
  * Abstract packer implementation. Subclasses must supply the buffer.
  */
@@ -74,3 +76,5 @@ public:
 	int CompleteSize() const { return m_pEnd - m_pStart; }
 	const unsigned char *CompleteData() const { return m_pStart; }
 };
+
+}

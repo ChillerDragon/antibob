@@ -1,8 +1,8 @@
 #pragma once
 
-class CUnpacker;
 #include <polybob/engine/message.h>
 namespace polybob {
+class CUnpacker;
 namespace protocol7 {
 
 enum

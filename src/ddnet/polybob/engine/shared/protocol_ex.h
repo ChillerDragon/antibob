@@ -3,7 +3,9 @@
 #include <polybob/engine/shared/bob_uuid_manager.h>
 
 class CMsgPacker;
+namespace polybob {
 class CUnpacker;
+}
 
 enum
 {
@@ -32,4 +34,4 @@ enum
 };
 
 void RegisterUuids(CBobUuidManager *pManager);
-int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, CUnpacker *pUnpacker, CMsgPacker *pPacker);
+int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, polybob::CUnpacker *pUnpacker, CMsgPacker *pPacker);
