@@ -1,5 +1,7 @@
 #pragma once
 
+namespace antibob {
+
 extern const int gs_Msg_SixToSeven[50];
 inline int Msg_SixToSeven(int a)
 {
@@ -27,4 +29,6 @@ inline int Obj_SevenToSix(int a)
 	if(a < 0 || a >= 25)
 		return -1;
 	return gs_Obj_SevenToSix[a];
+}
+
 }

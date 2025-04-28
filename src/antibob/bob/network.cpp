@@ -42,7 +42,7 @@ bool CNetwork::RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup)
 		else
 		{
 			if(MsgId >= 0 && MsgId < OFFSET_UUID)
-				MsgId = Msg_SixToSeven(MsgId);
+				MsgId = antibob::Msg_SixToSeven(MsgId);
 
 			if(MsgId < 0)
 				return false;
