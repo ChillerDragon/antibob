@@ -5,7 +5,8 @@ CXXFLAGS := \
 	    -Isrc/antibob \
 	    -Isrc/ddnet \
 	    -fPIC \
-	    -Og -g
+	    -Og -g \
+	    -fsanitize=address,undefined -fsanitize-recover=address,undefined -fno-omit-frame-pointer
 
 POLYBOB_SRCS := $(wildcard \
 	      src/ddnet/polybob/*/*.cpp \
