@@ -7,11 +7,11 @@
 #include <algorithm>
 #include <cstdio>
 
-static const CUuid TEEWORLDS_NAMESPACE = {{// "e05ddaaa-c4e6-4cfb-b642-5d48e80c0029"
+static const CUuid BOB_TEEWORLDS_NAMESPACE = {{// "e05ddaaa-c4e6-4cfb-b642-5d48e80c0029"
 	0xe0, 0x5d, 0xda, 0xaa, 0xc4, 0xe6, 0x4c, 0xfb,
 	0xb6, 0x42, 0x5d, 0x48, 0xe8, 0x0c, 0x00, 0x29}};
 
-const CUuid UUID_ZEROED = {{// "00000000-0000-0000-0000-000000000000"
+const CUuid BOB_UUID_ZEROED = {{// "00000000-0000-0000-0000-000000000000"
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
@@ -35,7 +35,7 @@ CUuid CalculateUuid(const char *pName)
 {
 	MD5_CTX Md5;
 	md5_init(&Md5);
-	md5_update(&Md5, TEEWORLDS_NAMESPACE.m_aData, sizeof(TEEWORLDS_NAMESPACE.m_aData));
+	md5_update(&Md5, BOB_TEEWORLDS_NAMESPACE.m_aData, sizeof(BOB_TEEWORLDS_NAMESPACE.m_aData));
 	// Without terminating NUL.
 	md5_update(&Md5, (const unsigned char *)pName, str_length(pName));
 	MD5_DIGEST Digest = md5_finish(&Md5);

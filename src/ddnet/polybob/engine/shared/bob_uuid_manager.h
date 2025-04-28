@@ -21,7 +21,7 @@ struct CUuid
 	bool operator<(const CUuid &Other) const;
 };
 
-extern const CUuid UUID_ZEROED;
+extern const CUuid BOB_UUID_ZEROED;
 
 CUuid RandomUuid();
 CUuid CalculateUuid(const char *pName);
