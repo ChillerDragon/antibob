@@ -2,6 +2,7 @@
 
 class CUnpacker;
 #include <polybob/engine/message.h>
+namespace antibob {
 namespace protocol7 {
 
 enum
@@ -1257,3 +1258,4 @@ public:
 };
 
 } // namespace protocol7
+}

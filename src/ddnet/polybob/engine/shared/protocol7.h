@@ -1,5 +1,6 @@
 #include <polybob/base/types.h>
 
+namespace antibob {
 namespace protocol7 {
 
 enum
@@ -60,3 +61,4 @@ enum
 };
 
 } // namespace protocol7
+}

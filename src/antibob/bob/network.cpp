@@ -28,7 +28,7 @@ bool CNetwork::RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup)
 			else if(MsgId >= NETMSG_CON_READY && MsgId <= NETMSG_INPUTTIMING)
 				MsgId += 1;
 			else if(MsgId == NETMSG_RCON_LINE)
-				MsgId = protocol7::NETMSG_RCON_LINE;
+				MsgId = antibob::protocol7::NETMSG_RCON_LINE;
 			else if(MsgId >= NETMSG_PING && MsgId <= NETMSG_PING_REPLY)
 				MsgId += 4;
 			else if(MsgId >= NETMSG_RCON_CMD_ADD && MsgId <= NETMSG_RCON_CMD_REM)
@@ -124,8 +124,8 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 
 	if(IsSixup(ClientId))
 	{
-		if(Msg == protocol7::NETMSGTYPE_CL_SAY)
-			pAntibob->OnSayNetMessage7(static_cast<protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+		if(Msg == antibob::protocol7::NETMSGTYPE_CL_SAY)
+			pAntibob->OnSayNetMessage7(static_cast<antibob::protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
 	}
 	else
 	{

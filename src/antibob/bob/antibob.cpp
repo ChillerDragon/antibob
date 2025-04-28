@@ -133,9 +133,9 @@ bool CAntibob::OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const C
 	return false;
 }
 
-bool CAntibob::OnSayNetMessage7(const protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
+bool CAntibob::OnSayNetMessage7(const antibob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
 {
-	if(pMsg->m_Mode == protocol7::CHAT_WHISPER)
+	if(pMsg->m_Mode == antibob::protocol7::CHAT_WHISPER)
 		if(str_find_nocase(pMsg->m_pMessage, "i use a cheat"))
 			Kick(ClientId, "self report");
 	return false;

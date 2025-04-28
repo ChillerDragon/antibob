@@ -35,7 +35,7 @@ class CNetwork
 public:
 	CAntibotClient m_aClients[ANTIBOT_MAX_CLIENTS];
 	CNetObjHandler m_NetObjHandler;
-	protocol7::CNetObjHandler m_NetObjHandler7;
+	antibob::protocol7::CNetObjHandler m_NetObjHandler7;
 
 	void OnInit(CAntibotData *pData);
 	void OnClientConnect(int ClientId, bool Sixup);
@@ -51,7 +51,7 @@ public:
 	static bool RepackMsg(const CMsgPacker *pMsg, CPacker &Packer, bool Sixup);
 	bool SendMsg(CMsgPacker *pMsg, int Flags, int ClientId);
 
-	template<class T, typename std::enable_if<!protocol7::is_sixup<T>::value, int>::type = 0>
+	template<class T, typename std::enable_if<!antibob::protocol7::is_sixup<T>::value, int>::type = 0>
 	int SendPackMsg(const T *pMsg, int Flags, int ClientId)
 	{
 		int Result = 0;
@@ -72,7 +72,7 @@ public:
 	int SendPackMsgOne(const T *pMsg, int Flags, int ClientId)
 	{
 		dbg_assert(ClientId != -1, "SendPackMsgOne called with -1");
-		CMsgPacker Packer(T::ms_MsgId, false, protocol7::is_sixup<T>::value);
+		CMsgPacker Packer(T::ms_MsgId, false, antibob::protocol7::is_sixup<T>::value);
 
 		if(pMsg->Pack(&Packer))
 			return -1;
@@ -97,10 +97,10 @@ public:
 
 		if(IsSixup(ClientId))
 		{
-			protocol7::CNetMsg_Sv_Chat Msg7;
+			antibob::protocol7::CNetMsg_Sv_Chat Msg7;
 			Msg7.m_ClientId = MsgCopy.m_ClientId;
 			Msg7.m_pMessage = MsgCopy.m_pMessage;
-			Msg7.m_Mode = MsgCopy.m_Team > 0 ? protocol7::CHAT_TEAM : protocol7::CHAT_ALL;
+			Msg7.m_Mode = MsgCopy.m_Team > 0 ? antibob::protocol7::CHAT_TEAM : antibob::protocol7::CHAT_ALL;
 			Msg7.m_TargetId = -1;
 			return SendPackMsgOne(&Msg7, Flags, ClientId);
 		}
