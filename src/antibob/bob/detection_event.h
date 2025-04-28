@@ -8,6 +8,20 @@ enum
 {
 	BOB_DE_SAMPLE,
 	BOB_DE_SELFREPORT,
+
+	// use this as offset for your own detection events
+	// add your new file myfork_events.h
+	// with the following code:
+	//
+	// #pragma once
+	//
+	// #include <bob/detection_event.h>
+	//
+	// enum
+	// {
+	// 	MYFORK_DE_CUSTOMEVENT = NUM_BOB_DES,
+	// 	NUM_MYFORK_DES,
+	// };
 	NUM_BOB_DES,
 };
 
