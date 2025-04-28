@@ -6,23 +6,10 @@
 
 enum
 {
-	BOB_DE_SAMPLE,
-	BOB_DE_SELFREPORT,
-
-	// use this as offset for your own detection events
-	// add your new file myfork_events.h
-	// with the following code:
-	//
-	// #pragma once
-	//
-	// #include <bob/detection_event.h>
-	//
-	// enum
-	// {
-	// 	MYFORK_DE_CUSTOMEVENT = NUM_BOB_DES,
-	// 	NUM_MYFORK_DES,
-	// };
-	NUM_BOB_DES,
+#define MACRO_DETECTION_EVENT(EnumName, StrName, Desc) EnumName,
+#include <bob/detection_events.h>
+#undef MACRO_DETECTION_EVENT
+	NUM_BOB_DETECTION_EVENTS,
 };
 
 // represents the event of a player
@@ -59,7 +46,11 @@ public:
 	// event id represented as human readable string
 	const char *ToString() const;
 
+	// turns event id into short friendly name
 	static const char *EventToStr(int EventId);
+
+	// truns event id into event description
+	static const char *EventToDesc(int EventId);
 
 	// given a list of events it writes a string into
 	// pBuf that looks something like this "(2, 10, 4)"

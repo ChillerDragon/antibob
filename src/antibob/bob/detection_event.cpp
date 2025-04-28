@@ -44,10 +44,24 @@ const char *CDetectionEvent::EventToStr(int EventId)
 {
 	switch(EventId)
 	{
-	case BOB_DE_SAMPLE:
-		return "sample";
-	case BOB_DE_SELFREPORT:
-		return "self report";
+#define MACRO_DETECTION_EVENT(EnumName, StrName, Desc) \
+	case EnumName: \
+		return StrName;
+#include <bob/detection_events.h>
+#undef MACRO_DETECTION_EVENT
+	}
+	return "unknown";
+}
+
+const char *CDetectionEvent::EventToDesc(int EventId)
+{
+	switch(EventId)
+	{
+#define MACRO_DETECTION_EVENT(EnumName, StrName, Desc) \
+	case EnumName: \
+		return Desc;
+#include <bob/detection_events.h>
+#undef MACRO_DETECTION_EVENT
 	}
 	return "unknown";
 }
