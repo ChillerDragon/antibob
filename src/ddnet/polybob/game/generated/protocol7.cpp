@@ -1089,4 +1089,4 @@ void *CNetObjHandler::SecureUnpackMsg(int Type, CUnpacker *pUnpacker)
 	return m_aMsgData;
 };
 } // namespace protocol7
-}
+} // namespace antibob

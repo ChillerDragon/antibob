@@ -123,7 +123,7 @@ void CAntibob::RconEvents(int ClientId)
 // antibob special hooks
 //
 
-bool CAntibob::OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
+bool CAntibob::OnSayNetMessage(const antibob::CNetMsg_Cl_Say *pMsg, int ClientId, const CUnpacker *pUnpacker)
 {
 	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
 		if(Config()->m_AbAutoKick)

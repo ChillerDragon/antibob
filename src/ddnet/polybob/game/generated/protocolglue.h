@@ -31,4 +31,4 @@ inline int Obj_SevenToSix(int a)
 	return gs_Obj_SevenToSix[a];
 }
 
-}
+} // namespace antibob

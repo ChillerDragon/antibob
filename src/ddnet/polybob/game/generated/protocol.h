@@ -5,6 +5,8 @@ class CUnpacker;
 
 #include <polybob/engine/shared/teehistorian_ex.h>
 
+namespace antibob {
+
 enum
 {
 	INPUT_STATE_MASK = 0x3f
@@ -1498,3 +1500,5 @@ public:
 	bool TeeHistorianRecordMsg(int Type);
 	const char *FailedMsgOn() const;
 };
+
+} // namespace antibob

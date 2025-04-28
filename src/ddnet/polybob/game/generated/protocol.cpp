@@ -6,6 +6,8 @@
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/game/mapitems_ex.h>
 
+namespace antibob {
+
 CNetObjHandler::CNetObjHandler()
 {
 	m_pMsgFailedOn = "";
@@ -1388,3 +1390,5 @@ void RegisterGameUuids(CBobUuidManager *pManager)
 
 	RegisterMapItemTypeUuids(pManager);
 }
+
+} // namespace antibob

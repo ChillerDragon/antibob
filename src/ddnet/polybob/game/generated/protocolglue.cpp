@@ -11,4 +11,4 @@ const int gs_Obj_SixToSeven[21] = {
 const int gs_Obj_SevenToSix[25] = {
 	0, 1, 2, 3, 4, 5, 7, -1, -1, 8, 9, 10, 12, -1, -1, -1, 13, 14, 15, 16, 17, 19, -1, -1, -1};
 
-}
+} // namespace antibob

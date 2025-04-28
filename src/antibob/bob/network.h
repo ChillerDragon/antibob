@@ -34,7 +34,7 @@ class CNetwork
 
 public:
 	CAntibotClient m_aClients[ANTIBOT_MAX_CLIENTS];
-	CNetObjHandler m_NetObjHandler;
+	antibob::CNetObjHandler m_NetObjHandler;
 	antibob::protocol7::CNetObjHandler m_NetObjHandler7;
 
 	void OnInit(CAntibotData *pData);
@@ -79,9 +79,9 @@ public:
 		return SendMsg(&Packer, Flags, ClientId);
 	}
 
-	int SendPackMsgTranslate(const CNetMsg_Sv_Chat *pMsg, int Flags, int ClientId)
+	int SendPackMsgTranslate(const antibob::CNetMsg_Sv_Chat *pMsg, int Flags, int ClientId)
 	{
-		CNetMsg_Sv_Chat MsgCopy;
+		antibob::CNetMsg_Sv_Chat MsgCopy;
 		mem_copy(&MsgCopy, pMsg, sizeof(MsgCopy));
 
 		// TODO: do not crash 0.6 vanilla clients
