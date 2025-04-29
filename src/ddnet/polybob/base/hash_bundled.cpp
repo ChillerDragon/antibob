@@ -1,5 +1,3 @@
-#if !defined(CONF_OPENSSL)
-
 #include "hash_ctxt.h"
 
 #include <polybob/engine/external/md5/md5.h>
@@ -15,5 +13,3 @@ MD5_DIGEST md5_finish(MD5_CTX *ctxt)
 	md5_finish_(ctxt, result.data);
 	return result;
 }
-
-#endif

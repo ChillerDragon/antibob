@@ -1,8 +1,6 @@
 // SHA-256. Adapted from https://github.com/kalven/sha-2, which was adapted
 // from LibTomCrypt. This code is Public Domain.
 
-#if !defined(CONF_OPENSSL)
-
 #include "hash_ctxt.h"
 
 #include <cstdint>
@@ -205,4 +203,3 @@ SHA256_DIGEST sha256_finish(SHA256_CTX *ctxt)
 	return result;
 }
 
-#endif
