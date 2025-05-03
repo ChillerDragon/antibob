@@ -339,4 +339,4 @@ void secure_random_fill(void *bytes, unsigned length);
 int secure_rand();
 int secure_rand_below(int below);
 
-}
+} // namespace polybob

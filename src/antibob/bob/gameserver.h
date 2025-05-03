@@ -33,4 +33,7 @@ public:
 	//
 
 	void Kick(int ClientId, const char *pReason = nullptr) const;
+
+	// TODO: GUNC_ATTRIBUTE
+	void Log(const char *pFormat, ...) const;
 };

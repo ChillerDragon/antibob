@@ -18,4 +18,4 @@ public:
 	static long Decompress(const void *pSrc, int SrcSize, void *pDst, int DstSize);
 };
 
-}
+} // namespace polybob

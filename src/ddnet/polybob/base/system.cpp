@@ -2191,4 +2191,4 @@ int secure_rand_below(int below)
 	}
 }
 
-}
+} // namespace polybob

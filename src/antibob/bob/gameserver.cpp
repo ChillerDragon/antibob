@@ -1,3 +1,5 @@
+#include <cstdarg>
+#include <polybob/base/system.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/game/generated/protocol.h>
 
@@ -38,4 +40,15 @@ void CGameServer::Kick(int ClientId, const char *pReason) const
 	if(!pReason || pReason[0] == '\0')
 		pReason = Config()->m_AbKickReason;
 	m_pData->m_pfnKick(ClientId, pReason, m_pData->m_pUser);
+}
+
+void CGameServer::Log(const char *pFormat, ...) const
+{
+	va_list Args;
+	va_start(Args, pFormat);
+	char aBuf[4000];
+	str_format_v(aBuf, sizeof(aBuf), pFormat, Args);
+	va_end(Args);
+
+	m_pData->m_pfnLog(aBuf, m_pData->m_pUser);
 }

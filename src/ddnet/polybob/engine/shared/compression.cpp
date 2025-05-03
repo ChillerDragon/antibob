@@ -104,4 +104,4 @@ long CVariableInt::Compress(const void *pSrc_, int SrcSize, void *pDst_, int Dst
 	return (long)(pDst - (unsigned char *)pDst_);
 }
 
-}
+} // namespace polybob

@@ -587,4 +587,4 @@ std::string CMemoryLogger::ConcatenatedLines()
 	return Result;
 }
 
-}
+} // namespace polybob

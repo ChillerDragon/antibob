@@ -299,4 +299,4 @@ public:
 	}
 };
 
-}
+} // namespace polybob
