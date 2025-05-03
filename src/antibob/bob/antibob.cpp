@@ -42,7 +42,7 @@ void CAntibob::RegisterCommands()
 	if(!CBobConsole::ParseParams(vParams, params, aBuf, sizeof(aBuf))) \
 	{ \
 		LogError("invalid antibot param check commands.h: %s", aBuf); \
-		exit(1); \
+		dbg_break(); \
 	}
 #include <bob/commands.h>
 #undef CONSOLE_COMMAND
@@ -153,6 +153,13 @@ void CAntibob::OnInit(CAntibotData *pData)
 {
 	LogInfo("antibob antibot initialized");
 	LogInfo("git revision hash: %s", BOB_GIT_SHORTREV_HASH);
+
+	if(secure_random_init() != 0)
+	{
+		LogError("could not initialize secure RNG");
+		dbg_break();
+	}
+
 	RegisterCommands();
 	m_ConfigManager.OnInit();
 	m_Console.OnInit(&m_ConfigManager, this);
