@@ -96,7 +96,7 @@ public:
 class CBobConsole
 {
 public:
-	static bool ParseParams(std::vector<CBobParam> &vParams, const char *pParamsText);
+	static bool ParseParams(std::vector<CBobParam> &vParams, const char *pParamsText, char *pError, int ErrorSize);
 
 	std::vector<CBobCommand> m_vCommands;
 	CBobConfigManager *m_pConfigManager = nullptr;

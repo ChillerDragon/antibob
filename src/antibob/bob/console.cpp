@@ -12,13 +12,14 @@ int CBobResult::NumRequiredParamaters() const
 	return Num;
 }
 
-bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pParamsText)
+bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pParamsText, char *pError, int ErrorSize)
 {
 	const int ParamsLen = str_length(pParamsText);
 	bool InDesc = false;
 	int k = 0;
 	CBobParam Param;
 	Param.Reset();
+	pError[0] = '\0';
 
 	for(int i = 0; i < ParamsLen; i++)
 	{
@@ -26,7 +27,7 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 		{
 			if(InDesc)
 			{
-				log_error("antibot", "nested braces in params '%s'", pParamsText);
+				str_format(pError, ErrorSize, "nested braces in params '%s'", pParamsText);
 				return false;
 			}
 			InDesc = true;
@@ -36,7 +37,7 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 		{
 			if(!InDesc)
 			{
-				log_error("antibot", "unexpected closing brace '%s'", pParamsText);
+				str_format(pError, ErrorSize, "unexpected closing brace '%s'", pParamsText);
 				return false;
 			}
 
@@ -50,7 +51,7 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 		{
 			if(Param.m_Optional)
 			{
-				log_error("antibot", "nameless optional parameter in %s", pParamsText);
+				str_format(pError, ErrorSize, "nameless optional parameter in %s", pParamsText);
 				return false;
 			}
 
@@ -70,7 +71,7 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 				Param.m_Type = CBobParam::EType::REST;
 				break;
 			default:
-				log_error("antibot", "invalid parameter type %c in params %s", pParamsText[i], pParamsText);
+				str_format(pError, ErrorSize, "invalid parameter type %c in params %s", pParamsText[i], pParamsText);
 				return false;
 			}
 			if(pParamsText[i + 1] != '[')
@@ -83,13 +84,13 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 
 	if(Param.m_Optional)
 	{
-		log_error("antibot", "nameless optional parameter in %s", pParamsText);
+		str_format(pError, ErrorSize, "nameless optional parameter in %s", pParamsText);
 		return false;
 	}
 
 	if(InDesc)
 	{
-		log_error("antibot", "missing ] in params '%s'", pParamsText);
+		str_format(pError, ErrorSize, "missing ] in params '%s'", pParamsText);
 		return false;
 	}
 
@@ -99,7 +100,11 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 void CBobResult::ParseParams()
 {
 	m_vParams.clear();
-	CBobConsole::ParseParams(m_vParams, m_aParamsText);
+
+	char aBuf[1024];
+	// this can technically fail but we already checked the params
+	// on server launch so it should be safe to ignore it
+	CBobConsole::ParseParams(m_vParams, m_aParamsText, aBuf, sizeof(aBuf));
 }
 
 bool CBobResult::ParseArgs(char *pError, int ErrorSize)

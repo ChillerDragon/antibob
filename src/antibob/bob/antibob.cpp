@@ -37,7 +37,13 @@ void CAntibob::RegisterCommands()
 #undef CONSOLE_COMMAND
 
 	std::vector<CBobParam> vParams;
-#define CONSOLE_COMMAND(name, params, callback, user, help) dbg_assert(CBobConsole::ParseParams(vParams, params), "invalid antibot param check commands.h");
+	char aBuf[1024];
+#define CONSOLE_COMMAND(name, params, callback, user, help) \
+	if(!CBobConsole::ParseParams(vParams, params, aBuf, sizeof(aBuf))) \
+	{ \
+		log_error("antibot", "invalid antibot param check commands.h: %s", aBuf); \
+		exit(1); \
+	}
 #include <bob/commands.h>
 #undef CONSOLE_COMMAND
 }
