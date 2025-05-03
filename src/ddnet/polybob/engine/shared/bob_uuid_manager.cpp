@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cstdio>
 
+namespace polybob {
+
 static const CUuid BOB_TEEWORLDS_NAMESPACE = {{// "e05ddaaa-c4e6-4cfb-b642-5d48e80c0029"
 	0xe0, 0x5d, 0xda, 0xaa, 0xc4, 0xe6, 0x4c, 0xfb,
 	0xb6, 0x42, 0x5d, 0x48, 0xe8, 0x0c, 0x00, 0x29}};
@@ -192,3 +194,5 @@ void CBobUuidManager::DebugDump() const
 		dbg_msg("uuid", "%s %s", aBuf, Name.m_pName);
 	}
 }
+
+} // namespace polybob

@@ -2,6 +2,8 @@
 
 #include "protocol_ex.h"
 
+namespace polybob {
+
 enum
 {
 	__TEEHISTORIAN_UUID_HELPER = OFFSET_TEEHISTORIAN_UUID - 1,
@@ -12,3 +14,5 @@ enum
 };
 
 void RegisterTeehistorianUuids(class CBobUuidManager *pManager);
+
+} // namespace polybob

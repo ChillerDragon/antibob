@@ -3,6 +3,8 @@
 
 #include "system.h"
 
+namespace polybob {
+
 const SHA256_DIGEST SHA256_ZEROED = {{0}};
 
 static void digest_str(const unsigned char *digest, size_t digest_len, char *str, size_t max_len)
@@ -73,3 +75,5 @@ int md5_comp(MD5_DIGEST digest1, MD5_DIGEST digest2)
 {
 	return mem_comp(digest1.data, digest2.data, sizeof(digest1.data));
 }
+
+} // namespace polybob

@@ -48,8 +48,8 @@ public:
 	int MaxClients() { return ANTIBOT_MAX_CLIENTS; }
 	bool ClientIngame(int ClientId) { return m_aClients[ClientId].m_Active; }
 
-	static bool RepackMsg(const CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup);
-	bool SendMsg(CMsgPacker *pMsg, int Flags, int ClientId);
+	static bool RepackMsg(const polybob::CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup);
+	bool SendMsg(polybob::CMsgPacker *pMsg, int Flags, int ClientId);
 
 	template<class T, typename std::enable_if<!polybob::protocol7::is_sixup<T>::value, int>::type = 0>
 	int SendPackMsg(const T *pMsg, int Flags, int ClientId)
@@ -72,7 +72,7 @@ public:
 	int SendPackMsgOne(const T *pMsg, int Flags, int ClientId)
 	{
 		dbg_assert(ClientId != -1, "SendPackMsgOne called with -1");
-		CMsgPacker Packer(T::ms_MsgId, false, polybob::protocol7::is_sixup<T>::value);
+		polybob::CMsgPacker Packer(T::ms_MsgId, false, polybob::protocol7::is_sixup<T>::value);
 
 		if(pMsg->Pack(&Packer))
 			return -1;

@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <cstring>
 
+namespace polybob {
+
 typedef uint32_t u32;
 typedef uint64_t u64;
 typedef SHA256_CTX sha256_state;
@@ -203,3 +205,4 @@ SHA256_DIGEST sha256_finish(SHA256_CTX *ctxt)
 	return result;
 }
 
+} // namespace polybob

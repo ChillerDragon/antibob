@@ -2,6 +2,8 @@
 
 #include <cstddef> // size_t
 
+namespace polybob {
+
 enum
 {
 	SHA256_DIGEST_LENGTH = 256 / 8,
@@ -48,3 +50,5 @@ inline bool operator!=(const MD5_DIGEST &that, const MD5_DIGEST &other)
 {
 	return !(that == other);
 }
+
+} // namespace polybob

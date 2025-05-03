@@ -77,4 +77,4 @@ public:
 	const unsigned char *CompleteData() const { return m_pStart; }
 };
 
-}
+} // namespace polybob

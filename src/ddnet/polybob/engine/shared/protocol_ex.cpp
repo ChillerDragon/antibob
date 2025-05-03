@@ -7,6 +7,8 @@
 
 #include <new>
 
+namespace polybob {
+
 void RegisterUuids(CBobUuidManager *pManager)
 {
 #define UUID(id, name) pManager->RegisterName(id, name);
@@ -101,3 +103,5 @@ int BobUnpackMessageId(int *pId, bool *pSys, CUuid *pUuid, polybob::CUnpacker *p
 	}
 	return UNPACKMESSAGE_OK;
 }
+
+} // namespace polybob

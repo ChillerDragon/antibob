@@ -3,7 +3,9 @@
 #include <polybob/engine/shared/bob_uuid_manager.h>
 #include <polybob/engine/shared/packer.h>
 
-class CMsgPacker : public polybob::CPacker
+namespace polybob {
+
+class CMsgPacker : public CPacker
 {
 public:
 	int m_MsgId;
@@ -21,3 +23,5 @@ public:
 	{
 	}
 };
+
+} // namespace polybob

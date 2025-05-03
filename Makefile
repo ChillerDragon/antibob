@@ -86,9 +86,13 @@ build/src/antibob/bob/generated/git_revision.cpp:
 	echo "const char *BOB_GIT_SHORTREV_HASH = \"$(GIT_HASH)\";" > \
 		build/src/antibob/bob/generated/git_revision.cpp
 
-build/objs/external/md5.o: src/ddnet/polybob/engine/external/md5/md5.c src/ddnet/polybob/engine/external/md5/md5.h
+# this should be a C file
+# compiled with C compiler
+# but we need the C++ namespace feature for polybob
+# to avoid odr violations because the server defines the same symbols
+build/objs/external/md5.o: src/ddnet/polybob/engine/external/md5/md5.cpp src/ddnet/polybob/engine/external/md5/md5.h
 	mkdir -p build/objs/external
-	$(CC) $< -c -o $@
+	$(CXX) $< -c -o $@
 
 tests: $(TESTS_BINARIES)
 

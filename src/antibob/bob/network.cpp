@@ -7,6 +7,8 @@
 #include "bob/antibob.h"
 #include "network.h"
 
+using namespace polybob;
+
 void CNetwork::OnInit(CAntibotData *pData)
 {
 	m_pData = pData;

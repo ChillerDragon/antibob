@@ -5,6 +5,8 @@
 
 #include <polybob/engine/external/md5/md5.h>
 
+namespace polybob {
+
 struct SHA256_CTX
 {
 	uint64_t length;
@@ -21,3 +23,5 @@ SHA256_DIGEST sha256_finish(SHA256_CTX *ctxt);
 void md5_init(MD5_CTX *ctxt);
 void md5_update(MD5_CTX *ctxt, const void *data, size_t data_len);
 MD5_DIGEST md5_finish(MD5_CTX *ctxt);
+
+} // namespace polybob

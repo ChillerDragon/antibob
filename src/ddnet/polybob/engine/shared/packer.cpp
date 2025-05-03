@@ -219,4 +219,4 @@ const unsigned char *CUnpacker::GetRaw(int Size)
 	return pPtr;
 }
 
-}
+} // namespace polybob

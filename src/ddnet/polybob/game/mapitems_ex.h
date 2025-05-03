@@ -1,5 +1,7 @@
 #include <polybob/game/generated/protocol.h>
 
+namespace polybob {
+
 enum
 {
 	__MAPITEMTYPE_UUID_HELPER = polybob::OFFSET_MAPITEMTYPE_UUID - 1,
@@ -10,3 +12,5 @@ enum
 };
 
 void RegisterMapItemTypeUuids(class CBobUuidManager *pManager);
+
+} // namespace polybob

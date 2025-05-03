@@ -2,6 +2,8 @@
 
 #include <vector>
 
+namespace polybob {
+
 enum
 {
 	UUID_MAXSTRSIZE = 37, // 12345678-0123-5678-0123-567890123456
@@ -45,10 +47,8 @@ struct CNameIndexed
 	bool operator==(const CNameIndexed &Other) const { return m_Uuid == Other.m_Uuid; }
 };
 
-namespace polybob {
 class CPacker;
 class CUnpacker;
-}
 
 class CBobUuidManager
 {
@@ -70,3 +70,5 @@ public:
 };
 
 extern CBobUuidManager g_BobUuidManager;
+
+} // namespace polybob

@@ -4,6 +4,8 @@
 
 #include <polybob/engine/uuid.h>
 
+namespace polybob {
+
 static CBobUuidManager CreateGlobalBobUuidManager()
 {
 	CBobUuidManager Manager;
@@ -14,3 +16,5 @@ static CBobUuidManager CreateGlobalBobUuidManager()
 }
 
 CBobUuidManager g_BobUuidManager = CreateGlobalBobUuidManager();
+
+} // namespace polybob
