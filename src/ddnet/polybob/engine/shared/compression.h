@@ -1,5 +1,7 @@
 #pragma once
 
+namespace polybob {
+
 // variable int packing
 class CVariableInt
 {
@@ -15,3 +17,5 @@ public:
 	static long Compress(const void *pSrc, int SrcSize, void *pDst, int DstSize);
 	static long Decompress(const void *pSrc, int SrcSize, void *pDst, int DstSize);
 };
+
+}

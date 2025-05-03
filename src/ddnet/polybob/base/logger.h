@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+namespace polybob {
+
 typedef void *IOHANDLE;
 
 /**
@@ -296,3 +298,5 @@ public:
 		log_set_scope_logger(old_scope_logger);
 	}
 };
+
+}

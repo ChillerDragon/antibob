@@ -19,6 +19,8 @@
 #include <android/log.h>
 #endif
 
+namespace polybob {
+
 std::atomic<ILogger *> global_logger = nullptr;
 thread_local ILogger *scope_logger = nullptr;
 thread_local bool in_logger = false;
@@ -583,4 +585,6 @@ std::string CMemoryLogger::ConcatenatedLines()
 		Result += Message.m_aLine;
 	}
 	return Result;
+}
+
 }

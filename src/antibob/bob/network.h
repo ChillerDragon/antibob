@@ -7,6 +7,8 @@
 #include <polybob/game/generated/protocol.h>
 #include <polybob/game/generated/protocol7.h>
 
+using namespace polybob;
+
 class CAntibotClient
 {
 public:

@@ -3,6 +3,8 @@
 
 #include "detection_event.h"
 
+using namespace polybob;
+
 CDetectionEvent::CDetectionEvent(int EventId) :
 	m_EventId(EventId)
 {

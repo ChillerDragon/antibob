@@ -4,6 +4,8 @@
 
 #include <iterator> // std::size
 
+namespace polybob {
+
 // Format: ESDDDDDD EDDDDDDD EDD... Extended, Data, Sign
 unsigned char *CVariableInt::Pack(unsigned char *pDst, int i, int DstSize)
 {
@@ -100,4 +102,6 @@ long CVariableInt::Compress(const void *pSrc_, int SrcSize, void *pDst_, int Dst
 		pSrc++;
 	}
 	return (long)(pDst - (unsigned char *)pDst_);
+}
+
 }

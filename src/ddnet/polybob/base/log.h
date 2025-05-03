@@ -9,6 +9,8 @@
 #define GNUC_ATTRIBUTE(x)
 #endif
 
+namespace polybob {
+
 enum LEVEL : char
 {
 	LEVEL_ERROR,
@@ -94,3 +96,5 @@ void log_log_v(LEVEL level, const char *sys, const char *fmt, va_list args)
  */
 void log_log_color_v(LEVEL level, LOG_COLOR color, const char *sys, const char *fmt, va_list args)
 	GNUC_ATTRIBUTE((format(printf, 4, 0)));
+
+}

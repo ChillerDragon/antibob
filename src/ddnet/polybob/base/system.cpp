@@ -78,6 +78,8 @@
 #error NOT IMPLEMENTED
 #endif
 
+namespace polybob {
+
 std::atomic_bool dbg_assert_failing = false;
 DBG_ASSERT_HANDLER dbg_assert_handler;
 
@@ -2187,4 +2189,6 @@ int secure_rand_below(int below)
 			return n;
 		}
 	}
+}
+
 }

@@ -6,6 +6,8 @@
 
 #include <vector>
 
+using namespace polybob;
+
 #define MAX_ARGS 10
 
 class CBobParam
