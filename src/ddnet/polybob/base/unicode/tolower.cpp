@@ -2,6 +2,8 @@
 
 #include "tolower.h"
 
+namespace polybob {
+
 static int compul(const void *a, const void *b)
 {
 	struct UPPER_LOWER *ul_a = (struct UPPER_LOWER *)a;
@@ -24,3 +26,5 @@ int str_utf8_tolower(int code)
 #define TOLOWER_DATA
 #include "tolower_data.h"
 #undef TOLOWER_DATA
+
+} // namespace polybob

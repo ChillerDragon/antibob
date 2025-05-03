@@ -30,7 +30,7 @@ bool CBobTest::ExpectEq(int Actual, int Expected, const char *pFilename, int Lin
 
 bool CBobTest::ExpectStrEq(const char *pActual, const char *pExpected, const char *pFilename, int LineNumber)
 {
-	if(!str_comp(pActual, pExpected))
+	if(!polybob::str_comp(pActual, pExpected))
 		return true;
 
 	m_NumErrors++;

@@ -1,5 +1,7 @@
 #include <cstdint>
 
+namespace polybob {
+
 struct UPPER_LOWER
 {
 	int32_t upper;
@@ -12,3 +14,5 @@ enum
 };
 
 extern const struct UPPER_LOWER tolowermap[];
+
+} // namespace polybob
