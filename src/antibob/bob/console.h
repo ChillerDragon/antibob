@@ -95,13 +95,15 @@ public:
 
 class CBobConsole
 {
+	class CAntibob *m_pAntibob = nullptr;
+
 public:
 	static bool ParseParams(std::vector<CBobParam> &vParams, const char *pParamsText, char *pError, int ErrorSize);
 
 	std::vector<CBobCommand> m_vCommands;
 	CBobConfigManager *m_pConfigManager = nullptr;
 
-	void OnInit(CBobConfigManager *pConfigManager);
+	void OnInit(CBobConfigManager *pConfigManager, class CAntibob *pAntibob);
 
 	void Register(
 		const char *pName,

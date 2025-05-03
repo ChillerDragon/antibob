@@ -1,6 +1,7 @@
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
+#include <bob/antibob.h>
 #include <bob/console.h>
 
 #include <algorithm>
@@ -37,7 +38,7 @@ void CBobConfigManager::OnInit()
 #undef MACRO_CONFIG_STR
 }
 
-bool CBobConfigManager::OnConsoleCommand(const char *pCommand)
+bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibob)
 {
 	for(auto *pVariable : m_vpAllVariables)
 	{
@@ -66,7 +67,7 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand)
 				str_copy(aValue, ((CBobStringConfigVariable *)pVariable)->m_pStr);
 				break;
 			}
-			log_info("antibot", "config %s value: %s", pVariable->m_pScriptName, aValue);
+			pAntibob->LogInfo("config %s value: %s", pVariable->m_pScriptName, aValue);
 			return true;
 		}
 
@@ -79,7 +80,7 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand)
 			pInt = (CBobIntConfigVariable *)pVariable;
 			if(!str_toint(pEnd, pInt->m_pVariable))
 			{
-				log_info("antibot", "'%s' is not a valid integer", pEnd);
+				pAntibob->LogInfo("'%s' is not a valid integer", pEnd);
 			}
 			*pInt->m_pVariable = std::clamp(*pInt->m_pVariable, pInt->m_Min, pInt->m_Max);
 			break;
@@ -87,7 +88,7 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand)
 			pStr = (CBobStringConfigVariable *)pVariable;
 			if(!CBobConsole::ParseStringQuotes(pEnd, pStr->m_pStr, pStr->m_MaxSize))
 			{
-				log_info("antibot", "failed to parse string");
+				pAntibob->LogInfo("failed to parse string");
 			}
 			break;
 		}

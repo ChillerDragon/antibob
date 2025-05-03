@@ -27,17 +27,23 @@ struct LOG_COLOR
 	uint8_t b;
 };
 
-#define log_error(sys, ...) log_log(LEVEL_ERROR, sys, __VA_ARGS__)
-#define log_warn(sys, ...) log_log(LEVEL_WARN, sys, __VA_ARGS__)
-#define log_info(sys, ...) log_log(LEVEL_INFO, sys, __VA_ARGS__)
-#define log_debug(sys, ...) log_log(LEVEL_DEBUG, sys, __VA_ARGS__)
-#define log_trace(sys, ...) log_log(LEVEL_TRACE, sys, __VA_ARGS__)
+#define log_error(sys, ...) DO_NOT_USE_THIS_LOGGER_USE_ANTIBOB_LogInfo_AND_LogError_METHODS_INSTEAD
+#define log_warn(sys, ...) DO_NOT_USE_THIS_LOGGER_USE_ANTIBOB_LogInfo_AND_LogError_METHODS_INSTEAD
+#define log_info(sys, ...) DO_NOT_USE_THIS_LOGGER_USE_ANTIBOB_LogInfo_AND_LogError_METHODS_INSTEAD
+#define log_debug(sys, ...) DO_NOT_USE_THIS_LOGGER_USE_ANTIBOB_LogInfo_AND_LogError_METHODS_INSTEAD
+#define log_trace(sys, ...) DO_NOT_USE_THIS_LOGGER_USE_ANTIBOB_LogInfo_AND_LogError_METHODS_INSTEAD
 
-#define log_error_color(color, sys, ...) log_log_color(LEVEL_ERROR, color, sys, __VA_ARGS__)
-#define log_warn_color(color, sys, ...) log_log_color(LEVEL_WARN, color, sys, __VA_ARGS__)
-#define log_info_color(color, sys, ...) log_log_color(LEVEL_INFO, color, sys, __VA_ARGS__)
-#define log_debug_color(color, sys, ...) log_log_color(LEVEL_DEBUG, color, sys, __VA_ARGS__)
-#define log_trace_color(color, sys, ...) log_log_color(LEVEL_TRACE, color, sys, __VA_ARGS__)
+// #define log_error(sys, ...) log_log(LEVEL_ERROR, sys, __VA_ARGS__)
+// #define log_warn(sys, ...) log_log(LEVEL_WARN, sys, __VA_ARGS__)
+// #define log_info(sys, ...) log_log(LEVEL_INFO, sys, __VA_ARGS__)
+// #define log_debug(sys, ...) log_log(LEVEL_DEBUG, sys, __VA_ARGS__)
+// #define log_trace(sys, ...) log_log(LEVEL_TRACE, sys, __VA_ARGS__)
+//
+// #define log_error_color(color, sys, ...) log_log_color(LEVEL_ERROR, color, sys, __VA_ARGS__)
+// #define log_warn_color(color, sys, ...) log_log_color(LEVEL_WARN, color, sys, __VA_ARGS__)
+// #define log_info_color(color, sys, ...) log_log_color(LEVEL_INFO, color, sys, __VA_ARGS__)
+// #define log_debug_color(color, sys, ...) log_log_color(LEVEL_DEBUG, color, sys, __VA_ARGS__)
+// #define log_trace_color(color, sys, ...) log_log_color(LEVEL_TRACE, color, sys, __VA_ARGS__)
 
 /**
  * @defgroup Log

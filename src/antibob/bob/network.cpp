@@ -5,13 +5,15 @@
 #include <polybob/game/generated/protocolglue.h>
 
 #include "bob/antibob.h"
+#include "bob/gameserver.h"
 #include "network.h"
 
 using namespace polybob;
 
-void CNetwork::OnInit(CAntibotData *pData)
+void CNetwork::OnInit(CAntibotData *pData, CGameServer *pGameServer)
 {
 	m_pData = pData;
+	m_pGameServer = pGameServer;
 }
 
 bool CNetwork::RepackMsg(const CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup)
@@ -37,7 +39,7 @@ bool CNetwork::RepackMsg(const CMsgPacker *pMsg, polybob::CPacker &Packer, bool 
 				MsgId -= 11;
 			else
 			{
-				log_error("net", "DROP send sys %d", MsgId);
+				m_pGameServer->LogError("DROP send sys %d", MsgId);
 				return false;
 			}
 		}

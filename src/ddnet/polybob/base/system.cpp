@@ -99,7 +99,10 @@ void dbg_assert_imp(const char *filename, int line, const char *fmt, ...)
 	char error[512];
 	str_format(error, sizeof(error), "%s(%d): %s", filename, line, msg);
 	va_end(args);
-	log_error("assert", "%s", error);
+	// this is nasty because it will not write to the logfile
+	// it should probably write to some dedicated antibob_asserts.txt file
+	fprintf(stderr, "[antibob-assert] %s\n", error);
+	// log_error("assert", "%s", error);
 	if(!already_failing)
 	{
 		DBG_ASSERT_HANDLER handler = dbg_assert_handler;

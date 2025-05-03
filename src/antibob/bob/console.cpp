@@ -1,6 +1,8 @@
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
+#include <bob/antibob.h>
+
 #include "console.h"
 
 int CBobResult::NumRequiredParamaters() const
@@ -157,9 +159,10 @@ bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 	return true;
 }
 
-void CBobConsole::OnInit(CBobConfigManager *pConfigManager)
+void CBobConsole::OnInit(CBobConfigManager *pConfigManager, CAntibob *pAntibob)
 {
 	m_pConfigManager = pConfigManager;
+	m_pAntibob = pAntibob;
 }
 
 void CBobConsole::Register(
@@ -195,7 +198,7 @@ bool CBobConsole::ExecuteCmd(const char *pCommand)
 			char aError[512];
 			if(!Result.ParseArgs(aError, sizeof(aError)))
 			{
-				log_error("antibot", "failed to parse %s arguments: %s", Cmd.m_pName, aError);
+				m_pAntibob->LogError("failed to parse %s arguments: %s", Cmd.m_pName, aError);
 				return true;
 			}
 
@@ -203,7 +206,7 @@ bool CBobConsole::ExecuteCmd(const char *pCommand)
 			return true;
 		}
 	}
-	return m_pConfigManager->OnConsoleCommand(pCommand);
+	return m_pConfigManager->OnConsoleCommand(pCommand, m_pAntibob);
 }
 
 void CBobConsole::PrintCmdHelp(const char *pCommand)
@@ -212,12 +215,12 @@ void CBobConsole::PrintCmdHelp(const char *pCommand)
 	{
 		if(!str_comp_nocase(pCommand, Cmd.m_pName))
 		{
-			log_info("antibot", "Usage: %s %s", Cmd.m_pName, Cmd.m_pParams);
-			log_info("antibot", "%s", Cmd.m_pHelp);
+			m_pAntibob->LogInfo("Usage: %s %s", Cmd.m_pName, Cmd.m_pParams);
+			m_pAntibob->LogInfo("%s", Cmd.m_pHelp);
 			return;
 		}
 	}
-	log_info("antibot", "no such command '%s'", pCommand);
+	m_pAntibob->LogInfo("no such command '%s'", pCommand);
 }
 
 void CBobConsole::PrintCmdlist()
@@ -234,7 +237,7 @@ void CBobConsole::PrintCmdlist()
 			str_append(aCommands, ", ");
 	}
 
-	log_info("antibot", "%s", aCommands);
+	m_pAntibob->LogInfo("%s", aCommands);
 }
 
 // TODO: this is not matching the ddnet implementation!

@@ -41,7 +41,7 @@ void CAntibob::RegisterCommands()
 #define CONSOLE_COMMAND(name, params, callback, user, help) \
 	if(!CBobConsole::ParseParams(vParams, params, aBuf, sizeof(aBuf))) \
 	{ \
-		log_error("antibot", "invalid antibot param check commands.h: %s", aBuf); \
+		LogError("invalid antibot param check commands.h: %s", aBuf); \
 		exit(1); \
 	}
 #include <bob/commands.h>
@@ -56,7 +56,7 @@ void CAntibob::RconDump(const char *pSearch)
 {
 	if(!m_pRoundData)
 	{
-		log_error("antibot", "missing round data");
+		LogError("missing round data");
 		return;
 	}
 
@@ -75,7 +75,7 @@ void CAntibob::RconDump(const char *pSearch)
 		if(pPlayer->m_DetectionEvents.size() != 0)
 			CDetectionEvent::EventsToIdStr(pPlayer->m_DetectionEvents, aEvents, sizeof(aEvents));
 
-		log_info("antibot", "cid=%d name='%s' %s", i, pName, aEvents);
+		LogInfo("cid=%d name='%s' %s", i, pName, aEvents);
 	}
 }
 
@@ -83,45 +83,43 @@ void CAntibob::RconEvents(int ClientId)
 {
 	if(!m_pRoundData)
 	{
-		log_error("antibot", "missing round data");
+		LogError("missing round data");
 		return;
 	}
 
 	if(ClientId < 0 || ClientId >= ANTIBOT_MAX_CLIENTS)
 	{
-		log_error("antibot", "client id out of range");
+		LogError("client id out of range");
 		return;
 	}
 
 	CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
 	if(!pPlayer)
 	{
-		log_info("antibot", "client id %d is not connected", ClientId);
+		LogInfo("client id %d is not connected", ClientId);
 		return;
 	}
 
 	if(pPlayer->m_DetectionEvents.size() == 0)
 	{
-		log_info("antibot", "player '%s' did not trigger any detections yet", ClientName(ClientId));
+		LogInfo("player '%s' did not trigger any detections yet", ClientName(ClientId));
 		return;
 	}
 
-	log_info("antibot", "detection events for '%s'", ClientName(ClientId));
+	LogInfo("detection events for '%s'", ClientName(ClientId));
 	for(const auto &[EventId, Event] : pPlayer->m_DetectionEvents)
 	{
-		log_info(
-			"antibot",
+		LogInfo(
 			"  event_id=%d name='%s'",
 			EventId,
 			Event.ToString());
-		log_info(
-			"antibot",
+		LogInfo(
 			"   first_seen=%ds last_seen=%ds num_seen=%d",
 			Event.SecondsSinceFirstTrigger(),
 			Event.SecondsSinceLastTrigger(),
 			Event.m_Amount);
 		if(Event.m_aInfo[0])
-			log_info("antibot", "   %s", Event.m_aInfo);
+			LogInfo("   %s", Event.m_aInfo);
 	}
 }
 
@@ -153,11 +151,11 @@ bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, 
 
 void CAntibob::OnInit(CAntibotData *pData)
 {
-	log_info("antibot", "antibob antibot initialized");
-	log_info("antibot", "git revision hash: %s", BOB_GIT_SHORTREV_HASH);
+	LogInfo("antibob antibot initialized");
+	LogInfo("git revision hash: %s", BOB_GIT_SHORTREV_HASH);
 	RegisterCommands();
 	m_ConfigManager.OnInit();
-	m_Console.OnInit(&m_ConfigManager);
+	m_Console.OnInit(&m_ConfigManager, this);
 }
 
 void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)
@@ -182,7 +180,7 @@ bool CAntibob::OnConsoleCommand(const char *pCommand)
 {
 	if(!Console()->ExecuteCmd(pCommand))
 	{
-		log_info("antibot", "unknown antibot command '%s' see 'antibot cmdlist' for a full list", pCommand);
+		LogInfo("unknown antibot command '%s' see 'antibot cmdlist' for a full list", pCommand);
 		return false;
 	}
 	return true;

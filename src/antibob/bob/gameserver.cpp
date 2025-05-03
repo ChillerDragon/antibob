@@ -10,7 +10,7 @@
 CGameServer::CGameServer(CAntibotData *pData) :
 	m_pData(pData)
 {
-	m_Network.OnInit(pData);
+	m_Network.OnInit(pData, this);
 }
 
 void CGameServer::SendChat(int ClientId, int Team, const char *pMessage)
@@ -42,7 +42,18 @@ void CGameServer::Kick(int ClientId, const char *pReason) const
 	m_pData->m_pfnKick(ClientId, pReason, m_pData->m_pUser);
 }
 
-void CGameServer::Log(const char *pFormat, ...) const
+void CGameServer::LogInfo(const char *pFormat, ...)
+{
+	va_list Args;
+	va_start(Args, pFormat);
+	char aBuf[4000];
+	str_format_v(aBuf, sizeof(aBuf), pFormat, Args);
+	va_end(Args);
+
+	m_pData->m_pfnLog(aBuf, m_pData->m_pUser);
+}
+
+void CGameServer::LogError(const char *pFormat, ...)
 {
 	va_list Args;
 	va_start(Args, pFormat);

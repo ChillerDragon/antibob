@@ -1,6 +1,7 @@
 #pragma once
 
 #include <polybob/antibot/antibot_data.h>
+#include <polybob/base/system.h>
 #include <polybob/engine/message.h>
 
 #include <bob/antibot_player.h>
@@ -33,7 +34,8 @@ public:
 	//
 
 	void Kick(int ClientId, const char *pReason = nullptr) const;
-
-	// TODO: GUNC_ATTRIBUTE
-	void Log(const char *pFormat, ...) const;
+	void LogInfo(const char *pFormat, ...)
+		GNUC_ATTRIBUTE((format(printf, 2, 3)));
+	void LogError(const char *pFormat, ...)
+		GNUC_ATTRIBUTE((format(printf, 2, 3)));
 };

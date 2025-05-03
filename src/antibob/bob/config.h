@@ -89,6 +89,6 @@ public:
 	std::vector<CBobConfigVariable *> m_vpAllVariables;
 	void OnInit();
 	// returns true if the console command operated on a config
-	bool OnConsoleCommand(const char *pCommand);
+	bool OnConsoleCommand(const char *pCommand, class CAntibob *pAntibob);
 	~CBobConfigManager();
 };
