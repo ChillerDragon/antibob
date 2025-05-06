@@ -39,6 +39,9 @@ libantibot.so: $(DEPENDENCIES) $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
 		-shared \
 		-o libantibot.so
 
+asan: CXXFLAGS += -fsanitize=address,undefined -fsanitize-recover=address,undefined -fno-omit-frame-pointer
+asan: libantibot.so
+
 build/objs/antibob/%.o: %.cpp %.h
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
