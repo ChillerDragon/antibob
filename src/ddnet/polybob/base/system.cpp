@@ -109,7 +109,6 @@ void dbg_assert_imp(const char *filename, int line, const char *fmt, ...)
 		if(handler)
 			handler(error);
 	}
-	log_global_logger_finish();
 	dbg_break();
 }
 

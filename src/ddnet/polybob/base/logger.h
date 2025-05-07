@@ -29,7 +29,6 @@ public:
 	 * The requested color of the log message. Only useful if `m_HaveColor`
 	 * is set.
 	 */
-	LOG_COLOR m_Color;
 	char m_aTimestamp[80];
 	char m_aSystem[32];
 	/**
@@ -137,19 +136,6 @@ void log_set_global_logger(ILogger *logger);
  * @see log_set_global_logger
  */
 void log_set_global_logger_default();
-
-/**
- * @ingroup Log
- *
- * Notify global loggers of impending abnormal exit.
- *
- * This function is automatically called on normal exit. It notifies the global
- * logger of the impending shutdown via `GlobalFinish`, the logger is supposed
- * to flush its buffers and shut down.
- *
- * Don't call this except right before an abnormal exit.
- */
-void log_global_logger_finish();
 
 /**
  * @ingroup Log
