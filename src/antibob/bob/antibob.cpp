@@ -131,7 +131,7 @@ bool CAntibob::OnSayNetMessage(const polybob::CNetMsg_Cl_Say *pMsg, int ClientId
 {
 	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
 		if(Config()->m_AbAutoKick)
-			Kick(ClientId, "self report");
+			Kick(ClientId, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
 	if(str_find_nocase(pMsg->m_pMessage, "i hack"))
 		m_apPlayers[ClientId]->Detect(BOB_DE_SELFREPORT, "said 'i hack'");
 	return false;
