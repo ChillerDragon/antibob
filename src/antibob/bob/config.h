@@ -27,6 +27,8 @@ extern CBobConfig g_BobConfig;
 class CBobConfigVariable
 {
 public:
+	virtual ~CBobConfigVariable() = default;
+
 	enum class EVarType
 	{
 		INT,
