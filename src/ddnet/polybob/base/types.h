@@ -5,6 +5,17 @@
 
 typedef void *IOHANDLE;
 
+typedef int (*FS_LISTDIR_CALLBACK)(const char *name, int is_dir, int dir_type, void *user);
+
+typedef struct
+{
+	const char *m_pName;
+	time_t m_TimeCreated; // seconds since UNIX Epoch
+	time_t m_TimeModified; // seconds since UNIX Epoch
+} CFsFileInfo;
+
+typedef int (*FS_LISTDIR_CALLBACK_FILEINFO)(const CFsFileInfo *info, int is_dir, int dir_type, void *user);
+
 enum
 {
 	/**

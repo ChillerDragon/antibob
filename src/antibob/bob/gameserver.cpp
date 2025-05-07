@@ -1,9 +1,19 @@
 #include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
+#include <polybob/base/log.h>
 #include <polybob/base/system.h>
+#include <polybob/base/system/shell.h>
 #include <polybob/engine/shared/protocol.h>
+#include <polybob/engine/storage.h>
 #include <polybob/game/generated/protocol.h>
 
+#include <bob/cmdline_arguments.h>
 #include <bob/network.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "gameserver.h"
 
@@ -11,6 +21,15 @@ CGameServer::CGameServer(CAntibotData *pData) :
 	m_pData(pData)
 {
 	m_Network.OnInit(pData, this);
+
+	CCmdlineArguments CliArgs;
+	m_pStorage = polybob::CreateStorage(IStorage::EInitializationType::SERVER, 1, (const char **)CliArgs.All());
+}
+
+CGameServer::~CGameServer()
+{
+	log_info("antibot", "shutting down antibob ...");
+	delete m_pStorage;
 }
 
 void CGameServer::SendChat(int ClientId, int Team, const char *pMessage)

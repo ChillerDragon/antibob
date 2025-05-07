@@ -10,6 +10,7 @@ CXXFLAGS := \
 POLYBOB_SRCS := $(wildcard \
 	      src/ddnet/polybob/*/*.cpp \
 	      src/ddnet/polybob/base/unicode/*.cpp \
+	      src/ddnet/polybob/base/system/*.cpp \
 	      src/ddnet/polybob/game/generated/*.cpp \
 	      src/ddnet/polybob/engine/shared/*.cpp)
 POLYBOB_OBJS := $(patsubst %.cpp,build/objs/polybob/%.o,$(POLYBOB_SRCS))
@@ -37,6 +38,7 @@ libantibot.so: $(DEPENDENCIES) $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
 		$(CXXFLAGS) \
 		-rdynamic \
 		-shared \
+		-lz \
 		-o libantibot.so
 
 asan: CXXFLAGS += -fsanitize=address,undefined -fsanitize-recover=address,undefined -fno-omit-frame-pointer
@@ -74,6 +76,7 @@ build/%_bob_test: src/test/bob/%.cpp libantibot.so $(DEPENDENCIES) $(BOBTEST_OBJ
 		$(CXXFLAGS) \
 		-I . \
 		-L. \
+		-lz \
 		libantibot.so \
 		-o $@
 
