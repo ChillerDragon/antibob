@@ -11,8 +11,10 @@ to build your own antibot module.
 - github CI
 - OOP wrapper around antibot api
 - console command system like in ddnet ``antibot cmdlist``
+- config system similar to ddnet for example ``antibot ab_auto_kick 1``
 - helper methods for sending chat messages (including automatic 0.6/0.7 translation)
 - fully self contained and batteries included (no ddnet source code needed)
+- feels like the ddnet code base with access to functions such as ``str_copy`` and more (needs ``using namespace polybob;``)
 
 You can explore the most interesting code at [src/antibot.cpp](https://github.com/ChillerDragon/antibob/blob/master/src/bob/antibob.cpp)
 the rest are just helpers that you should not have to worry about until you run into their limits.
@@ -102,7 +104,7 @@ public:
 void CMyAntibot::OnInit(CAntibotData *pData)
 {
 	CAntibob::OnInit(pData);
-	LogInfo("antibot", "my antibot initialized");
+	log_info("antibot", "my antibot initialized");
 }
 ```
 
