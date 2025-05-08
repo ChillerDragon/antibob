@@ -53,6 +53,15 @@
 #define GNUC_ATTRIBUTE(x)
 #endif
 
+#if defined(CONF_FAMILY_WINDOWS)
+#elif defined(CONF_PLATFORM_MACOS)
+#include <semaphore.h>
+#elif defined(CONF_FAMILY_UNIX)
+#include <semaphore.h>
+#else
+#error semaphore not supported on this platform
+#endif
+
 namespace polybob {
 
 #define dbg_assert(test, fmt, ...) \
@@ -298,10 +307,8 @@ void thread_init_and_detach(void (*threadfunc)(void *), void *user, const char *
 #if defined(CONF_FAMILY_WINDOWS)
 typedef void *SEMAPHORE;
 #elif defined(CONF_PLATFORM_MACOS)
-#include <semaphore.h>
 typedef sem_t *SEMAPHORE;
 #elif defined(CONF_FAMILY_UNIX)
-#include <semaphore.h>
 typedef sem_t SEMAPHORE;
 #else
 #error not implemented on this platform
