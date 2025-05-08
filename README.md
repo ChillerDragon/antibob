@@ -4,6 +4,9 @@ Your ddnet antibot module boilerplate! Example antibot module with helper method
 This is not a library so you can just fork this repository and start editing the code
 to build your own antibot module.
 
+**This project contains no actual bot detections.**
+It is just meant to be a framework for you to write your own.
+
 ## features
 
 - Makefile
