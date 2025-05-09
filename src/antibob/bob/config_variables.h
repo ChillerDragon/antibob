@@ -22,7 +22,7 @@ MACRO_CONFIG_STR(SvName, sv_name, 128, "unnamed server", CFGFLAG_SERVER, "Server
 
 // antibot internal variables are conventionally prefixed with ab
 // short for anti bob
-MACRO_CONFIG_INT(AbAutoKick, ab_auto_kick, 1, 1, 100, CFGFLAG_SERVER, "0=off 1=kick 2+=ban time in minutes")
+MACRO_CONFIG_INT(AbAutoKick, ab_auto_kick, 1, 0, 100, CFGFLAG_SERVER, "0=off 1=kick 2+=ban time in minutes")
 MACRO_CONFIG_STR(AbKickReason, ab_kick_reason, 64, "antibob auto kick", CFGFLAG_SERVER, "shown to players that get kicked if ab_auto_kick is set")
 
 //
