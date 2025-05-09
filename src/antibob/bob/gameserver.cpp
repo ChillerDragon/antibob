@@ -20,6 +20,7 @@
 CGameServer::CGameServer(CAntibotData *pData) :
 	m_pData(pData)
 {
+	m_BobAbi.OnInit();
 	m_Network.OnInit(pData, this);
 
 	CCmdlineArguments CliArgs;
