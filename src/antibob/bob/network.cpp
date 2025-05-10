@@ -129,12 +129,12 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 	if(IsSixup(ClientId))
 	{
 		if(Msg == polybob::protocol7::NETMSGTYPE_CL_SAY)
-			pAntibob->OnSayNetMessage7(static_cast<polybob::protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+			return pAntibob->OnSayNetMessage7(static_cast<polybob::protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
 	}
 	else
 	{
 		if(Msg == polybob::NETMSGTYPE_CL_SAY)
-			pAntibob->OnSayNetMessage(static_cast<polybob::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+			return pAntibob->OnSayNetMessage(static_cast<polybob::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
 	}
 
 	return false;
