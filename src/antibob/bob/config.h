@@ -8,10 +8,10 @@ class CBobConfig
 public:
 #define MACRO_CONFIG_INT(Name, ScriptName, Def, Min, Max, Flags, Desc) \
 	static constexpr int ms_##Name = Def; \
-	int m_##Name;
+	int m_##Name = Def;
 #define MACRO_CONFIG_COL(Name, ScriptName, Def, Flags, Desc) \
 	static constexpr unsigned ms_##Name = Def; \
-	unsigned m_##Name;
+	unsigned m_##Name = Def;
 #define MACRO_CONFIG_STR(Name, ScriptName, Len, Def, Flags, Desc) \
 	static constexpr const char *ms_p##Name = Def; \
 	char m_##Name[Len]; // Flawfinder: ignore
@@ -66,7 +66,10 @@ public:
 		m_pVariable(pVariable),
 		m_Default(Default),
 		m_Min(Min),
-		m_Max(Max){};
+		m_Max(Max)
+	{
+		*m_pVariable = m_Default;
+	};
 };
 
 class CBobStringConfigVariable : public CBobConfigVariable
