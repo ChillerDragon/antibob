@@ -5,6 +5,7 @@ CXXFLAGS := \
 	    -Isrc/antibob \
 	    -Isrc/ddnet \
 	    -fPIC \
+	    -MMD -MP \
 	    -Og -g
 
 POLYBOB_SRCS := $(wildcard \
@@ -25,6 +26,8 @@ BOBTEST_OBJS := $(patsubst %.cpp,build/objs/bobtest/%.o,$(BOBTEST_SRCS))
 
 TESTS_SRCS := $(wildcard src/test/bob/*.cpp)
 TESTS_BINARIES := $(patsubst src/test/bob/%.cpp,build/%_bob_test,$(TESTS_SRCS))
+
+HEADER_DEPS := $(POLYBOB_OBJS:.o=.d) $(ANTIBOB_OBJS:.o=.d) $(BOBTEST_OBJS:.o=.d)
 
 DEPENDENCIES := build/objs/external/md5.o \
 		build/objs/generated/git_revision.o
@@ -103,6 +106,8 @@ tests: $(TESTS_BINARIES)
 
 run_tests: tests
 	$(foreach var,$(TESTS_BINARIES),LD_LIBRARY_PATH=. $(var);)
+
+-include $(HEADER_DEPS)
 
 clean:
 	rm -rf build
