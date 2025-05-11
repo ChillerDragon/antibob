@@ -10,6 +10,7 @@
 
 #include <bob/cmdline_arguments.h>
 #include <bob/network.h>
+#include <bob/pending_punish.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,6 +50,11 @@ void CGameServer::SendChatTarget(int ClientId, const char *pMessage)
 	Msg.m_ClientId = -1;
 	Msg.m_pMessage = pMessage;
 	Server()->SendPackMsg(&Msg, polybob::MSGFLAG_VITAL, ClientId);
+}
+
+void CGameServer::Punish(int ClientId, const char *pReason, int TimeInMinutes, CPendingPunish::EPunish Punish)
+{
+	m_PunishController.SchedulePunish(ClientId, pReason, TimeInMinutes, Punish);
 }
 
 //

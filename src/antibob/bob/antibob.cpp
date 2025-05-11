@@ -134,6 +134,8 @@ bool CAntibob::OnSayNetMessage(const polybob::CNetMsg_Cl_Say *pMsg, int ClientId
 			Kick(ClientId, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
 	if(str_find_nocase(pMsg->m_pMessage, "i hack"))
 		m_apPlayers[ClientId]->Detect(BOB_DE_SELFREPORT, "said 'i hack'");
+	// if(str_find_nocase(pMsg->m_pMessage, "uwu"))
+	// 	Punish(ClientId, "no uwu allowed", 0, CPendingPunish::EPunish::KICK);
 	return false;
 }
 
@@ -163,6 +165,7 @@ void CAntibob::OnInit(CAntibotData *pData)
 	RegisterCommands();
 	m_ConfigManager.OnInit();
 	m_Console.OnInit(&m_ConfigManager, this);
+	m_PunishController.OnInit(this);
 }
 
 void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)
@@ -233,6 +236,7 @@ void CAntibob::OnHookAttach(int ClientId, bool Player)
 
 void CAntibob::OnEngineTick()
 {
+	m_PunishController.OnTick();
 }
 
 void CAntibob::OnEngineClientJoin(int ClientId)
@@ -244,6 +248,8 @@ void CAntibob::OnEngineClientJoin(int ClientId)
 
 void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 {
+	m_PunishController.OnPlayerDisconnect(ClientId);
+
 	delete m_apPlayers[ClientId];
 	m_apPlayers[ClientId] = nullptr;
 

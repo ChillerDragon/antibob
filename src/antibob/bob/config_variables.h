@@ -24,6 +24,7 @@ MACRO_CONFIG_STR(SvName, sv_name, 128, "unnamed server", CFGFLAG_SERVER, "Server
 // short for anti bob
 MACRO_CONFIG_INT(AbAutoKick, ab_auto_kick, 1, 0, 100, CFGFLAG_SERVER, "0=off 1=kick 2+=ban time in minutes")
 MACRO_CONFIG_STR(AbKickReason, ab_kick_reason, 64, "antibob auto kick", CFGFLAG_SERVER, "shown to players that get kicked if ab_auto_kick is set")
+MACRO_CONFIG_INT(AbPunishInterval, ab_punish_interval, 1, 1, 600, CFGFLAG_SERVER, "delay in seconds between punish waves")
 
 //
 // Add config variables for forks below this comment to avoid merge conflicts.

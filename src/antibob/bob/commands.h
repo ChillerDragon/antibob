@@ -10,6 +10,7 @@ CONSOLE_COMMAND("cmdlist", "", ComCmdlist, this, "lists all antibot commands (se
 CONSOLE_COMMAND("dump", "?r[search]", ComDump, this, "shows current antibot data for all players")
 CONSOLE_COMMAND("events", "i[client id]", ComEvents, this, "shows details about triggered detections for a given player")
 CONSOLE_COMMAND("version", "", ComVersion, this, "shows version of the antibob module")
+CONSOLE_COMMAND("pending", "", ComPendingPunishments, this, "list pending punishments")
 
 //
 // Add new commands for forks below this comment to avoid merge conflicts.

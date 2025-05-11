@@ -36,3 +36,9 @@ void CAntibob::ComVersion(CBobResult *pResult, void *pUserData)
 {
 	log_info("antibot", "antibob v" ANTIBOB_VERSION " git revision hash: %s", BOB_GIT_SHORTREV_HASH);
 }
+
+void CAntibob::ComPendingPunishments(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+	pSelf->m_PunishController.ListPendingPunishments();
+}

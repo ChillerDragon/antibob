@@ -10,6 +10,10 @@
 #include <bob/config.h>
 #include <bob/console.h>
 #include <bob/network.h>
+#include <bob/pending_punish.h>
+
+#include <cstdint>
+#include <vector>
 
 class CGameServer
 {
@@ -26,6 +30,7 @@ public:
 	CBobConfig *Config() const { return &g_BobConfig; }
 	polybob::IStorage *Storage() const { return m_pStorage; }
 	CAntibobAbi m_BobAbi;
+	CPunishController m_PunishController;
 
 	CBobConfigManager m_ConfigManager;
 
@@ -36,10 +41,17 @@ public:
 	void SendChat(int ClientId, int Team, const char *pMessage);
 	void SendChatTarget(int ClientId, const char *pMessage);
 
+	// schedules a punishment like kicking
+	// it will not be executed directly
+	// but with a delay of up to a few minutes to obfuscate the detection
+	// they will also be applied instantly on disconnect to avoid bypass
+	void Punish(int ClientId, const char *pReason, int TimeInMinutes, CPendingPunish::EPunish Punish);
+
 	//
 	// antibot callbacks
 	//
 
+	// it is recommended to use Punish() instead of Kick()
 	void Kick(int ClientId, const char *pReason = nullptr) const;
 	void LogInfo(const char *pFormat, ...)
 		GNUC_ATTRIBUTE((format(printf, 2, 3)));
