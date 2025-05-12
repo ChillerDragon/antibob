@@ -147,6 +147,11 @@ bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, 
 	return false;
 }
 
+void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
+{
+	log_info("antibot", "%s joined the game", ClientName(pPlayer->m_ClientId));
+}
+
 //
 // ddnet antibot interface hooks
 //

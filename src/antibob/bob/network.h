@@ -20,12 +20,25 @@ public:
 	bool m_Sixup = false;
 	// char m_aName[MAX_NAME_LENGTH];
 
+	enum class EState
+	{
+		REDIRECTED = -1,
+		EMPTY,
+		PREAUTH,
+		AUTH,
+		CONNECTING,
+		READY,
+		INGAME
+	};
+	EState m_State = EState::EMPTY;
+
 	void Init(int ClientId, bool Sixup)
 	{
 		m_Active = true;
 
 		m_ClientId = ClientId;
 		m_Sixup = Sixup;
+		m_State = EState::CONNECTING;
 		// str_copy(m_aName, "(connecting)");
 	}
 };

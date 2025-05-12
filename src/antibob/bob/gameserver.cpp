@@ -49,6 +49,13 @@ CAntibotPlayer *CGameServer::GetPlayerByUniqueClientId(int UniqueClientId)
 	return nullptr;
 }
 
+bool CGameServer::IsClientReady(int ClientId) const
+{
+	if(!m_apPlayers[ClientId])
+		return false;
+	return m_apPlayers[ClientId]->m_Ready;
+}
+
 void CGameServer::AddJob(std::shared_ptr<polybob::IJob> pJob)
 {
 	m_JobPool.Add(std::move(pJob));

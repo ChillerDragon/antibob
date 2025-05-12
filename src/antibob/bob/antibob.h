@@ -40,6 +40,12 @@ public:
 	// return true to drop the message
 	virtual bool OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
+	// same as IGameController::OnPlayerConnect(CPlayer *pPlayer)
+	// in ddnet code base
+	// is called when the client is fully online and
+	// sent its name and skin info already
+	virtual void OnPlayerConnect(class CAntibotPlayer *pPlayer);
+
 	//
 	// ddnet antibot interface hooks
 	//

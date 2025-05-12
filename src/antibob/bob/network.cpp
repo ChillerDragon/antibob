@@ -126,15 +126,47 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 	if(!pRawMsg)
 		return false;
 
-	if(IsSixup(ClientId))
+	if(Sys)
 	{
-		if(Msg == polybob::protocol7::NETMSGTYPE_CL_SAY)
-			return pAntibob->OnSayNetMessage7(static_cast<polybob::protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+		if(IsSixup(ClientId))
+		{
+			// somehow the state handling works already for 0.7
+			// i think the server side translation layer is applied
+			// befor the call to antibot or something like that
+		}
+		else
+		{
+			if(Msg == polybob::NETMSG_READY)
+			{
+				if(m_aClients[ClientId].m_State == CAntibotClient::EState::CONNECTING)
+				{
+					m_aClients[ClientId].m_State = CAntibotClient::EState::READY;
+				}
+			}
+			else if(Msg == polybob::NETMSG_ENTERGAME && pAntibob->IsClientReady(ClientId))
+			{
+				if(m_aClients[ClientId].m_State == CAntibotClient::EState::CONNECTING)
+				{
+					m_aClients[ClientId].m_State = CAntibotClient::EState::READY;
+					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]); // TODO: this does not get called
+				}
+			}
+		}
 	}
 	else
 	{
-		if(Msg == polybob::NETMSGTYPE_CL_SAY)
-			return pAntibob->OnSayNetMessage(static_cast<polybob::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+		if(IsSixup(ClientId))
+		{
+			if(Msg == polybob::protocol7::NETMSGTYPE_CL_SAY)
+				return pAntibob->OnSayNetMessage7(static_cast<polybob::protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+		}
+		else
+		{
+			if(Msg == polybob::NETMSGTYPE_CL_SAY)
+				return pAntibob->OnSayNetMessage(static_cast<polybob::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+			else if(Msg == polybob::NETMSGTYPE_CL_STARTINFO)
+				pAntibob->m_apPlayers[ClientId]->m_Ready = true;
+		}
 	}
 
 	return false;

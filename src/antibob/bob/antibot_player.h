@@ -14,6 +14,11 @@ public:
 	uint32_t m_UniqueClientId = 0;
 	int m_ClientId;
 	bool m_Sixup;
+
+	// same as ddnet's CPlayer::m_Ready
+	// indicating if the client info was already sent
+	bool m_Ready = false;
+
 	std::unordered_map<int, CDetectionEvent> m_DetectionEvents;
 
 	// registers a detection event
