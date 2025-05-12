@@ -3,6 +3,7 @@
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/system.h>
 #include <polybob/engine/message.h>
+#include <polybob/engine/shared/jobs.h>
 #include <polybob/engine/storage.h>
 
 #include <bob/antibob_abi.h>
@@ -13,7 +14,7 @@
 #include <bob/pending_punish.h>
 
 #include <cstdint>
-#include <vector>
+#include <memory>
 
 class CGameServer
 {
@@ -23,6 +24,7 @@ public:
 
 	CAntibotData *m_pData = nullptr;
 	polybob::IStorage *m_pStorage = nullptr;
+	polybob::CJobPool m_JobPool;
 	CNetwork m_Network;
 	CNetwork *Server() { return &m_Network; }
 	CBobConsole m_Console;
@@ -47,6 +49,8 @@ public:
 	CAntibotPlayer *GetPlayerByUniqueClientId(int UniqueClientId);
 
 	const char *ClientName(int ClientId) const { return !m_pRoundData ? "(null)" : m_pRoundData->m_aCharacters[ClientId].m_aName; }
+
+	void AddJob(std::shared_ptr<polybob::IJob> pJob);
 
 	void SendChat(int ClientId, int Team, const char *pMessage);
 	void SendChatTarget(int ClientId, const char *pMessage);

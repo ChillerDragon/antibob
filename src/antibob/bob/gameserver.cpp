@@ -1,6 +1,3 @@
-#include <cstdarg>
-#include <cstdio>
-#include <cstdlib>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 #include <polybob/base/system/shell.h>
@@ -12,8 +9,9 @@
 #include <bob/network.h>
 #include <bob/pending_punish.h>
 
-#include <stdio.h>
+#include <cstdarg>
 #include <stdlib.h>
+#include <thread>
 #include <unistd.h>
 
 #include "gameserver.h"
@@ -26,12 +24,15 @@ CGameServer::CGameServer(CAntibotData *pData) :
 
 	CCmdlineArguments CliArgs;
 	m_pStorage = polybob::CreateStorage(IStorage::EInitializationType::SERVER, 1, (const char **)CliArgs.All());
+	m_JobPool.Init(std::max(4, (int)std::thread::hardware_concurrency()) - 2);
 }
 
 CGameServer::~CGameServer()
 {
 	log_info("antibot", "shutting down antibob ...");
 	delete m_pStorage;
+	log_info("antibot", "shutting down job pool ...");
+	m_JobPool.Shutdown();
 }
 
 CAntibotPlayer *CGameServer::GetPlayerByUniqueClientId(int UniqueClientId)
@@ -46,6 +47,11 @@ CAntibotPlayer *CGameServer::GetPlayerByUniqueClientId(int UniqueClientId)
 		return pPlayer;
 	}
 	return nullptr;
+}
+
+void CGameServer::AddJob(std::shared_ptr<polybob::IJob> pJob)
+{
+	m_JobPool.Add(std::move(pJob));
 }
 
 void CGameServer::SendChat(int ClientId, int Team, const char *pMessage)
