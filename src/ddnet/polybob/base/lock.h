@@ -2,6 +2,8 @@
 
 #include <mutex>
 
+namespace polybob {
+
 // Enable thread safety attributes only with clang.
 // The attributes can be safely erased when compiling with other compilers.
 #if defined(__clang__) && (!defined(SWIG))
@@ -130,3 +132,5 @@ public:
 private:
 	CLock &m_Lock;
 };
+
+} // namespace polybob
