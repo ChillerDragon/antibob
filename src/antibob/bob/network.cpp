@@ -142,12 +142,14 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 				{
 					m_aClients[ClientId].m_State = CAntibotClient::EState::READY;
 				}
+				log_info("antibot", "ready");
 			}
 			else if(Msg == polybob::NETMSG_ENTERGAME && pAntibob->IsClientReady(ClientId))
 			{
-				if(m_aClients[ClientId].m_State == CAntibotClient::EState::CONNECTING)
+				log_info("antibot", "ener gane");
+				if(m_aClients[ClientId].m_State == CAntibotClient::EState::READY)
 				{
-					m_aClients[ClientId].m_State = CAntibotClient::EState::READY;
+					m_aClients[ClientId].m_State = CAntibotClient::EState::INGAME;
 					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]); // TODO: this does not get called
 				}
 			}
