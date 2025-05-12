@@ -153,12 +153,12 @@ bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, 
 
 void CAntibob::OnInit(CAntibotData *pData)
 {
-	LogInfo("antibob antibot initialized");
-	LogInfo("git revision hash: %s", BOB_GIT_SHORTREV_HASH);
+	log_info("antibob", "antibob antibot initialized");
+	log_info("antibot", "antibob v" ANTIBOB_VERSION " git rev: %s, built on: " ANTIBOB_BUILD_DATE, BOB_GIT_SHORTREV_HASH);
 
 	if(secure_random_init() != 0)
 	{
-		LogError("could not initialize secure RNG");
+		log_error("antibob", "could not initialize secure RNG");
 		dbg_break();
 	}
 
