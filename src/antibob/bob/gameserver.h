@@ -36,6 +36,16 @@ public:
 
 	CAntibotRoundData *m_pRoundData = nullptr;
 	CAntibotPlayer *m_apPlayers[ANTIBOT_MAX_CLIENTS];
+
+	// starting 1 to make 0 the special value "no client id"
+	uint32_t m_NextUniqueClientId = 1;
+
+	// returns CAntibotPlayer or nullptr
+	// based on a matching unique client id
+	// the unique client ids start at 1 and are never reused during the
+	// runtime of the server
+	CAntibotPlayer *GetPlayerByUniqueClientId(int UniqueClientId);
+
 	const char *ClientName(int ClientId) const { return !m_pRoundData ? "(null)" : m_pRoundData->m_aCharacters[ClientId].m_aName; }
 
 	void SendChat(int ClientId, int Team, const char *pMessage);

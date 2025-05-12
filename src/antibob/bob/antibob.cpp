@@ -242,7 +242,8 @@ void CAntibob::OnEngineTick()
 void CAntibob::OnEngineClientJoin(int ClientId)
 {
 	bool Sixup = m_pRoundData->m_aPlayers[ClientId].m_Sixup;
-	m_apPlayers[ClientId] = new CAntibotPlayer(ClientId, Sixup);
+	m_apPlayers[ClientId] = new CAntibotPlayer(ClientId, m_NextUniqueClientId, Sixup);
+	m_NextUniqueClientId += 1;
 	m_Network.OnClientConnect(ClientId, Sixup);
 }
 

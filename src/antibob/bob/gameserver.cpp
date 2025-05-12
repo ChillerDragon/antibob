@@ -34,6 +34,20 @@ CGameServer::~CGameServer()
 	delete m_pStorage;
 }
 
+CAntibotPlayer *CGameServer::GetPlayerByUniqueClientId(int UniqueClientId)
+{
+	for(CAntibotPlayer *pPlayer : m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+		if(pPlayer->m_UniqueClientId != UniqueClientId)
+			continue;
+
+		return pPlayer;
+	}
+	return nullptr;
+}
+
 void CGameServer::SendChat(int ClientId, int Team, const char *pMessage)
 {
 	polybob::CNetMsg_Sv_Chat Msg;

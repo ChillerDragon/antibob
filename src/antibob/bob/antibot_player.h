@@ -2,13 +2,16 @@
 
 #include <bob/detection_event.h>
 
+#include <cstdint>
 #include <unordered_map>
 
 class CAntibotPlayer
 {
 public:
-	CAntibotPlayer(int ClientId, bool Sixup);
+	CAntibotPlayer(int ClientId, uint32_t UniqueClientId, bool Sixup);
 
+	// starting 1 to make 0 the special value "no client id"
+	uint32_t m_UniqueClientId = 0;
 	int m_ClientId;
 	bool m_Sixup;
 	std::unordered_map<int, CDetectionEvent> m_DetectionEvents;
