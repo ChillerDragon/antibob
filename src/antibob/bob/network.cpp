@@ -124,7 +124,16 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 		pRawMsg = m_NetObjHandler.SecureUnpackMsg(Msg, &Unpacker);
 
 	if(!pRawMsg)
+	{
+		log_error(
+			"antibob",
+			"sixup=%d sys=%d msgid=%d secure unpack error: %s",
+			IsSixup(ClientId),
+			Sys,
+			Msg,
+			IsSixup(ClientId) ? m_NetObjHandler7.FailedMsgOn() : m_NetObjHandler.FailedMsgOn());
 		return false;
+	}
 
 	if(Sys)
 	{
