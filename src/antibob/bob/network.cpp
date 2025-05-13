@@ -126,6 +126,13 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 			{
 				if(m_aClients[ClientId].m_State == CAntibotClient::EState::READY)
 				{
+					m_aClients[ClientId].m_State = CAntibotClient::EState::PREINGAME;
+				}
+			}
+			else if(Msg == polybob::protocol7::NETMSG_INPUT)
+			{
+				if(m_aClients[ClientId].m_State == CAntibotClient::EState::PREINGAME)
+				{
 					m_aClients[ClientId].m_State = CAntibotClient::EState::INGAME;
 					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]);
 				}
@@ -143,6 +150,13 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 			else if(Msg == polybob::NETMSG_ENTERGAME && pAntibob->IsClientReady(ClientId))
 			{
 				if(m_aClients[ClientId].m_State == CAntibotClient::EState::READY)
+				{
+					m_aClients[ClientId].m_State = CAntibotClient::EState::PREINGAME;
+				}
+			}
+			else if(Msg == polybob::NETMSG_INPUT)
+			{
+				if(m_aClients[ClientId].m_State == CAntibotClient::EState::PREINGAME)
 				{
 					m_aClients[ClientId].m_State = CAntibotClient::EState::INGAME;
 					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]);

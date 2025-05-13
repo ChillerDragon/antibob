@@ -28,6 +28,20 @@ public:
 		AUTH,
 		CONNECTING,
 		READY,
+
+		// antibob specific state
+		// the antibot reads the network messages
+		// before the server processes them
+		// so the final message that sets the player
+		// fully connected on the server side
+		// is not being processed by the server
+		// when the antibot gets it
+		// so we have to delay the in game state hook
+		// by one tick in order to have a fully initialized client
+		// otherwise the server still has the client in state CONNECTING
+		// and the round data still shows the player name (connecting)
+		PREINGAME,
+
 		INGAME
 	};
 	EState m_State = EState::EMPTY;
