@@ -111,37 +111,25 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 
 	if(Sys)
 	{
-		// if(Msg == BOB_NETMSG_PINGEX)
-		// 	log_info("antibot", "got pingex");
-		// else if(Msg == BOB_NETMSG_PONGEX)
-		// 	log_info("antibot", "got pongex");
-	}
-
-	void *pRawMsg = nullptr;
-	if(IsSixup(ClientId))
-		pRawMsg = m_NetObjHandler7.SecureUnpackMsg(Msg, &Unpacker);
-	else
-		pRawMsg = m_NetObjHandler.SecureUnpackMsg(Msg, &Unpacker);
-
-	if(!pRawMsg)
-	{
-		log_error(
-			"antibob",
-			"sixup=%d sys=%d msgid=%d secure unpack error: %s",
-			IsSixup(ClientId),
-			Sys,
-			Msg,
-			IsSixup(ClientId) ? m_NetObjHandler7.FailedMsgOn() : m_NetObjHandler.FailedMsgOn());
-		return false;
-	}
-
-	if(Sys)
-	{
 		if(IsSixup(ClientId))
 		{
-			// somehow the state handling works already for 0.7
-			// i think the server side translation layer is applied
-			// befor the call to antibot or something like that
+			// blocked by
+			// https://github.com/ddnet/ddnet/issues/10219
+			if(Msg == polybob::protocol7::NETMSG_READY)
+			{
+				if(m_aClients[ClientId].m_State == CAntibotClient::EState::CONNECTING)
+				{
+					m_aClients[ClientId].m_State = CAntibotClient::EState::READY;
+				}
+			}
+			else if(Msg == polybob::protocol7::NETMSG_ENTERGAME && pAntibob->IsClientReady(ClientId))
+			{
+				if(m_aClients[ClientId].m_State == CAntibotClient::EState::READY)
+				{
+					m_aClients[ClientId].m_State = CAntibotClient::EState::INGAME;
+					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]);
+				}
+			}
 		}
 		else
 		{
@@ -151,21 +139,37 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 				{
 					m_aClients[ClientId].m_State = CAntibotClient::EState::READY;
 				}
-				log_info("antibot", "ready");
 			}
 			else if(Msg == polybob::NETMSG_ENTERGAME && pAntibob->IsClientReady(ClientId))
 			{
-				log_info("antibot", "ener gane");
 				if(m_aClients[ClientId].m_State == CAntibotClient::EState::READY)
 				{
 					m_aClients[ClientId].m_State = CAntibotClient::EState::INGAME;
-					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]); // TODO: this does not get called
+					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]);
 				}
 			}
 		}
 	}
-	else
+	else // game msg
 	{
+		void *pRawMsg = nullptr;
+		if(IsSixup(ClientId))
+			pRawMsg = m_NetObjHandler7.SecureUnpackMsg(Msg, &Unpacker);
+		else
+			pRawMsg = m_NetObjHandler.SecureUnpackMsg(Msg, &Unpacker);
+
+		if(!pRawMsg)
+		{
+			// log_error(
+			// 	"antibob",
+			// 	"sixup=%d sys=%d msgid=%d secure unpack error: %s",
+			// 	IsSixup(ClientId),
+			// 	Sys,
+			// 	Msg,
+			// 	IsSixup(ClientId) ? m_NetObjHandler7.FailedMsgOn() : m_NetObjHandler.FailedMsgOn());
+			return false;
+		}
+
 		if(IsSixup(ClientId))
 		{
 			if(Msg == polybob::protocol7::NETMSGTYPE_CL_SAY)
@@ -179,6 +183,5 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 				pAntibob->m_apPlayers[ClientId]->m_Ready = true;
 		}
 	}
-
 	return false;
 }
