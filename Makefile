@@ -30,6 +30,7 @@ TESTS_BINARIES := $(patsubst src/test/bob/%.cpp,build/%_bob_test,$(TESTS_SRCS))
 HEADER_DEPS := $(POLYBOB_OBJS:.o=.d) $(ANTIBOB_OBJS:.o=.d) $(BOBTEST_OBJS:.o=.d)
 
 DEPENDENCIES := build/objs/external/md5.o \
+		build/objs/external/json-parser.o \
 		build/objs/generated/git_revision.o
 
 libantibot.so: $(DEPENDENCIES) $(POLYBOB_OBJS) $(ANTIBOB_OBJS)
@@ -100,7 +101,12 @@ build/src/antibob/bob/generated/git_revision.cpp:
 # to avoid odr violations because the server defines the same symbols
 build/objs/external/md5.o: src/ddnet/polybob/engine/external/md5/md5.cpp src/ddnet/polybob/engine/external/md5/md5.h
 	mkdir -p build/objs/external
-	$(CXX) $< -c -o $@
+	$(CXX) $(CXXFLAGS) $< -c -o $@
+
+
+build/objs/external/json-parser.o: src/ddnet/polybob/engine/external/json-parser/json.cpp src/ddnet/polybob/engine/external/json-parser/json.h
+	mkdir -p build/objs/external
+	$(CXX) $(CXXFLAGS) $< -c -o $@
 
 tests: $(TESTS_BINARIES)
 
