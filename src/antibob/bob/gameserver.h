@@ -62,6 +62,17 @@ public:
 	// they will also be applied instantly on disconnect to avoid bypass
 	void Punish(int ClientId, const char *pReason, int TimeInMinutes, CPendingPunish::EPunish Punish);
 
+	// register suspicious activity detection
+	//
+	// ClientId - players client id
+	// EventId - event id should be defined in detection_events.h like BOB_DE_SAMPLE
+	// pInfo - optional additional information about this specifc occurence (free text)
+	void Detect(int ClientId, int EventId, const char *pInfo = nullptr);
+
+private:
+	void LogEvent(int ClientId, int EventId, const char *pInfo = nullptr);
+
+public:
 	//
 	// antibot callbacks
 	//

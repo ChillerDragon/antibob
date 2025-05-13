@@ -84,6 +84,38 @@ void CGameServer::Punish(int ClientId, const char *pReason, int TimeInMinutes, C
 	m_PunishController.SchedulePunish(ClientId, pReason, TimeInMinutes, Punish);
 }
 
+void CGameServer::Detect(int ClientId, int EventId, const char *pInfo)
+{
+	m_apPlayers[ClientId]->Detect(EventId, pInfo);
+	if(Config()->m_AbLogEvents)
+		LogEvent(ClientId, EventId, pInfo);
+}
+
+void CGameServer::LogEvent(int ClientId, int EventId, const char *pInfo)
+{
+	// TODO: this filename will conflict when multiple servers try to write to it
+	//       ideally the filename would include the port of the server
+	//       or it should write to a properly locked sqlite3 database instead
+
+	const char *pFilename = "antibob_events.txt";
+	IOHANDLE File = Storage()->OpenFile(pFilename, IOFLAG_APPEND, IStorage::TYPE_SAVE);
+	if(!File)
+	{
+		log_error("antibot", "failed to open file %s", pFilename);
+		return;
+	}
+
+	const char *pAddr = "null";
+	if(m_pRoundData)
+		pAddr = m_pRoundData->m_aPlayers[ClientId].m_aAddress;
+
+	char aLine[512];
+	str_format(aLine, sizeof(aLine), "%d, %s, %s, %s", EventId, pAddr, ClientName(ClientId), pInfo ? pInfo : "");
+	io_write(File, aLine, str_length(aLine));
+	io_write_newline(File);
+	io_close(File);
+}
+
 //
 // antibot callbacks
 //
