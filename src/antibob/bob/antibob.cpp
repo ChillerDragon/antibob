@@ -1,10 +1,12 @@
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/log.h>
+#include <polybob/base/logger.h>
 #include <polybob/base/system.h>
 #include <polybob/engine/message.h>
 #include <polybob/engine/shared/packer.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/engine/shared/protocol_ex.h>
+#include <polybob/engine/storage.h>
 #include <polybob/game/generated/protocol.h>
 #include <polybob/game/generated/protocol7.h>
 #include <polybob/game/generated/protocolglue.h>
@@ -150,6 +152,20 @@ bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, 
 void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 {
 	// log_info("antibot", "'%s' joined the game", ClientName(pPlayer->m_ClientId));
+
+	// const char *pFilename = "antibob_data.txt";
+	// IOHANDLE File = Storage()->OpenFile(pFilename, IOFLAG_APPEND, IStorage::TYPE_SAVE);
+	// if(!File)
+	// {
+	// 	log_error("antibot", "failed to open file %s", pFilename);
+	// 	return;
+	// }
+
+	// char aLine[512];
+	// str_format(aLine, sizeof(aLine), "player join: %s", ClientName(pPlayer->m_ClientId));
+	// io_write(File, aLine, str_length(aLine));
+	// io_write_newline(File);
+	// io_close(File);
 }
 
 //
