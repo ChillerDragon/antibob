@@ -8,7 +8,7 @@
 #define LOOKUP_SYM(name) \
 	m_pfn##name = (F##name)dlsym(RTLD_DEFAULT, "Antibob" #name); \
 	if(!m_pfn##name) \
-		log_error("antibot", "symbol '" #name "' not found");
+		log_error("antibot", "symbol 'Antibob" #name "' not found");
 
 void CAntibobAbi::OnInit()
 {
