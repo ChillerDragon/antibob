@@ -81,6 +81,7 @@ build/%_bob_test: src/test/bob/%.cpp libantibot.so $(DEPENDENCIES) $(BOBTEST_OBJ
 		-I . \
 		-L. \
 		-lz \
+		-lcurl \
 		libantibot.so \
 		-o $@
 
