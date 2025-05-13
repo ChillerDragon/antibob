@@ -103,7 +103,6 @@ build/objs/external/md5.o: src/ddnet/polybob/engine/external/md5/md5.cpp src/ddn
 	mkdir -p build/objs/external
 	$(CXX) $(CXXFLAGS) $< -c -o $@
 
-
 build/objs/external/json-parser.o: src/ddnet/polybob/engine/external/json-parser/json.cpp src/ddnet/polybob/engine/external/json-parser/json.h
 	mkdir -p build/objs/external
 	$(CXX) $(CXXFLAGS) $< -c -o $@
