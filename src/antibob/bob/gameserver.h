@@ -3,6 +3,7 @@
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/system.h>
 #include <polybob/engine/message.h>
+#include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/jobs.h>
 #include <polybob/engine/storage.h>
 
@@ -31,6 +32,7 @@ public:
 	CBobConsole *Console() { return &m_Console; }
 	CBobConfig *Config() const { return &g_BobConfig; }
 	polybob::IStorage *Storage() const { return m_pStorage; }
+	CHttp m_Http;
 	CAntibobAbi m_BobAbi;
 	CPunishController m_PunishController;
 

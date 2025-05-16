@@ -113,7 +113,7 @@ bool CHttpRequest::ShouldSkipRequest()
 		SHA256_DIGEST Sha256;
 		if(CalculateSha256(m_aDestAbsolute, &Sha256) && Sha256 == m_ExpectedSha256)
 		{
-			log_debug("http", "skipping download because expected file already exists: %s", m_aDest);
+			log_debug("antibot-http", "skipping download because expected file already exists: %s", m_aDest);
 			return true;
 		}
 	}
@@ -135,14 +135,14 @@ bool CHttpRequest::BeforeInit()
 
 		if(fs_makedir_rec_for(m_aDestAbsoluteTmp) < 0)
 		{
-			log_error("http", "i/o error, cannot create folder for: %s", m_aDest);
+			log_error("antibot-http", "i/o error, cannot create folder for: %s", m_aDest);
 			return false;
 		}
 
 		m_File = io_open(m_aDestAbsoluteTmp, IOFLAG_WRITE);
 		if(!m_File)
 		{
-			log_error("http", "i/o error, cannot open file: %s", m_aDest);
+			log_error("antibot-http", "i/o error, cannot open file: %s", m_aDest);
 			return false;
 		}
 	}
@@ -388,7 +388,7 @@ void CHttpRequest::OnCompletionInternal(void *pHandle, unsigned int Result)
 	{
 		// if(g_Config.m_DbgCurl || m_LogProgress >= HTTPLOG::FAILURE)
 		{
-			log_error("http", "%s failed. libcurl error (%u): %s", m_aUrl, Code, m_aErr);
+			log_error("antibot-http", "%s failed. libcurl error (%u): %s", m_aUrl, Code, m_aErr);
 		}
 		State = (Code == CURLE_ABORTED_BY_CALLBACK) ? EHttpState::ABORTED : EHttpState::ERROR;
 	}
@@ -396,7 +396,7 @@ void CHttpRequest::OnCompletionInternal(void *pHandle, unsigned int Result)
 	{
 		// if(g_Config.m_DbgCurl || m_LogProgress >= HTTPLOG::ALL)
 		{
-			log_info("http", "task done: %s", m_aUrl);
+			log_info("antibot-http", "task done: %s", m_aUrl);
 		}
 		State = EHttpState::DONE;
 	}
@@ -412,7 +412,7 @@ void CHttpRequest::OnCompletionInternal(void *pHandle, unsigned int Result)
 				sha256_str(m_ActualSha256, aActualSha256, sizeof(aActualSha256));
 				char aExpectedSha256[SHA256_MAXSTRSIZE];
 				sha256_str(m_ExpectedSha256, aExpectedSha256, sizeof(aExpectedSha256));
-				log_error("http", "SHA256 mismatch: got=%s, expected=%s, url=%s", aActualSha256, aExpectedSha256, m_aUrl);
+				log_error("antibot-http", "SHA256 mismatch: got=%s, expected=%s, url=%s", aActualSha256, aExpectedSha256, m_aUrl);
 			}
 			State = EHttpState::ERROR;
 		}
@@ -422,7 +422,7 @@ void CHttpRequest::OnCompletionInternal(void *pHandle, unsigned int Result)
 	{
 		if(m_File && io_close(m_File) != 0)
 		{
-			log_error("http", "i/o error, cannot close file: %s", m_aDest);
+			log_error("antibot-http", "i/o error, cannot close file: %s", m_aDest);
 			State = EHttpState::ERROR;
 		}
 		m_File = nullptr;
@@ -454,7 +454,7 @@ void CHttpRequest::OnCompletionInternal(void *pHandle, unsigned int Result)
 				}
 				else
 				{
-					log_error("http", "i/o error, cannot read existing file: %s", m_aDest);
+					log_error("antibot-http", "i/o error, cannot read existing file: %s", m_aDest);
 					State = EHttpState::ERROR;
 				}
 			}
@@ -463,7 +463,7 @@ void CHttpRequest::OnCompletionInternal(void *pHandle, unsigned int Result)
 		{
 			if(fs_rename(m_aDestAbsoluteTmp, m_aDestAbsolute))
 			{
-				log_error("http", "i/o error, cannot move file: %s", m_aDest);
+				log_error("antibot-http", "i/o error, cannot move file: %s", m_aDest);
 				State = EHttpState::ERROR;
 				fs_remove(m_aDestAbsoluteTmp);
 			}
@@ -494,7 +494,7 @@ void CHttpRequest::OnValidation(bool Success)
 		}
 		if(fs_rename(m_aDestAbsoluteTmp, m_aDestAbsolute))
 		{
-			log_error("http", "i/o error, cannot move file: %s", m_aDest);
+			log_error("antibot-http", "i/o error, cannot move file: %s", m_aDest);
 			m_State = EHttpState::ERROR;
 			fs_remove(m_aDestAbsoluteTmp);
 		}
@@ -596,7 +596,7 @@ bool CHttp::Init(std::chrono::milliseconds ShutdownDelay)
 	// handlers and instead ignore SIGPIPE from OpenSSL ourselves.
 	signal(SIGPIPE, SIG_IGN);
 #endif
-	m_pThread = thread_init(CHttp::ThreadMain, this, "http");
+	m_pThread = thread_init(CHttp::ThreadMain, this, "antibot-http");
 
 	std::unique_lock Lock(m_Lock);
 	m_Cv.wait(Lock, [this]() { return m_State != CHttp::UNINITIALIZED; });
@@ -619,7 +619,7 @@ void CHttp::RunLoop()
 	std::unique_lock Lock(m_Lock);
 	if(curl_global_init(CURL_GLOBAL_DEFAULT))
 	{
-		log_error("http", "curl_global_init failed");
+		log_error("antibot-http", "curl_global_init failed");
 		m_State = CHttp::ERROR;
 		m_Cv.notify_all();
 		return;
@@ -628,7 +628,7 @@ void CHttp::RunLoop()
 	m_pMultiH = curl_multi_init();
 	if(!m_pMultiH)
 	{
-		log_error("http", "curl_multi_init failed");
+		log_error("antibot-http", "curl_multi_init failed");
 		m_State = CHttp::ERROR;
 		m_Cv.notify_all();
 		return;
@@ -637,7 +637,7 @@ void CHttp::RunLoop()
 	// print curl version
 	{
 		curl_version_info_data *pVersion = curl_version_info(CURLVERSION_NOW);
-		log_info("http", "libcurl version %s (compiled = " LIBCURL_VERSION ")", pVersion->version);
+		log_info("antibot-http", "libcurl version %s (compiled = " LIBCURL_VERSION ")", pVersion->version);
 	}
 
 	m_State = CHttp::RUNNING;
@@ -668,7 +668,7 @@ void CHttp::RunLoop()
 		if(PollCode != CURLM_OK)
 		{
 			Lock.lock();
-			log_error("http", "curl_multi_poll failed: %s", curl_multi_strerror(PollCode));
+			log_error("antibot-http", "curl_multi_poll failed: %s", curl_multi_strerror(PollCode));
 			m_State = CHttp::ERROR;
 			break;
 		}
@@ -677,7 +677,7 @@ void CHttp::RunLoop()
 		if(PerformCode != CURLM_OK)
 		{
 			Lock.lock();
-			log_error("http", "curl_multi_perform failed: %s", curl_multi_strerror(PerformCode));
+			log_error("antibot-http", "curl_multi_perform failed: %s", curl_multi_strerror(PerformCode));
 			m_State = CHttp::ERROR;
 			break;
 		}
@@ -707,7 +707,7 @@ void CHttp::RunLoop()
 		{
 			auto &pRequest = NewRequests.front();
 			// if(g_Config.m_DbgCurl)
-			//	log_debug("http", "task: %s %s", CHttpRequest::GetRequestType(pRequest->m_Type), pRequest->m_aUrl);
+			//	log_debug("antibot-http", "task: %s %s", CHttpRequest::GetRequestType(pRequest->m_Type), pRequest->m_aUrl);
 
 			if(pRequest->ShouldSkipRequest())
 			{
@@ -724,7 +724,7 @@ void CHttp::RunLoop()
 			CURL *pEH = curl_easy_init();
 			if(!pEH)
 			{
-				log_error("http", "curl_easy_init failed");
+				log_error("antibot-http", "curl_easy_init failed");
 				goto error_init;
 			}
 
@@ -739,7 +739,7 @@ void CHttp::RunLoop()
 
 			if(curl_multi_add_handle(m_pMultiH, pEH) != CURLM_OK)
 			{
-				log_error("http", "curl_multi_add_handle failed");
+				log_error("antibot-http", "curl_multi_add_handle failed");
 				goto error_configure;
 			}
 

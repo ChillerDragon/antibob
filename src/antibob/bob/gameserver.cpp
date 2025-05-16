@@ -22,6 +22,11 @@ CGameServer::CGameServer(CAntibotData *pData) :
 	m_BobAbi.OnInit();
 	m_Network.OnInit(pData, this);
 
+	if(!m_Http.Init(std::chrono::seconds{2}))
+	{
+		log_error("antibot", "Failed to initialize the HTTP client.");
+	}
+
 	CCmdlineArguments CliArgs;
 	m_pStorage = polybob::CreateStorage(IStorage::EInitializationType::SERVER, 1, (const char **)CliArgs.All());
 	m_JobPool.Init(std::max(4, (int)std::thread::hardware_concurrency()) - 2);
