@@ -3,6 +3,7 @@
 #include <polybob/base/logger.h>
 #include <polybob/base/system.h>
 #include <polybob/engine/message.h>
+#include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/packer.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/engine/shared/protocol_ex.h>
@@ -151,6 +152,15 @@ bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, 
 
 void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 {
+	log_info("ab", "connect");
+	std::shared_ptr<CHttpRequest> pHttp = HttpGet("http://127.0.0.1:9090");
+	pHttp->LogProgress(HTTPLOG::FAILURE);
+	pHttp->IpResolve(IPRESOLVE::V4);
+	pHttp->Timeout(CTimeout{4000, 15000, 500, 5});
+	pHttp->HeaderString("Content-Type", "application/json");
+	m_Http.Run(pHttp);
+	log_info("ab", "http requested");
+
 	// log_info("antibot", "'%s' joined the game", ClientName(pPlayer->m_ClientId));
 
 	// const char *pFilename = "antibob_data.txt";

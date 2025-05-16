@@ -164,9 +164,9 @@ bool CHttpRequest::ConfigureHandle(void *pHandle)
 	}
 	long Protocols = CURLPROTO_HTTPS;
 	// if(g_Config.m_HttpAllowInsecure)
-	// {
-	// 	Protocols |= CURLPROTO_HTTP;
-	// }
+	{
+		Protocols |= CURLPROTO_HTTP;
+	}
 
 	curl_easy_setopt(pH, CURLOPT_ERRORBUFFER, m_aErr);
 
