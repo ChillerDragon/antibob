@@ -1,8 +1,10 @@
 #pragma once
 
+#include <polybob/engine/shared/http.h>
 #include <bob/detection_event.h>
 
 #include <cstdint>
+#include <memory>
 #include <unordered_map>
 
 class CAntibotPlayer
@@ -20,6 +22,10 @@ public:
 	bool m_Ready = false;
 
 	std::unordered_map<int, CDetectionEvent> m_DetectionEvents;
+	std::shared_ptr<polybob::CHttpRequest> m_pHttpLookupName = nullptr;
+	polybob::EHttpState m_LookupState = polybob::EHttpState::ABORTED;
+
+	void Lookup(const char *pName, const char *pAddr);
 
 	// registers a detection event
 	// that will show up in the "dump_antibot" rcon command
