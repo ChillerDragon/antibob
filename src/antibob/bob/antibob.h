@@ -40,7 +40,7 @@ public:
 	// return true to drop the message
 	virtual bool OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
-	virtual void OnInputNetMessage(int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput);
+	virtual void OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput);
 
 	// same as IGameController::OnPlayerConnect(CPlayer *pPlayer)
 	// in ddnet code base

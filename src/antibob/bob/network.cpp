@@ -161,7 +161,7 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 			if(Unpacker.Error())
 				return false;
 
-			pAntibob->OnInputNetMessage(LastAckedSnapshot, IntendedTick, Size, (CNetObj_PlayerInput *)aData);
+			pAntibob->OnInputNetMessage(ClientId, LastAckedSnapshot, IntendedTick, Size, (CNetObj_PlayerInput *)aData);
 		}
 	}
 	else // game msg
