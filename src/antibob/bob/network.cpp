@@ -2,6 +2,7 @@
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 #include <polybob/engine/shared/protocol.h>
+#include <polybob/game/generated/protocol.h>
 #include <polybob/game/generated/protocolglue.h>
 
 #include "bob/antibob.h"
@@ -166,6 +167,20 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 					m_aClients[ClientId].m_State = CAntibotClient::EState::INGAME;
 					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]);
 				}
+
+				const int LastAckedSnapshot = Unpacker.GetInt();
+				int IntendedTick = Unpacker.GetInt();
+				int Size = Unpacker.GetInt();
+				if(Unpacker.Error() || Size / 4 > polybob::MAX_INPUT_SIZE || IntendedTick < polybob::MIN_TICK || IntendedTick >= polybob::MAX_TICK)
+					return false;
+
+				int aData[MAX_INPUT_SIZE];
+				for(int i = 0; i < Size / 4; i++)
+					aData[i] = Unpacker.GetInt();
+				if(Unpacker.Error())
+					return false;
+
+				pAntibob->OnInputNetMessage(LastAckedSnapshot, IntendedTick, Size, (CNetObj_PlayerInput *)aData);
 			}
 		}
 	}

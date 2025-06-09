@@ -150,6 +150,13 @@ bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, 
 	return false;
 }
 
+void CAntibob::OnInputNetMessage(int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput)
+{
+	log_info("antibot", "player is aiming at x=%d y=%d", pInput->m_TargetX, pInput->m_TargetY);
+	if(pInput->m_Direction)
+		log_info("antibot", "player is walking %s", pInput->m_Direction == -1 ? "left" : "right");
+}
+
 void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 {
 	// log_info("ab", "connect");
