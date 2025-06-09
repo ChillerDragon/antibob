@@ -119,69 +119,49 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 	{
 		if(IsSixup(ClientId))
 		{
-			// blocked by
-			// https://github.com/ddnet/ddnet/issues/10219
 			if(Msg == polybob::protocol7::NETMSG_READY)
-			{
-				if(m_aClients[ClientId].m_State == CAntibotClient::EState::CONNECTING)
-				{
-					m_aClients[ClientId].m_State = CAntibotClient::EState::READY;
-				}
-			}
-			else if(Msg == polybob::protocol7::NETMSG_ENTERGAME && pAntibob->IsClientReady(ClientId))
-			{
-				if(m_aClients[ClientId].m_State == CAntibotClient::EState::READY)
-				{
-					m_aClients[ClientId].m_State = CAntibotClient::EState::PREINGAME;
-				}
-			}
+				Msg = polybob::NETMSG_READY;
+			else if(Msg == polybob::protocol7::NETMSG_ENTERGAME)
+				Msg = polybob::NETMSG_ENTERGAME;
 			else if(Msg == polybob::protocol7::NETMSG_INPUT)
+				Msg = polybob::NETMSG_INPUT;
+		}
+
+		if(Msg == polybob::NETMSG_READY)
+		{
+			if(m_aClients[ClientId].m_State == CAntibotClient::EState::CONNECTING)
 			{
-				if(m_aClients[ClientId].m_State == CAntibotClient::EState::PREINGAME)
-				{
-					m_aClients[ClientId].m_State = CAntibotClient::EState::INGAME;
-					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]);
-				}
+				m_aClients[ClientId].m_State = CAntibotClient::EState::READY;
 			}
 		}
-		else
+		else if(Msg == polybob::NETMSG_ENTERGAME && pAntibob->IsClientReady(ClientId))
 		{
-			if(Msg == polybob::NETMSG_READY)
+			if(m_aClients[ClientId].m_State == CAntibotClient::EState::READY)
 			{
-				if(m_aClients[ClientId].m_State == CAntibotClient::EState::CONNECTING)
-				{
-					m_aClients[ClientId].m_State = CAntibotClient::EState::READY;
-				}
+				m_aClients[ClientId].m_State = CAntibotClient::EState::PREINGAME;
 			}
-			else if(Msg == polybob::NETMSG_ENTERGAME && pAntibob->IsClientReady(ClientId))
+		}
+		else if(Msg == polybob::NETMSG_INPUT)
+		{
+			if(m_aClients[ClientId].m_State == CAntibotClient::EState::PREINGAME)
 			{
-				if(m_aClients[ClientId].m_State == CAntibotClient::EState::READY)
-				{
-					m_aClients[ClientId].m_State = CAntibotClient::EState::PREINGAME;
-				}
+				m_aClients[ClientId].m_State = CAntibotClient::EState::INGAME;
+				pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]);
 			}
-			else if(Msg == polybob::NETMSG_INPUT)
-			{
-				if(m_aClients[ClientId].m_State == CAntibotClient::EState::PREINGAME)
-				{
-					m_aClients[ClientId].m_State = CAntibotClient::EState::INGAME;
-					pAntibob->OnPlayerConnect(pAntibob->m_apPlayers[ClientId]);
-				}
 
-				const int LastAckedSnapshot = Unpacker.GetInt();
-				int IntendedTick = Unpacker.GetInt();
-				int Size = Unpacker.GetInt();
-				if(Unpacker.Error() || Size / 4 > polybob::MAX_INPUT_SIZE || IntendedTick < polybob::MIN_TICK || IntendedTick >= polybob::MAX_TICK)
-					return false;
+			const int LastAckedSnapshot = Unpacker.GetInt();
+			int IntendedTick = Unpacker.GetInt();
+			int Size = Unpacker.GetInt();
+			if(Unpacker.Error() || Size / 4 > polybob::MAX_INPUT_SIZE || IntendedTick < polybob::MIN_TICK || IntendedTick >= polybob::MAX_TICK)
+				return false;
 
-				int aData[MAX_INPUT_SIZE];
-				for(int i = 0; i < Size / 4; i++)
-					aData[i] = Unpacker.GetInt();
-				if(Unpacker.Error())
-					return false;
+			int aData[MAX_INPUT_SIZE];
+			for(int i = 0; i < Size / 4; i++)
+				aData[i] = Unpacker.GetInt();
+			if(Unpacker.Error())
+				return false;
 
-				pAntibob->OnInputNetMessage(LastAckedSnapshot, IntendedTick, Size, (CNetObj_PlayerInput *)aData);
-			}
+			pAntibob->OnInputNetMessage(LastAckedSnapshot, IntendedTick, Size, (CNetObj_PlayerInput *)aData);
 		}
 	}
 	else // game msg
