@@ -16,6 +16,11 @@ void CNetwork::OnInit(CAntibotData *pData, CGameServer *pGameServer)
 	m_pGameServer = pGameServer;
 }
 
+void CNetwork::OnTick()
+{
+	m_CurrentGameTick++;
+}
+
 bool CNetwork::RepackMsg(const CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup)
 {
 	int MsgId = pMsg->m_MsgId;

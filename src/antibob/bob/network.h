@@ -61,6 +61,7 @@ class CNetwork
 {
 	CAntibotData *m_pData = nullptr;
 	class CGameServer *m_pGameServer = nullptr;
+	int m_CurrentGameTick = 0;
 
 public:
 	CAntibotClient m_aClients[ANTIBOT_MAX_CLIENTS];
@@ -68,6 +69,7 @@ public:
 	polybob::protocol7::CNetObjHandler m_NetObjHandler7;
 
 	void OnInit(CAntibotData *pData, class CGameServer *pGameServer);
+	void OnTick();
 	void OnClientConnect(int ClientId, bool Sixup);
 	void OnClientDisconnect(int ClientId);
 
@@ -77,6 +79,8 @@ public:
 	// const char *ClientName(int ClientId) { return m_aClients[ClientId].m_aName; }
 	int MaxClients() { return ANTIBOT_MAX_CLIENTS; }
 	bool ClientIngame(int ClientId) { return m_aClients[ClientId].m_Active; }
+	int Tick() const { return m_CurrentGameTick; }
+	int TickSpeed() const { return 50; }
 
 	bool RepackMsg(const polybob::CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup);
 	bool SendMsg(polybob::CMsgPacker *pMsg, int Flags, int ClientId);
