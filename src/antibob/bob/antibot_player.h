@@ -16,6 +16,8 @@ public:
 	int m_ClientId;
 	bool m_Sixup;
 	polybob::CNetObj_PlayerInput m_aInputs[10];
+	int m_SentInputs = 0;
+	bool InputHistoryValid() const { return m_SentInputs > std::size(m_aInputs); }
 	void DumpInputHistory();
 
 	// same as ddnet's CPlayer::m_Ready

@@ -160,6 +160,9 @@ void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTi
 		pPlayer->m_aInputs[i] = pPlayer->m_aInputs[i - 1];
 	pPlayer->m_aInputs[0] = *pInput;
 
+	if(!pPlayer->InputHistoryValid())
+		pPlayer->m_SentInputs++;
+
 	// log_info("antibot", "player is aiming at x=%d y=%d", pInput->m_TargetX, pInput->m_TargetY);
 	// if(pInput->m_Direction)
 	// 	log_info("antibot", "player is walking %s", pInput->m_Direction == -1 ? "left" : "right");
