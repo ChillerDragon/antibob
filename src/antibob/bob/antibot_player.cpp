@@ -9,7 +9,7 @@ CAntibotPlayer::CAntibotPlayer(int ClientId, uint32_t UniqueClientId, bool Sixup
 {
 }
 
-void CAntibotPlayer::DumpAimHistory()
+void CAntibotPlayer::DumpInputHistory()
 {
 	log_info("antibot", "input history for cid=%d", m_ClientId);
 	for(polybob::CNetObj_PlayerInput &Input : m_aInputs)
