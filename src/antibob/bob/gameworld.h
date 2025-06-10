@@ -10,7 +10,7 @@ class CBobGameWorld
 public:
 	void OnInit(CAntibotRoundData *pRoundData);
 
-	CAntibotCharacterData *IntersectCharacter(
+	const CAntibotCharacterData *IntersectCharacter(
 		vec2 Pos0,
 		vec2 Pos1,
 		float Radius,
