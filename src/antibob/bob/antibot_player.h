@@ -16,6 +16,7 @@ public:
 	int m_ClientId;
 	bool m_Sixup;
 	polybob::CNetObj_PlayerInput m_aInputs[10];
+	void DumpAimHistory();
 
 	// same as ddnet's CPlayer::m_Ready
 	// indicating if the client info was already sent
