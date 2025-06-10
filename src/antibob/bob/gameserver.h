@@ -11,6 +11,7 @@
 #include <bob/antibot_player.h>
 #include <bob/config.h>
 #include <bob/console.h>
+#include <bob/gameworld.h>
 #include <bob/network.h>
 #include <bob/pending_punish.h>
 
@@ -28,6 +29,8 @@ public:
 	polybob::CJobPool m_JobPool;
 	CNetwork m_Network;
 	CNetwork *Server() { return &m_Network; }
+	CBobGameWorld m_GameWorld;
+	CBobGameWorld *GameWorld() { return &m_GameWorld; }
 	CBobConsole m_Console;
 	CBobConsole *Console() { return &m_Console; }
 	CBobConfig *Config() const { return &g_BobConfig; }

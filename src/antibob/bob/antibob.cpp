@@ -220,11 +220,13 @@ void CAntibob::OnInit(CAntibotData *pData)
 void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)
 {
 	m_pRoundData = pRoundData;
+	m_GameWorld.OnInit(pRoundData);
 }
 
 void CAntibob::OnRoundEnd()
 {
 	m_pRoundData = nullptr;
+	m_GameWorld.OnInit(nullptr);
 }
 
 void CAntibob::OnUpdateData()
