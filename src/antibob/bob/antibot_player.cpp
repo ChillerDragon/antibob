@@ -7,6 +7,8 @@
 CAntibotPlayer::CAntibotPlayer(int ClientId, uint32_t UniqueClientId, bool Sixup) :
 	m_ClientId(ClientId), m_UniqueClientId(UniqueClientId), m_Sixup(Sixup)
 {
+	for(polybob::CNetObj_PlayerInput &Input : m_aInputs)
+		Input = {};
 }
 
 void CAntibotPlayer::DumpInputHistory()
