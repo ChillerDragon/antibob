@@ -17,11 +17,6 @@ void CNetwork::OnInit(CAntibotData *pData, CGameServer *pGameServer)
 	m_pGameServer = pGameServer;
 }
 
-void CNetwork::OnTick()
-{
-	m_CurrentGameTick++;
-}
-
 bool CNetwork::RepackMsg(const CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup)
 {
 	int MsgId = pMsg->m_MsgId;
@@ -198,4 +193,14 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 		}
 	}
 	return false;
+}
+
+int CNetwork::Tick() const
+{
+	if(!m_pGameServer)
+		return 0;
+	if(!m_pGameServer->m_pRoundData)
+		return 0;
+
+	return m_pGameServer->m_pRoundData->m_Tick;
 }

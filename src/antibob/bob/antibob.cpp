@@ -275,7 +275,6 @@ void CAntibob::OnHookAttach(int ClientId, bool Player)
 void CAntibob::OnEngineTick()
 {
 	m_PunishController.OnTick();
-	m_Network.OnTick();
 }
 
 void CAntibob::OnEngineClientJoin(int ClientId)
