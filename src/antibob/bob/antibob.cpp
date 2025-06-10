@@ -157,7 +157,7 @@ void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTi
 		return;
 
 	for(int i = std::size(pPlayer->m_aInputs) - 1; i > 0; i--)
-		pPlayer->m_aInputs[i - 1] = pPlayer->m_aInputs[i];
+		pPlayer->m_aInputs[i] = pPlayer->m_aInputs[i - 1];
 	pPlayer->m_aInputs[0] = *pInput;
 
 	// log_info("antibot", "player is aiming at x=%d y=%d", pInput->m_TargetX, pInput->m_TargetY);
