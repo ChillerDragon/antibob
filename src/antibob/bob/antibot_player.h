@@ -1,6 +1,7 @@
 #pragma once
 
 #include <bob/detection_event.h>
+#include <polybob/game/generated/protocol.h>
 
 #include <cstdint>
 #include <unordered_map>
@@ -14,6 +15,7 @@ public:
 	uint32_t m_UniqueClientId = 0;
 	int m_ClientId;
 	bool m_Sixup;
+	polybob::CNetObj_PlayerInput m_aInputs[10];
 
 	// same as ddnet's CPlayer::m_Ready
 	// indicating if the client info was already sent

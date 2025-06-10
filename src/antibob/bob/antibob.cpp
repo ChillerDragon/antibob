@@ -152,6 +152,14 @@ bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, 
 
 void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput)
 {
+	CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
+	if(!pPlayer)
+		return;
+
+	for(int i = std::size(pPlayer->m_aInputs); i > 0; i--)
+		pPlayer->m_aInputs[i - 1] = pPlayer->m_aInputs[i];
+	pPlayer->m_aInputs[0] = *pInput;
+
 	// log_info("antibot", "player is aiming at x=%d y=%d", pInput->m_TargetX, pInput->m_TargetY);
 	// if(pInput->m_Direction)
 	// 	log_info("antibot", "player is walking %s", pInput->m_Direction == -1 ? "left" : "right");
