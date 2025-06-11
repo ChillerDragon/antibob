@@ -9,6 +9,7 @@
 
 #include <bob/antibob_abi.h>
 #include <bob/antibot_player.h>
+#include <bob/collision.h>
 #include <bob/config.h>
 #include <bob/console.h>
 #include <bob/gameworld.h>
@@ -31,6 +32,8 @@ public:
 	CNetwork *Server() { return &m_Network; }
 	CBobGameWorld m_GameWorld;
 	CBobGameWorld *GameWorld() { return &m_GameWorld; }
+	CBobCollision m_Collision;
+	CBobCollision *Collision() { return &m_Collision; }
 	CBobConsole m_Console;
 	CBobConsole *Console() { return &m_Console; }
 	CBobConfig *Config() const { return &g_BobConfig; }

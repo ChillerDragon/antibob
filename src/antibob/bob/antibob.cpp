@@ -221,12 +221,14 @@ void CAntibob::OnRoundStart(CAntibotRoundData *pRoundData)
 {
 	m_pRoundData = pRoundData;
 	m_GameWorld.OnInit(pRoundData);
+	m_Collision.OnInit(pRoundData);
 }
 
 void CAntibob::OnRoundEnd()
 {
 	m_pRoundData = nullptr;
 	m_GameWorld.OnInit(nullptr);
+	m_Collision.OnInit(nullptr);
 }
 
 void CAntibob::OnUpdateData()
