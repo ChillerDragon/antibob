@@ -2,6 +2,7 @@
 #include <polybob/base/log.h>
 #include <polybob/base/logger.h>
 #include <polybob/base/system.h>
+#include <polybob/base/system/net.h>
 #include <polybob/engine/message.h>
 #include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/packer.h>
@@ -176,9 +177,9 @@ void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 	{
 		int ClientId = pPlayer->m_ClientId;
 		const char *pName = ClientName(ClientId);
-		const char *pAddr = m_pRoundData->m_aPlayers[ClientId].m_aAddress;
-
-		pPlayer->m_pLookupJob = std::make_shared<CLookupPlayerJob>(this, ClientId, pName, pAddr);
+		char aAddr[512];
+		net_addr_str(&m_apPlayers[ClientId]->m_Addr, aAddr, sizeof(aAddr), false);
+		pPlayer->m_pLookupJob = std::make_shared<CLookupPlayerJob>(this, ClientId, pName, aAddr);
 		AddJob(pPlayer->m_pLookupJob);
 	}
 
