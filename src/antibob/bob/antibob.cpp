@@ -179,7 +179,7 @@ void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 		const char *pName = ClientName(ClientId);
 		char aAddr[512];
 		net_addr_str(&m_apPlayers[ClientId]->m_Addr, aAddr, sizeof(aAddr), false);
-		pPlayer->m_pLookupJob = std::make_shared<CLookupPlayerJob>(this, ClientId, pName, aAddr);
+		pPlayer->m_pLookupJob = std::make_shared<CLookupPlayerJob>(this, ClientId, pName, aAddr, Config()->m_AbCheaterApiUrl, Config()->m_AbCheaterApiToken);
 		AddJob(pPlayer->m_pLookupJob);
 	}
 

@@ -4,7 +4,6 @@
 #include <polybob/engine/shared/jobs.h>
 
 #include <bob/antibob.h>
-#include <bob/config.h>
 
 #include <cstdint>
 #include <memory>
@@ -13,16 +12,18 @@
 
 using namespace polybob;
 
-CAbstractLookupPlayerJob::CAbstractLookupPlayerJob(CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr)
+CAbstractLookupPlayerJob::CAbstractLookupPlayerJob(CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr, const char *pApiUrl, const char *pApiToken)
 {
 	m_pAntibob = pAntibob;
 	m_ClientId = ClientId;
 	str_copy(m_aName, pName);
 	str_copy(m_aAddr, pAddr);
+	str_copy(m_aApiUrl, pApiUrl);
+	str_copy(m_aApiToken, pApiToken);
 }
 
-CLookupPlayerJob::CLookupPlayerJob(CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr) :
-	CAbstractLookupPlayerJob(pAntibob, ClientId, pName, pAddr)
+CLookupPlayerJob::CLookupPlayerJob(CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr, const char *pApiUrl, const char *pApiToken) :
+	CAbstractLookupPlayerJob(pAntibob, ClientId, pName, pAddr, pApiUrl, pApiToken)
 {
 }
 
@@ -33,11 +34,10 @@ void CLookupPlayerJob::Run()
 	char aAddr[512];
 	EscapeUrl(aName, m_aName);
 	EscapeUrl(aAddr, m_aAddr);
-	const char *pBaseUrl = g_BobConfig.m_AbCheaterApiUrl;
-	str_format(aUrl, sizeof(aUrl), "%s/player?name=%s&addr=%s", pBaseUrl, aName, aAddr);
+	str_format(aUrl, sizeof(aUrl), "%s/player?name=%s&addr=%s", m_aApiUrl, aName, aAddr);
 
 	char aAuthHeader[1024];
-	str_format(aAuthHeader, sizeof(aAuthHeader), "Authorization: Bearer %s", g_BobConfig.m_AbCheaterApiToken);
+	str_format(aAuthHeader, sizeof(aAuthHeader), "Authorization: Bearer %s", m_aApiToken);
 	const CTimeout Timeout{10000, 0, 8192, 10};
 	const size_t MaxResponseSize = 10 * 1024 * 1024; // 10 MiB
 

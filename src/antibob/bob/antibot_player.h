@@ -16,7 +16,7 @@
 class CAbstractLookupPlayerJob : public polybob::IJob
 {
 public:
-	CAbstractLookupPlayerJob(class CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr);
+	CAbstractLookupPlayerJob(class CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr, const char *pApiUrl, const char *pApiToken);
 
 	// output
 	bool m_KnownCheater = false;
@@ -27,12 +27,14 @@ protected:
 	int m_ClientId;
 	char m_aName[polybob::MAX_NAME_LENGTH];
 	char m_aAddr[128];
+	char m_aApiUrl[1024];
+	char m_aApiToken[1024];
 };
 
 class CLookupPlayerJob : public CAbstractLookupPlayerJob
 {
 public:
-	CLookupPlayerJob(class CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr);
+	CLookupPlayerJob(class CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr, const char *pApiUrl, const char *pApiToken);
 
 protected:
 	void Run() override REQUIRES(!m_Lock);
