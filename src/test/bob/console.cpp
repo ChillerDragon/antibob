@@ -26,4 +26,6 @@ int main()
 	ExpectEscape(BobTest, "hello \" world", "hello \\\" world");
 	ExpectEscape(BobTest, "foo\\", "foo\\\\");
 	ExpectEscape(BobTest, "foo\\\"bar", "foo\\\\\\\"bar");
+	ExpectEscape(BobTest, "'\"'", "'\\\"'");
+	ExpectEscape(BobTest, "\";shutdown", "\\\";shutdown");
 }

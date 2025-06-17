@@ -121,10 +121,34 @@ public:
 	// reads a tw console string that might be quoted or not
 	static bool ParseStringQuotes(const char *pStringInput, char *pOut, int OutSize);
 
-	// bar foo
+	// Escapes userinput pStr so that it can be used in a rcon string
+	// the output is written into pBuf
+	//
+	// You still HAVE TO make sure the result is put into a proper
+	// double quoted string.
+	// If you do not use double quotes or use them incorrectly
+	// and pass the result to the rcon console. Your code will be unsafe!
+	//
+	// example usage:
+	//
+	// CBobConsole::EscapeRconString(aName, ClientName(pPlayer->m_ClientId));
+	// str_format(aBuf, sizeof(aBuf), "echo \"hello %s\"", aName);
+	// m_BobAbi.Rcon(aBuf);
 	static void EscapeRconString(char *pBuf, int BufSize, const char *pStr);
 
-	// foo bar
+	// Escapes userinput pStr so that it can be used in a rcon string
+	// the output is written into pBuf
+	//
+	// You still HAVE TO make sure the result is put into a proper
+	// double quoted string.
+	// If you do not use double quotes or use them incorrectly
+	// and pass the result to the rcon console. Your code will be unsafe!
+	//
+	// example usage:
+	//
+	// CBobConsole::EscapeRconString(aName, ClientName(pPlayer->m_ClientId));
+	// str_format(aBuf, sizeof(aBuf), "echo \"hello %s\"", aName);
+	// m_BobAbi.Rcon(aBuf);
 	template<int N>
 	static void EscapeRconString(char (&aBuf)[N], const char *pStr)
 	{
