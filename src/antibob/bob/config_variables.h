@@ -27,6 +27,7 @@ MACRO_CONFIG_STR(AbKickReason, ab_kick_reason, 64, "antibob auto kick", CFGFLAG_
 MACRO_CONFIG_INT(AbPunishInterval, ab_punish_interval, 120, 1, 600, CFGFLAG_SERVER, "delay in seconds between punish waves")
 MACRO_CONFIG_INT(AbLogEvents, ab_log_events, 0, 0, 1, CFGFLAG_SERVER, "log all suspicious player events into antibob_events.txt in the tw folder (unsafe with multiple servers)")
 MACRO_CONFIG_STR(AbCheaterApiUrl, ab_cheater_api_url, 256, "", CFGFLAG_SERVER, "base url of api that implements GET /player?name=:playername&addr=:ipaddr endpoint")
+MACRO_CONFIG_STR(AbCheaterApiToken, ab_cheater_api_token, 256, "", CFGFLAG_SERVER, "security token http header for ab_cheater_api_url")
 
 //
 // Add config variables for forks below this comment to avoid merge conflicts.

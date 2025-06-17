@@ -1,7 +1,9 @@
-#include <bob/antibob.h>
 #include <polybob/base/log.h>
 #include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/jobs.h>
+
+#include <bob/antibob.h>
+#include <bob/config.h>
 
 #include <cstdint>
 #include <memory>
@@ -33,10 +35,13 @@ void CLookupPlayerJob::Run()
 	const char *pBaseUrl = g_BobConfig.m_AbCheaterApiUrl;
 	str_format(aUrl, sizeof(aUrl), "%s/player?name=%s&addr=%s", pBaseUrl, aName, aAddr);
 
+	char aAuthHeader[1024];
+	str_format(aAuthHeader, sizeof(aAuthHeader), "Authorization: Bearer %s", g_BobConfig.m_AbCheaterApiToken);
 	const CTimeout Timeout{10000, 0, 8192, 10};
 	const size_t MaxResponseSize = 10 * 1024 * 1024; // 10 MiB
 
 	std::shared_ptr<CHttpRequest> pGet = HttpGet(aUrl);
+	pGet->Header(aAuthHeader);
 	pGet->Timeout(Timeout);
 	pGet->MaxResponseSize(MaxResponseSize);
 	pGet->ValidateBeforeOverwrite(true);
