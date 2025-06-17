@@ -1,4 +1,5 @@
 #include <polybob/base/log.h>
+#include <polybob/base/system/net.h>
 #include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/jobs.h>
 
@@ -76,9 +77,10 @@ void CLookupPlayerJob::Run()
 	// const json_value &Names = Json["names"];
 }
 
-CAntibotPlayer::CAntibotPlayer(int ClientId, uint32_t UniqueClientId, bool Sixup) :
+CAntibotPlayer::CAntibotPlayer(int ClientId, uint32_t UniqueClientId, bool Sixup, const char *pAddr) :
 	m_ClientId(ClientId), m_UniqueClientId(UniqueClientId), m_Sixup(Sixup)
 {
+	net_addr_from_str(&m_Addr, pAddr);
 	for(CNetObj_PlayerInput &Input : m_aInputs)
 		Input = {};
 }

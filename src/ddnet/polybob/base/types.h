@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <ctime>
 
+namespace polybob {
+
 typedef void *IOHANDLE;
 
 typedef int (*FS_LISTDIR_CALLBACK)(const char *name, int is_dir, int dir_type, void *user);
@@ -42,3 +44,18 @@ enum
 	NETTYPE_ALL = NETTYPE_IPV4 | NETTYPE_IPV6 | NETTYPE_WEBSOCKET_IPV4,
 	NETTYPE_MASK = NETTYPE_ALL | NETTYPE_LINK_BROADCAST | NETTYPE_TW7,
 };
+
+/**
+ * @ingroup Network-General
+ */
+typedef struct NETADDR
+{
+	unsigned int type;
+	unsigned char ip[16];
+	unsigned short port;
+
+	bool operator==(const NETADDR &other) const;
+	bool operator!=(const NETADDR &other) const { return !(*this == other); }
+} NETADDR;
+
+} // namespace polybob

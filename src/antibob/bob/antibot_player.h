@@ -1,6 +1,7 @@
 #pragma once
 
 #include <polybob/base/lock.h>
+#include <polybob/base/types.h>
 #include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/jobs.h>
 #include <polybob/engine/shared/protocol.h>
@@ -44,12 +45,13 @@ private:
 class CAntibotPlayer
 {
 public:
-	CAntibotPlayer(int ClientId, uint32_t UniqueClientId, bool Sixup);
+	CAntibotPlayer(int ClientId, uint32_t UniqueClientId, bool Sixup, const char *pAddr);
 
 	// starting 1 to make 0 the special value "no client id"
 	uint32_t m_UniqueClientId = 0;
 	int m_ClientId;
 	bool m_Sixup;
+	polybob::NETADDR m_Addr;
 
 	bool m_KnownCheater = false;
 	// TODO: for now the job is only launched on join
