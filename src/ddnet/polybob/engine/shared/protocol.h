@@ -1,3 +1,5 @@
+#pragma once
+
 #include <bitset>
 #include <polybob/engine/shared/protocol7.h>
 

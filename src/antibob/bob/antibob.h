@@ -48,6 +48,8 @@ public:
 	// sent its name and skin info already
 	virtual void OnPlayerConnect(class CAntibotPlayer *pPlayer);
 
+	virtual void OnKnownCheaterJoin(class CAntibotPlayer *pPlayer);
+
 	//
 	// ddnet antibot interface hooks
 	//

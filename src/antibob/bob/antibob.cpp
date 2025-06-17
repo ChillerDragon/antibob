@@ -18,8 +18,7 @@
 #include <bob/gameserver.h>
 #include <bob/version.h>
 
-#include <cstdio>
-#include <cstring>
+#include <memory>
 
 #include "antibob.h"
 
@@ -170,6 +169,19 @@ void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTi
 
 void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 {
+	if(!m_pRoundData)
+		return;
+
+	if(Config()->m_AbCheaterApiUrl[0])
+	{
+		int ClientId = pPlayer->m_ClientId;
+		const char *pName = ClientName(ClientId);
+		const char *pAddr = m_pRoundData->m_aPlayers[ClientId].m_aAddress;
+
+		pPlayer->m_pLookupJob = std::make_shared<CLookupPlayerJob>(this, ClientId, pName, pAddr);
+		AddJob(pPlayer->m_pLookupJob);
+	}
+
 	// log_info("ab", "connect");
 	// std::shared_ptr<CHttpRequest> pHttp = HttpGet("http://127.0.0.1:9090");
 	// pHttp->LogProgress(HTTPLOG::FAILURE);
@@ -194,6 +206,18 @@ void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 	// io_write(File, aLine, str_length(aLine));
 	// io_write_newline(File);
 	// io_close(File);
+}
+
+void CAntibob::OnKnownCheaterJoin(CAntibotPlayer *pPlayer)
+{
+	char aBuf[512];
+	char aName[512];
+
+	CBobConsole::EscapeRconString(aName, ClientName(pPlayer->m_ClientId));
+	str_format(aBuf, sizeof(aBuf), "say \"[antibot] player '%s' was caught cheating already.\"", aName);
+
+	if(!m_BobAbi.Rcon(aBuf))
+		log_error("antibot", "server does not support antibob rcon extension");
 }
 
 //
@@ -290,6 +314,25 @@ void CAntibob::OnHookAttach(int ClientId, bool Player)
 void CAntibob::OnEngineTick()
 {
 	m_PunishController.OnTick();
+
+	for(CAntibotPlayer *pPlayer : m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+
+		pPlayer->OnTick();
+
+		if(pPlayer->m_pLookupJob && pPlayer->m_pLookupJob->Done())
+		{
+			if(pPlayer->m_pLookupJob->State() == IJob::STATE_DONE)
+			{
+				pPlayer->m_KnownCheater = pPlayer->m_pLookupJob->m_KnownCheater;
+				if(pPlayer->m_KnownCheater)
+					OnKnownCheaterJoin(pPlayer);
+			}
+			pPlayer->m_pLookupJob = nullptr;
+		}
+	}
 }
 
 void CAntibob::OnEngineClientJoin(int ClientId)

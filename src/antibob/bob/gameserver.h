@@ -39,6 +39,7 @@ public:
 	CBobConfig *Config() const { return &g_BobConfig; }
 	polybob::IStorage *Storage() const { return m_pStorage; }
 	CHttp m_Http;
+	CHttp *Http() { return &m_Http; }
 	CAntibobAbi m_BobAbi;
 	CPunishController m_PunishController;
 

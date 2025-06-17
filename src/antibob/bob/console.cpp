@@ -287,3 +287,32 @@ bool CBobConsole::ParseStringQuotes(const char *pStringInput, char *pOut, int Ou
 	pOut[OutIdx] = '\0';
 	return true;
 }
+
+void CBobConsole::EscapeRconString(char *pBuf, int BufSize, const char *pStr)
+{
+	int BufIdx = 0;
+	bool Error = false;
+
+	auto SafeAppend = [&pBuf, BufSize, &BufIdx, &Error](char NewChar) -> bool {
+		if(Error)
+			return false;
+		if(BufIdx >= BufSize - 1)
+		{
+			Error = true;
+			str_copy(pBuf, "error", BufSize);
+			return false;
+		}
+		pBuf[BufIdx++] = NewChar;
+		return true;
+	};
+
+	for(int i = 0; i < str_length(pStr); i++)
+	{
+		if(pStr[i] == '"')
+			SafeAppend('\\');
+		else if(pStr[i] == '\\')
+			SafeAppend('\\');
+		SafeAppend(pStr[i]);
+	}
+	SafeAppend('\0');
+}

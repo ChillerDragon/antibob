@@ -120,6 +120,16 @@ public:
 
 	// reads a tw console string that might be quoted or not
 	static bool ParseStringQuotes(const char *pStringInput, char *pOut, int OutSize);
+
+	// bar foo
+	static void EscapeRconString(char *pBuf, int BufSize, const char *pStr);
+
+	// foo bar
+	template<int N>
+	static void EscapeRconString(char (&aBuf)[N], const char *pStr)
+	{
+		EscapeRconString(aBuf, N, pStr);
+	}
 };
 
 // TODO: add custom authorization for antibot commands something like this

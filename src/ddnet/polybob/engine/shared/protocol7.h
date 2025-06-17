@@ -1,3 +1,5 @@
+#pragma once
+
 #include <polybob/base/types.h>
 
 namespace polybob {
