@@ -19,7 +19,7 @@ It is just meant to be a framework for you to write your own.
 - fully self contained and batteries included (no ddnet source code needed)
 - feels like the ddnet code base with access to functions such as ``str_copy`` and more (needs ``using namespace polybob;``)
 
-You can explore the most interesting code at [src/antibot.cpp](https://github.com/ChillerDragon/antibob/blob/master/src/bob/antibob.cpp)
+You can explore the most interesting code at [src/antibob/bob/antibot.cpp](https://github.com/ChillerDragon/antibob/blob/master/src/antibob/bob/antibob.cpp)
 the rest are just helpers that you should not have to worry about until you run into their limits.
 All sample use cases are shown in antibot.cpp already.
 
@@ -89,7 +89,7 @@ bear -- make
 Create your own class that inherits from antibob.
 
 ```C++
-// src/my_antibot.h
+// src/antibob/bob/my_antibot.h
 
 #include <bob/antibob.h>
 
@@ -115,7 +115,7 @@ Then patch your class into interface.cpp
 
 
 ```C++
-// src/interface.cpp
+// src/antibob/interface.cpp
 
 #include "my_antibot.h"
 
