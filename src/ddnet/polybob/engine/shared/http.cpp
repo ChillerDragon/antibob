@@ -394,7 +394,7 @@ void CHttpRequest::OnCompletionInternal(void *pHandle, unsigned int Result)
 	}
 	else
 	{
-		// if(g_Config.m_DbgCurl || m_LogProgress >= HTTPLOG::ALL)
+		if(m_LogProgress >= HTTPLOG::ALL)
 		{
 			log_info("antibot-http", "task done: %s", m_aUrl);
 		}
