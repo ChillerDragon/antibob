@@ -42,6 +42,10 @@ public:
 
 	virtual void OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput);
 
+	// send http request with player name and ip
+	// to backend configured by ab_cheater_api_url
+	virtual void LookupPlayer(class CAntibotPlayer *pPlayer);
+
 	// same as IGameController::OnPlayerConnect(CPlayer *pPlayer)
 	// in ddnet code base
 	// is called when the client is fully online and

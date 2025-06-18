@@ -168,20 +168,33 @@ void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTi
 	// 	log_info("antibot", "player is walking %s", pInput->m_Direction == -1 ? "left" : "right");
 }
 
+void CAntibob::LookupPlayer(CAntibotPlayer *pPlayer)
+{
+	if(Config()->m_AbCheaterApiUrl[0] == '\0')
+		return;
+	if(!str_startswith(Config()->m_AbCheaterApiUrl, "https://"))
+	{
+		log_error(
+			"antibot",
+			"invalid ab_cheater_api_url value '%s' it is missing the https:// prefix",
+			Config()->m_AbCheaterApiUrl);
+		return;
+	}
+
+	int ClientId = pPlayer->m_ClientId;
+	const char *pName = ClientName(ClientId);
+	char aAddr[512];
+	net_addr_str(&m_apPlayers[ClientId]->m_Addr, aAddr, sizeof(aAddr), false);
+	pPlayer->m_pLookupJob = std::make_shared<CLookupPlayerJob>(this, ClientId, pName, aAddr, Config()->m_AbCheaterApiUrl, Config()->m_AbCheaterApiToken);
+	AddJob(pPlayer->m_pLookupJob);
+}
+
 void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 {
 	if(!m_pRoundData)
 		return;
 
-	if(Config()->m_AbCheaterApiUrl[0])
-	{
-		int ClientId = pPlayer->m_ClientId;
-		const char *pName = ClientName(ClientId);
-		char aAddr[512];
-		net_addr_str(&m_apPlayers[ClientId]->m_Addr, aAddr, sizeof(aAddr), false);
-		pPlayer->m_pLookupJob = std::make_shared<CLookupPlayerJob>(this, ClientId, pName, aAddr, Config()->m_AbCheaterApiUrl, Config()->m_AbCheaterApiToken);
-		AddJob(pPlayer->m_pLookupJob);
-	}
+	LookupPlayer(pPlayer);
 
 	// log_info("ab", "connect");
 	// std::shared_ptr<CHttpRequest> pHttp = HttpGet("http://127.0.0.1:9090");
