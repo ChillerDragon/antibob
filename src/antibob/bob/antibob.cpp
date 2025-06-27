@@ -363,6 +363,14 @@ void CAntibob::OnEngineClientJoin(int ClientId)
 
 void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 {
+	if(str_startswith(pReason, "You have been banned") && ClientId >= 0 && ClientId < ANTIBOT_MAX_CLIENTS)
+	{
+		CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
+		char aAddr[512];
+		net_addr_str(&pPlayer->m_Addr, aAddr, sizeof(aAddr), false);
+		log_info("antibot", "player got banned ip=%s name='%s'", aAddr, ClientName(ClientId));
+	}
+
 	m_PunishController.OnPlayerDisconnect(ClientId);
 
 	delete m_apPlayers[ClientId];
