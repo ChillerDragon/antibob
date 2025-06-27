@@ -53,6 +53,7 @@ void CAntibob::ComKnownCheaters(CBobResult *pResult, void *pUserData)
 		return;
 	}
 
+	bool GotKnown = false;
 	for(int i = 0; i < ANTIBOT_MAX_CLIENTS; i++)
 	{
 		CAntibotPlayer *pPlayer = pSelf->m_apPlayers[i];
@@ -62,5 +63,9 @@ void CAntibob::ComKnownCheaters(CBobResult *pResult, void *pUserData)
 			continue;
 
 		log_info("antibot", "cid=%d name='%s' was caught cheating already", i, pSelf->ClientName(i));
+		GotKnown = true;
 	}
+
+	if(!GotKnown)
+		log_info("antibot", "no known cheaters currently on the server");
 }
