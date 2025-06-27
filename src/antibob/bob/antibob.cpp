@@ -368,6 +368,10 @@ void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 		CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
 		char aAddr[512];
 		net_addr_str(&pPlayer->m_Addr, aAddr, sizeof(aAddr), false);
+
+		// TODO: the ClientName is an empty string
+		//       https://github.com/ddnet/ddnet/issues/10428
+
 		log_info("antibot", "player got banned ip=%s name='%s'", aAddr, ClientName(ClientId));
 	}
 
