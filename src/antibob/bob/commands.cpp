@@ -42,3 +42,25 @@ void CAntibob::ComPendingPunishments(CBobResult *pResult, void *pUserData)
 	CAntibob *pSelf = (CAntibob *)pUserData;
 	pSelf->m_PunishController.ListPendingPunishments();
 }
+
+void CAntibob::ComKnownCheaters(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+
+	if(!pSelf->m_pRoundData)
+	{
+		log_error("antibot", "missing round data");
+		return;
+	}
+
+	for(int i = 0; i < ANTIBOT_MAX_CLIENTS; i++)
+	{
+		CAntibotPlayer *pPlayer = pSelf->m_apPlayers[i];
+		if(!pPlayer)
+			continue;
+		if(!pPlayer->m_KnownCheater)
+			continue;
+
+		log_info("antibot", "cid=%d name='%s' was caught cheating already", i, pSelf->ClientName(i));
+	}
+}
