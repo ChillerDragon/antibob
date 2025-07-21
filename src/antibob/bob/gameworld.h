@@ -2,11 +2,11 @@
 
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/vmath.h>
+#include <polybob/game/gamecore.h>
 
 class CBobGameWorld
 {
 	CAntibotRoundData *m_pRoundData = nullptr;
-
 public:
 	void OnInit(CAntibotRoundData *pRoundData);
 
@@ -18,4 +18,6 @@ public:
 		const CAntibotCharacterData *pNotThis,
 		int CollideWith,
 		const CAntibotCharacterData *pThisOnly);
+
+	polybob::CTuningParams m_Tuning;
 };
