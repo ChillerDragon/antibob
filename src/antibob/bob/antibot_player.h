@@ -52,6 +52,7 @@ public:
 	// starting 1 to make 0 the special value "no client id"
 	uint32_t m_UniqueClientId = 0;
 	int m_ClientId;
+	int GetCid() const { return m_ClientId; }
 	bool m_Sixup;
 	polybob::NETADDR m_Addr;
 
