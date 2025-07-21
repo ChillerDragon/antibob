@@ -19,5 +19,12 @@ public:
 		int CollideWith,
 		const CAntibotCharacterData *pThisOnly);
 
+	// WARNING: these are just the default** ddnet tunings from 2025
+	//          this does not support tune zones in the map!
+	//          this does not support custom tunes set by config or rcon!
+	//          **this might not even be correct ddnet default tunings!
+	//          gun_curvature, gun_speed, shotgun_curvature, shotgun_speed, shotgun_speeddif
+	//          are not the default ddnet values! they are the default teeworlds/ddnet-insta
+	//          values instead!!!
 	polybob::CTuningParams m_Tuning;
 };
