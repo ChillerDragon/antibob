@@ -7,6 +7,7 @@
 class CBobGameWorld
 {
 	CAntibotRoundData *m_pRoundData = nullptr;
+
 public:
 	void OnInit(CAntibotRoundData *pRoundData);
 

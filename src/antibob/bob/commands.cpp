@@ -69,3 +69,39 @@ void CAntibob::ComKnownCheaters(CBobResult *pResult, void *pUserData)
 	if(!GotKnown)
 		log_info("antibot", "no known cheaters currently on the server");
 }
+
+void CAntibob::ComRedirectKnownCheaters(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+
+	if(!pSelf->m_pRoundData)
+	{
+		log_error("antibot", "missing round data");
+		return;
+	}
+
+	int DstPort = pResult->GetInteger(0);
+
+	bool GotKnown = false;
+	for(int i = 0; i < ANTIBOT_MAX_CLIENTS; i++)
+	{
+		CAntibotPlayer *pPlayer = pSelf->m_apPlayers[i];
+		if(!pPlayer)
+			continue;
+		if(!pPlayer->m_KnownCheater)
+			continue;
+
+		log_info("antibot", "cid=%d name='%s' was caught cheating already redirecting to port %d", i, pSelf->ClientName(i), DstPort);
+		char aCmd[512];
+		str_format(aCmd, sizeof(aCmd), "redirect %d %d", i, DstPort);
+		if(!pSelf->m_BobAbi.Rcon(aCmd))
+		{
+			log_error("antibob", "antibob rcon abi not supported. redirect failed.");
+		}
+
+		GotKnown = true;
+	}
+
+	if(!GotKnown)
+		log_info("antibot", "no known cheaters currently on the server");
+}
