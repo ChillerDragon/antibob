@@ -23,6 +23,12 @@ public:
 	void RegisterCommands();
 
 	//
+	// helpers
+	//
+
+	bool IsTimeouted(int ClientId);
+
+	//
 	// rcon commands
 	//
 

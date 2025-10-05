@@ -77,8 +77,8 @@ void CLookupPlayerJob::Run()
 	// const json_value &Names = Json["names"];
 }
 
-CAntibotPlayer::CAntibotPlayer(int ClientId, uint32_t UniqueClientId, bool Sixup, const char *pAddr) :
-	m_ClientId(ClientId), m_UniqueClientId(UniqueClientId), m_Sixup(Sixup)
+CAntibotPlayer::CAntibotPlayer(int ClientId, uint32_t UniqueClientId, int64_t JoinTick, bool Sixup, const char *pAddr) :
+	m_ClientId(ClientId), m_UniqueClientId(UniqueClientId), m_JoinTick(JoinTick), m_Sixup(Sixup)
 {
 	net_addr_from_str(&m_Addr, pAddr);
 	for(CNetObj_PlayerInput &Input : m_aInputs)

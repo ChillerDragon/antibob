@@ -52,6 +52,24 @@ void CAntibob::RegisterCommands()
 }
 
 //
+// helpers
+//
+
+bool CAntibob::IsTimeouted(int ClientId)
+{
+	if(!m_apPlayers[ClientId])
+		return false;
+
+	int64_t TicksWithoutSend = Server()->Tick() - m_apPlayers[ClientId]->m_LastSendTick;
+
+	// totally randomly picked value
+	// to determine that 1 second no send means timeout
+	// but should kinda work because regular clients even as spectators
+	// are supposed to send way more often
+	return TicksWithoutSend > Server()->TickSpeed();
+}
+
+//
 // rcon commands
 //
 
@@ -356,7 +374,7 @@ void CAntibob::OnEngineClientJoin(int ClientId)
 
 	bool Sixup = m_pRoundData->m_aPlayers[ClientId].m_Sixup;
 	const char *pAddr = m_pRoundData->m_aPlayers[ClientId].m_aAddress;
-	m_apPlayers[ClientId] = new CAntibotPlayer(ClientId, m_NextUniqueClientId, Sixup, pAddr);
+	m_apPlayers[ClientId] = new CAntibotPlayer(ClientId, m_NextUniqueClientId, Server()->Tick(), Sixup, pAddr);
 	m_NextUniqueClientId += 1;
 	m_Network.OnClientConnect(ClientId, Sixup);
 }
@@ -385,6 +403,8 @@ void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 
 bool CAntibob::OnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags)
 {
+	if(m_apPlayers[ClientId])
+		m_apPlayers[ClientId]->m_LastSendTick = Server()->Tick();
 	return m_Network.OnEngineClientMessage(ClientId, pData, Size, Flags, this);
 }
 

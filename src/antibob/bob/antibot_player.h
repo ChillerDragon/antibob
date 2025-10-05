@@ -47,7 +47,7 @@ private:
 class CAntibotPlayer
 {
 public:
-	CAntibotPlayer(int ClientId, uint32_t UniqueClientId, bool Sixup, const char *pAddr);
+	CAntibotPlayer(int ClientId, uint32_t UniqueClientId, int64_t JoinTick, bool Sixup, const char *pAddr);
 
 	// starting 1 to make 0 the special value "no client id"
 	uint32_t m_UniqueClientId = 0;
@@ -55,6 +55,14 @@ public:
 	int GetCid() const { return m_ClientId; }
 	bool m_Sixup;
 	polybob::NETADDR m_Addr;
+
+	// Server()->Tick() of the player join
+	int64_t m_JoinTick = 0;
+
+	// Server()->Tick() of when this client
+	// send his last net message
+	// used to determine timeouts
+	int64_t m_LastSendTick = 0;
 
 	bool m_KnownCheater = false;
 	// TODO: for now the job is only launched on join
