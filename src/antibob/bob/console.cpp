@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
@@ -58,6 +59,12 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 			}
 
 			Param.m_Optional = true;
+		}
+		else if(InDesc)
+		{
+			char aDescChar[4];
+			str_format(aDescChar, sizeof(aDescChar), "%c", pParamsText[i]);
+			str_append(Param.m_aDescription, aDescChar);
 		}
 		else if(!InDesc)
 		{
@@ -154,6 +161,26 @@ bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 				str_format(pError, ErrorSize, "got %d out of %d..%d arguments %s", NumGot, NumMin, NumMax, ParamsText());
 		}
 		return false;
+	}
+
+	for(int i = 0; i < m_NumArgs; i++)
+	{
+		switch(m_vParams[i].m_Type)
+		{
+		case CBobParam::EType::INT:
+			int Value;
+			if(!str_toint(m_aaArgs[i], &Value) ||
+				Value == std::numeric_limits<int>::max() || Value == std::numeric_limits<int>::min())
+			{
+				str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not a valid integer", m_vParams[i].m_aDescription, m_aaArgs[i]);
+				return false;
+			}
+			break;
+		case CBobParam::EType::STRING:
+		case CBobParam::EType::REST:
+		case CBobParam::EType::INVALID:
+			break;
+		}
 	}
 
 	return true;
