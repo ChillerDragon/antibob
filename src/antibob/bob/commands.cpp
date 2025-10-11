@@ -24,7 +24,7 @@ void CAntibob::ComDump(CBobResult *pResult, void *pUserData)
 {
 	CAntibob *pSelf = (CAntibob *)pUserData;
 	int MinConfidence = pResult->NumArguments() > 0 ? pResult->GetInteger(0) : pSelf->Config()->m_AbDumpConfidence;
-	const char *pSearch = pResult->NumArguments() > 1 ? pResult->GetString(0) : "";
+	const char *pSearch = pResult->NumArguments() > 1 ? pResult->GetString(1) : "";
 	pSelf->RconDump(pSearch, MinConfidence);
 }
 
