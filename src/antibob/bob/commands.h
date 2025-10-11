@@ -7,7 +7,7 @@
 CONSOLE_COMMAND("test", "", ComTest, this, "tests stuff")
 CONSOLE_COMMAND("help", "s[command]", ComCmdHelp, this, "prints details for a given command (see also cmdlist)")
 CONSOLE_COMMAND("cmdlist", "", ComCmdlist, this, "lists all antibot commands (see also help)")
-CONSOLE_COMMAND("dump", "?s[search]?i[min confidence]", ComDump, this, "shows current antibot data for all players")
+CONSOLE_COMMAND("dump", "?i[min confidence]?r[search]", ComDump, this, "shows current antibot data for all players")
 CONSOLE_COMMAND("events", "i[client id]", ComEvents, this, "shows details about triggered detections for a given player")
 CONSOLE_COMMAND("version", "", ComVersion, this, "shows version of the antibob module")
 CONSOLE_COMMAND("pending", "", ComPendingPunishments, this, "list pending punishments")

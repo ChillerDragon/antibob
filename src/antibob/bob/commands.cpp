@@ -23,8 +23,8 @@ void CAntibob::ComCmdlist(CBobResult *pResult, void *pUserData)
 void CAntibob::ComDump(CBobResult *pResult, void *pUserData)
 {
 	CAntibob *pSelf = (CAntibob *)pUserData;
-	const char *pSearch = pResult->NumArguments() ? pResult->GetString(0) : "";
-	int MinConfidence = pResult->NumArguments() > 1 ? pResult->GetInteger(0) : pSelf->Config()->m_AbDumpConfidence;
+	int MinConfidence = pResult->NumArguments() > 0 ? pResult->GetInteger(0) : pSelf->Config()->m_AbDumpConfidence;
+	const char *pSearch = pResult->NumArguments() > 1 ? pResult->GetString(0) : "";
 	pSelf->RconDump(pSearch, MinConfidence);
 }
 
