@@ -76,7 +76,7 @@ public:
 	// ClientId - players client id
 	// EventId - event id should be defined in detection_events.h like BOB_DE_SAMPLE
 	// pInfo - optional additional information about this specifc occurence (free text)
-	void Detect(int ClientId, int EventId, const char *pInfo = nullptr);
+	void Detect(int ClientId, int EventId, const char *pInfo = nullptr, int Confidence = 90);
 
 private:
 	void LogEvent(int ClientId, int EventId, const char *pInfo = nullptr);

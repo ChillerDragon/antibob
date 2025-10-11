@@ -89,9 +89,9 @@ void CGameServer::Punish(int ClientId, const char *pReason, int TimeInMinutes, C
 	m_PunishController.SchedulePunish(ClientId, pReason, TimeInMinutes, Punish);
 }
 
-void CGameServer::Detect(int ClientId, int EventId, const char *pInfo)
+void CGameServer::Detect(int ClientId, int EventId, const char *pInfo, int Confidence)
 {
-	m_apPlayers[ClientId]->Detect(EventId, pInfo);
+	m_apPlayers[ClientId]->Detect(EventId, pInfo, Confidence);
 	if(Config()->m_AbLogEvents)
 		LogEvent(ClientId, EventId, pInfo);
 }

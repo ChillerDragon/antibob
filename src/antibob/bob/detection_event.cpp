@@ -11,8 +11,8 @@ CDetectionEvent::CDetectionEvent(int EventId) :
 	Reset();
 }
 
-CDetectionEvent::CDetectionEvent(int EventId, const char *pInfo) :
-	m_EventId(EventId)
+CDetectionEvent::CDetectionEvent(int EventId, const char *pInfo, int Confidence) :
+	m_EventId(EventId), m_Confidence(Confidence)
 {
 	Reset();
 
@@ -68,7 +68,7 @@ const char *CDetectionEvent::EventToDesc(int EventId)
 	return "unknown";
 }
 
-void CDetectionEvent::EventsToIdStr(const std::unordered_map<int, CDetectionEvent> &Events, char *pBuf, int BufSize)
+void CDetectionEvent::EventsToIdStr(const std::unordered_map<int, CDetectionEvent> &Events, int MinConfidence, char *pBuf, int BufSize)
 {
 	int BufIdx = 0;
 	auto SafeAppend = [&pBuf, BufSize, &BufIdx](const char *pText) -> bool {
@@ -83,8 +83,11 @@ void CDetectionEvent::EventsToIdStr(const std::unordered_map<int, CDetectionEven
 
 	SafeAppend("(");
 	int EventNum = 0;
-	for(const auto &[EventId, _] : Events)
+	for(const auto &[EventId, Event] : Events)
 	{
+		if(Event.m_Confidence < MinConfidence)
+			continue;
+
 		char aEvent[16];
 		str_format_int(aEvent, sizeof(aEvent), EventId);
 		if(!SafeAppend(aEvent))

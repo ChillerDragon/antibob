@@ -73,7 +73,7 @@ bool CAntibob::IsTimeouted(int ClientId)
 // rcon commands
 //
 
-void CAntibob::RconDump(const char *pSearch)
+void CAntibob::RconDump(const char *pSearch, int MinConfidence)
 {
 	if(!m_pRoundData)
 	{
@@ -94,7 +94,7 @@ void CAntibob::RconDump(const char *pSearch)
 		char aEvents[512];
 		aEvents[0] = '\0';
 		if(pPlayer->m_DetectionEvents.size() != 0)
-			CDetectionEvent::EventsToIdStr(pPlayer->m_DetectionEvents, aEvents, sizeof(aEvents));
+			CDetectionEvent::EventsToIdStr(pPlayer->m_DetectionEvents, MinConfidence, aEvents, sizeof(aEvents));
 
 		LogInfo("cid=%d name='%s' %s", i, pName, aEvents);
 	}
@@ -139,6 +139,9 @@ void CAntibob::RconEvents(int ClientId)
 			Event.SecondsSinceFirstTrigger(),
 			Event.SecondsSinceLastTrigger(),
 			Event.m_Amount);
+		LogInfo(
+			"   confidence=%d%% (higher value means less false positives)",
+			Event.m_Confidence);
 		if(Event.m_aInfo[0])
 			LogInfo("   %s", Event.m_aInfo);
 	}

@@ -33,7 +33,7 @@ public:
 	//
 
 	// called on rcon command "antibot dump"
-	virtual void RconDump(const char *pSearch);
+	virtual void RconDump(const char *pSearch, int MinConfidence);
 	virtual void RconEvents(int ClientId);
 
 	//

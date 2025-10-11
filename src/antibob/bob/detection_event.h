@@ -20,7 +20,7 @@ class CDetectionEvent
 
 public:
 	CDetectionEvent(int EventId);
-	CDetectionEvent(int EventId, const char *pInfo);
+	CDetectionEvent(int EventId, const char *pInfo, int Confidence);
 
 	// events can be stacked to avoid spamming
 	// the event log
@@ -40,6 +40,12 @@ public:
 	// might be empty
 	char m_aInfo[1024];
 
+	// value from 0-100 with the confidence
+	// of it being a correct detection
+	// 100 means this should never be a false positive
+	// and 0 means this is most likely a false positive
+	int m_Confidence;
+
 	int SecondsSinceFirstTrigger() const;
 	int SecondsSinceLastTrigger() const;
 
@@ -55,7 +61,7 @@ public:
 	// given a list of events it writes a string into
 	// pBuf that looks something like this "(2, 10, 4)"
 	// where the numbers are the m_EventId values
-	static void EventsToIdStr(const std::unordered_map<int, CDetectionEvent> &Events, char *pBuf, int BufSize);
+	static void EventsToIdStr(const std::unordered_map<int, CDetectionEvent> &Events, int MinConfidence, char *pBuf, int BufSize);
 
 	// pushes NewEvent into Events
 	// but if the same event type is already known it just
