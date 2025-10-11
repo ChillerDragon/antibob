@@ -93,6 +93,10 @@ void CDetectionEvent::EventsToIdStr(const std::unordered_map<int, CDetectionEven
 		if(!SafeAppend(aEvent))
 			break;
 
+		if(Event.m_Confidence > 90)
+			if(!SafeAppend("!"))
+				break;
+
 		if(++EventNum != Events.size())
 		{
 			if(!SafeAppend(", "))
