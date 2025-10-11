@@ -28,6 +28,7 @@ MACRO_CONFIG_INT(AbPunishInterval, ab_punish_interval, 120, 1, 600, CFGFLAG_SERV
 MACRO_CONFIG_INT(AbLogEvents, ab_log_events, 0, 0, 1, CFGFLAG_SERVER, "log all suspicious player events into antibob_events.txt in the tw folder (unsafe with multiple servers)")
 MACRO_CONFIG_STR(AbCheaterApiUrl, ab_cheater_api_url, 256, "", CFGFLAG_SERVER, "base url of api that implements GET /player?name=:playername&addr=:ipaddr endpoint has to start with https://")
 MACRO_CONFIG_STR(AbCheaterApiToken, ab_cheater_api_token, 256, "", CFGFLAG_SERVER, "security token http header for ab_cheater_api_url")
+MACRO_CONFIG_INT(AbDumpConfidence, ab_dump_confidence, 50, 0, 100, CFGFLAG_SERVER, "minimum no false positive event confidence for dump command event list")
 
 //
 // Add config variables for forks below this comment to avoid merge conflicts.
