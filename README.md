@@ -33,7 +33,7 @@ make
 
 ## run
 
-The make in the antibob repo will create a ``libantibot.so``
+The `make` in the antibob repo will create a ``libantibot.so``
 which has to be placed next to the ``DDNet-Server`` executable
 when launching it. Then it will pick it up.
 Also make sure to compile the server with the cmake flag
