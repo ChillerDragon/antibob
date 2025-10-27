@@ -17,6 +17,7 @@
 #include <bob/console.h>
 #include <bob/detection_event.h>
 #include <bob/gameserver.h>
+#include <bob/network.h>
 #include <bob/version.h>
 
 #include <memory>
@@ -395,6 +396,9 @@ void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 
 		log_info("antibot", "player got banned ip=%s name='%s'", aAddr, ClientName(ClientId));
 	}
+
+	if(m_Network.m_aClients[ClientId].m_State >= CAntibotClient::EState::READY)
+		OnPlayerDisconnect(m_apPlayers[ClientId], pReason);
 
 	m_PunishController.OnPlayerDisconnect(ClientId);
 

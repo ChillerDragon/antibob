@@ -58,6 +58,12 @@ public:
 	// sent its name and skin info already
 	virtual void OnPlayerConnect(class CAntibotPlayer *pPlayer);
 
+	// same as IGameController::OnPlayerDisconnect(CPlayer *pPlayer, const char *pReason)
+	// in ddnet code base
+	// only called for clients that properly joined first
+	// this is not called for clients that abort during the connection phase
+	virtual void OnPlayerDisconnect(class CAntibotPlayer *pPlayer, const char *pReason);
+
 	virtual void OnKnownCheaterJoin(class CAntibotPlayer *pPlayer);
 
 	//

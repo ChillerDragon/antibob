@@ -86,6 +86,7 @@ void CNetwork::OnClientConnect(int ClientId, bool Sixup)
 void CNetwork::OnClientDisconnect(int ClientId)
 {
 	m_aClients[ClientId].m_Active = false;
+	m_aClients[ClientId].m_State = CAntibotClient::EState::EMPTY;
 }
 
 bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags, class CAntibob *pAntibob)
