@@ -9,7 +9,7 @@ It is just meant to be a framework for you to write your own.
 
 ## features
 
-- Makefile
+- cmake project
 - tests
 - github CI
 - OOP wrapper around antibot api
@@ -33,7 +33,7 @@ make
 
 ## run
 
-The `make` in the antibob repo will create a ``libantibot.so``
+The cmake build in the antibob repo will create a ``libantibot.so``
 which has to be placed next to the ``DDNet-Server`` executable
 when launching it. Then it will pick it up.
 Also make sure to compile the server with the cmake flag
@@ -52,10 +52,13 @@ directory. But be careful it will be overwritten once the server is rebuild.
 
 # build antibob
 cd antibob
+mkdir -p build
+cd build
+cmake ..
 make
 
 # navigate to ddnet repo
-cd ../ddnet
+cd ../../ddnet
 
 # build ddnet server with antibot on
 mkdir -p build
@@ -69,19 +72,10 @@ rm libantibot.so
 # replace it with symlink into antibob
 # so recompiling antibob and restarting the ddnet server
 # loads the new antibob automatically
-ln ../../antibob/libantibot.so .
+ln ../../antibob/build/libantibot.so .
 
 # verify it prints antibob not null antibot
 ./DDNet-Server | grep antibot
-```
-
-## clangd compile_commands.json
-
-If your editor depends on a compile_commands.json to work properly.
-You can use bear to generate them.
-
-```
-bear -- make
 ```
 
 ## Example usage
