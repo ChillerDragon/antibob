@@ -3,7 +3,6 @@ project(antibot LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Og -g -MMD -MP")
 
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
@@ -125,6 +124,7 @@ target_link_libraries(antibot z)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
+add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -fPIC)
 add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wno-deprecated-enum-float-conversion) # c++20 arithmetic between floating-point type and enumeration type
 if(APPLE)
     add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -std=gnu++20)
