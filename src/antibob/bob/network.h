@@ -72,7 +72,7 @@ public:
 	void OnClientConnect(int ClientId, bool Sixup);
 	void OnClientDisconnect(int ClientId);
 
-	bool OnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags, class CAntibob *pAntibob);
+	bool OnEngineClientMessage(int ClientId, const void *pMsgData, int MsgSize, int Flags, class CAntibob *pAntibob);
 
 	bool IsSixup(int ClientId) { return m_aClients[ClientId].m_Sixup; }
 	// const char *ClientName(int ClientId) { return m_aClients[ClientId].m_aName; }

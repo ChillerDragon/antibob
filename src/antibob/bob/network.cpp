@@ -89,7 +89,7 @@ void CNetwork::OnClientDisconnect(int ClientId)
 	m_aClients[ClientId].m_State = CAntibotClient::EState::EMPTY;
 }
 
-bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, int Flags, class CAntibob *pAntibob)
+bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int MsgSize, int Flags, class CAntibob *pAntibob)
 {
 	// TODO: ddnet does a Server()->ClientIngame(ClientId)
 	//       check here. We probably need that too otherwise clients can
@@ -101,7 +101,7 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pData, int Size, 
 	Packer.Reset();
 
 	polybob::CUnpacker Unpacker;
-	Unpacker.Reset(pData, Size);
+	Unpacker.Reset(pMsgData, MsgSize);
 
 	int Msg;
 	bool Sys;

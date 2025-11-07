@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12...3.27.4)
 project(antibot LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -124,11 +124,18 @@ target_link_libraries(antibot z)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 
+# antibob specific, not sure what we need it for
 add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -fPIC)
+
+# TODO: enable these
+# add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wall)
+# add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wextra)
+
+add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wshadow-all) # clang
+add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wshadow=global) # gcc
+add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wthread-safety)
+add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wthread-safety-negative)
 add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wno-deprecated-enum-float-conversion) # c++20 arithmetic between floating-point type and enumeration type
-if(APPLE)
-    add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -std=gnu++20)
-endif()
 
 if(OUR_FLAGS_OWN)
     target_compile_options(antibot PRIVATE ${OUR_FLAGS_OWN})

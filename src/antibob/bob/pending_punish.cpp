@@ -74,9 +74,9 @@ void CPunishController::OnPlayerDisconnect(int ClientId)
 
 void CPunishController::SchedulePunish(int ClientId, const char *pReason, int TimeInMinutes, CPendingPunish::EPunish Punish)
 {
-	for(auto &Punish : m_vPendingPunishments)
+	for(auto &PendingPunish : m_vPendingPunishments)
 	{
-		if(Punish.m_ClientId != ClientId)
+		if(PendingPunish.m_ClientId != ClientId)
 			continue;
 
 		// TODO: what exactly do we want to happen here?
