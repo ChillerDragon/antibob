@@ -76,11 +76,14 @@ jobs:
 
     - name: Build antibot
       run: |
+          mkdir build
+          cd build
+          cmake ..
           make
 
     - name: Run server
       run: |
-        cp libantibot.so ../ddnet/build
+        cp build/libantibot.so ../ddnet/build
         cd ../ddnet/build
         ./DDNet-Server shutdown
 
