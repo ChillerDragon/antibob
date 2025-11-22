@@ -64,7 +64,7 @@ jobs:
         cd ..
         git clone --recursive https://github.com/ddnet/ddnet.git
         cd ddnet
-        git checkout 683eb4aa57be1dd025c5602881446e2dec2399c7
+        # git checkout a85d5d00b7752d496eae5d2e442ae6a3064db182
         mkdir build
         cd build
         cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} -DCMAKE_BUILD_TYPE=Debug -Werror=dev -DDEV=ON -DANTIBOT=ON ..
