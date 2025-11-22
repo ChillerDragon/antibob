@@ -2,7 +2,8 @@
 
 #include <mutex>
 
-namespace polybob {
+namespace polybob
+{
 
 // Enable thread safety attributes only with clang.
 // The attributes can be safely erased when compiling with other compilers.
@@ -72,65 +73,65 @@ namespace polybob {
 #define NO_THREAD_SAFETY_ANALYSIS \
 	THREAD_ANNOTATION_ATTRIBUTE__(no_thread_safety_analysis)
 
-/**
- * @defgroup Locks
- * @see Threads
- */
+	/**
+	 * @defgroup Locks
+	 * @see Threads
+	 */
 
-/**
- * Wrapper for `std::mutex`.
- *
- * @ingroup Locks
- *
- * @remark This wrapper is only necessary because the clang thread-safety attributes
- * are not available for `std::mutex` except when explicitly using libc++.
- */
-class CAPABILITY("mutex") CLock
-{
-public:
-	CLock() = default;
-
-	void lock() ACQUIRE()
+	/**
+	 * Wrapper for `std::mutex`.
+	 *
+	 * @ingroup Locks
+	 *
+	 * @remark This wrapper is only necessary because the clang thread-safety attributes
+	 * are not available for `std::mutex` except when explicitly using libc++.
+	 */
+	class CAPABILITY("mutex") CLock
 	{
-		m_Mutex.lock();
-	}
+	public:
+		CLock() = default;
 
-	void unlock() RELEASE()
+		void lock() ACQUIRE()
+		{
+			m_Mutex.lock();
+		}
+
+		void unlock() RELEASE()
+		{
+			m_Mutex.unlock();
+		}
+
+		// To support negative capabilities, otherwise EXCLUDES(m_Lock) must be used instead of REQUIRES(!m_Lock)
+		const CLock &operator!() const { return *this; }
+
+	private:
+		std::mutex m_Mutex;
+	};
+
+	/**
+	 * RAII-style wrapper for owning a `CLock`.
+	 *
+	 * @ingroup Locks
+	 *
+	 * @remark This wrapper is only necessary because the clang thread-safety attributes
+	 * are not available for `std::lock_guard` except when explicitly using libc++.
+	 */
+	class SCOPED_CAPABILITY CLockScope
 	{
-		m_Mutex.unlock();
-	}
+	public:
+		explicit CLockScope(CLock &Lock) ACQUIRE(Lock, m_Lock) :
+			m_Lock(Lock)
+		{
+			m_Lock.lock();
+		}
 
-	// To support negative capabilities, otherwise EXCLUDES(m_Lock) must be used instead of REQUIRES(!m_Lock)
-	const CLock &operator!() const { return *this; }
+		~CLockScope() RELEASE() REQUIRES(m_Lock)
+		{
+			m_Lock.unlock();
+		}
 
-private:
-	std::mutex m_Mutex;
-};
-
-/**
- * RAII-style wrapper for owning a `CLock`.
- *
- * @ingroup Locks
- *
- * @remark This wrapper is only necessary because the clang thread-safety attributes
- * are not available for `std::lock_guard` except when explicitly using libc++.
- */
-class SCOPED_CAPABILITY CLockScope
-{
-public:
-	explicit CLockScope(CLock &Lock) ACQUIRE(Lock, m_Lock) :
-		m_Lock(Lock)
-	{
-		m_Lock.lock();
-	}
-
-	~CLockScope() RELEASE() REQUIRES(m_Lock)
-	{
-		m_Lock.unlock();
-	}
-
-private:
-	CLock &m_Lock;
-};
+	private:
+		CLock &m_Lock;
+	};
 
 } // namespace polybob

@@ -1,3 +1,11 @@
+#include "antibob.h"
+
+#include <bob/antibot_player.h>
+#include <bob/console.h>
+#include <bob/detection_event.h>
+#include <bob/gameserver.h>
+#include <bob/network.h>
+#include <bob/version.h>
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/log.h>
 #include <polybob/base/logger.h>
@@ -13,16 +21,7 @@
 #include <polybob/game/generated/protocol7.h>
 #include <polybob/game/generated/protocolglue.h>
 
-#include <bob/antibot_player.h>
-#include <bob/console.h>
-#include <bob/detection_event.h>
-#include <bob/gameserver.h>
-#include <bob/network.h>
-#include <bob/version.h>
-
 #include <memory>
-
-#include "antibob.h"
 
 CAntibob::CAntibob(CAntibotData *pData) :
 	CGameServer(pData)

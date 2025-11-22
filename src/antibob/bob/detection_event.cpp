@@ -1,7 +1,8 @@
-#include <polybob/base/system.h>
-#include <unordered_map>
-
 #include "detection_event.h"
+
+#include <polybob/base/system.h>
+
+#include <unordered_map>
 
 using namespace polybob;
 

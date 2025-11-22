@@ -1,9 +1,8 @@
-#include <bob/detection_event.h>
+#include "bobtest.h"
 
+#include <bob/detection_event.h>
 #include <polybob/base/system.h>
 #include <polybob/game/generated/protocolglue.h>
-
-#include "bobtest.h"
 
 int main()
 {

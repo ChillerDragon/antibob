@@ -1,13 +1,12 @@
 #pragma once
 
+#include <bob/detection_event.h>
 #include <polybob/base/lock.h>
 #include <polybob/base/types.h>
 #include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/jobs.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/game/generated/protocol.h>
-
-#include <bob/detection_event.h>
 
 #include <cstdint>
 #include <memory>

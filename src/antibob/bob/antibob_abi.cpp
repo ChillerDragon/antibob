@@ -1,9 +1,8 @@
-#include <dlfcn.h>
+#include "antibob_abi.h"
 
+#include <dlfcn.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
-
-#include "antibob_abi.h"
 
 #define LOOKUP_SYM(name) \
 	m_pfn##name = (F##name)dlsym(RTLD_DEFAULT, "Antibob" #name); \

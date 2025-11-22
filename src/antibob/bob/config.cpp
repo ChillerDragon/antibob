@@ -1,12 +1,11 @@
-#include <polybob/base/log.h>
-#include <polybob/base/system.h>
+#include "config.h"
 
 #include <bob/antibob.h>
 #include <bob/console.h>
+#include <polybob/base/log.h>
+#include <polybob/base/system.h>
 
 #include <algorithm>
-
-#include "config.h"
 
 CBobConfig g_BobConfig;
 

@@ -1,12 +1,5 @@
 #pragma once
 
-#include <polybob/antibot/antibot_data.h>
-#include <polybob/base/system.h>
-#include <polybob/engine/message.h>
-#include <polybob/engine/shared/http.h>
-#include <polybob/engine/shared/jobs.h>
-#include <polybob/engine/storage.h>
-
 #include <bob/antibob_abi.h>
 #include <bob/antibot_player.h>
 #include <bob/collision.h>
@@ -15,6 +8,12 @@
 #include <bob/gameworld.h>
 #include <bob/network.h>
 #include <bob/pending_punish.h>
+#include <polybob/antibot/antibot_data.h>
+#include <polybob/base/system.h>
+#include <polybob/engine/message.h>
+#include <polybob/engine/shared/http.h>
+#include <polybob/engine/shared/jobs.h>
+#include <polybob/engine/storage.h>
 
 #include <cstdint>
 #include <memory>

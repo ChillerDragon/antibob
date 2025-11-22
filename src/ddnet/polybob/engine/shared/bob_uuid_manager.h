@@ -2,73 +2,74 @@
 
 #include <vector>
 
-namespace polybob {
-
-enum
+namespace polybob
 {
-	UUID_MAXSTRSIZE = 37, // 12345678-0123-5678-0123-567890123456
 
-	UUID_INVALID = -2,
-	UUID_UNKNOWN = -1,
+	enum
+	{
+		UUID_MAXSTRSIZE = 37, // 12345678-0123-5678-0123-567890123456
 
-	OFFSET_UUID = 1 << 16,
-};
+		UUID_INVALID = -2,
+		UUID_UNKNOWN = -1,
 
-struct CUuid
-{
-	unsigned char m_aData[16];
+		OFFSET_UUID = 1 << 16,
+	};
 
-	bool operator==(const CUuid &Other) const;
-	bool operator!=(const CUuid &Other) const;
-	bool operator<(const CUuid &Other) const;
-};
+	struct CUuid
+	{
+		unsigned char m_aData[16];
 
-extern const CUuid BOB_UUID_ZEROED;
+		bool operator==(const CUuid &Other) const;
+		bool operator!=(const CUuid &Other) const;
+		bool operator<(const CUuid &Other) const;
+	};
 
-CUuid RandomUuid();
-CUuid CalculateUuid(const char *pName);
-// The buffer length should be at least UUID_MAXSTRSIZE.
-void FormatUuid(CUuid Uuid, char *pBuffer, unsigned BufferLength);
-// Returns nonzero on failure.
-int ParseUuid(CUuid *pUuid, const char *pBuffer);
+	extern const CUuid BOB_UUID_ZEROED;
 
-struct CName
-{
-	CUuid m_Uuid;
-	const char *m_pName;
-};
+	CUuid RandomUuid();
+	CUuid CalculateUuid(const char *pName);
+	// The buffer length should be at least UUID_MAXSTRSIZE.
+	void FormatUuid(CUuid Uuid, char *pBuffer, unsigned BufferLength);
+	// Returns nonzero on failure.
+	int ParseUuid(CUuid *pUuid, const char *pBuffer);
 
-struct CNameIndexed
-{
-	CUuid m_Uuid;
-	int m_Id;
+	struct CName
+	{
+		CUuid m_Uuid;
+		const char *m_pName;
+	};
 
-	bool operator<(const CNameIndexed &Other) const { return m_Uuid < Other.m_Uuid; }
-	bool operator==(const CNameIndexed &Other) const { return m_Uuid == Other.m_Uuid; }
-};
+	struct CNameIndexed
+	{
+		CUuid m_Uuid;
+		int m_Id;
 
-class CPacker;
-class CUnpacker;
+		bool operator<(const CNameIndexed &Other) const { return m_Uuid < Other.m_Uuid; }
+		bool operator==(const CNameIndexed &Other) const { return m_Uuid == Other.m_Uuid; }
+	};
 
-class CBobUuidManager
-{
-	std::vector<CName> m_vNames;
-	std::vector<CNameIndexed> m_vNamesSorted;
+	class CPacker;
+	class CUnpacker;
 
-public:
-	void RegisterName(int Id, const char *pName);
-	CUuid GetUuid(int Id) const;
-	const char *GetName(int Id) const;
-	int LookupUuid(CUuid Uuid) const;
-	int NumUuids() const;
+	class CBobUuidManager
+	{
+		std::vector<CName> m_vNames;
+		std::vector<CNameIndexed> m_vNamesSorted;
 
-	int UnpackUuid(polybob::CUnpacker *pUnpacker) const;
-	int UnpackUuid(polybob::CUnpacker *pUnpacker, CUuid *pOut) const;
-	void PackUuid(int Id, polybob::CPacker *pPacker) const;
+	public:
+		void RegisterName(int Id, const char *pName);
+		CUuid GetUuid(int Id) const;
+		const char *GetName(int Id) const;
+		int LookupUuid(CUuid Uuid) const;
+		int NumUuids() const;
 
-	void DebugDump() const;
-};
+		int UnpackUuid(polybob::CUnpacker *pUnpacker) const;
+		int UnpackUuid(polybob::CUnpacker *pUnpacker, CUuid *pOut) const;
+		void PackUuid(int Id, polybob::CPacker *pPacker) const;
 
-extern CBobUuidManager g_BobUuidManager;
+		void DebugDump() const;
+	};
+
+	extern CBobUuidManager g_BobUuidManager;
 
 } // namespace polybob

@@ -1,8 +1,8 @@
+#include "bobtest.h"
+
 #include <polybob/base/system.h>
 
 #include <cstdio>
-
-#include "bobtest.h"
 
 bool CBobTest::ExpectNe(int Actual, int Expected, const char *pFilename, int LineNumber)
 {

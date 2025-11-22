@@ -1,13 +1,14 @@
+#include "network.h"
+
+#include "bob/antibob.h"
+#include "bob/gameserver.h"
+
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/game/generated/protocol.h>
 #include <polybob/game/generated/protocolglue.h>
-
-#include "bob/antibob.h"
-#include "bob/gameserver.h"
-#include "network.h"
 
 using namespace polybob;
 

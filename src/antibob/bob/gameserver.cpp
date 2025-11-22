@@ -1,20 +1,19 @@
+#include "gameserver.h"
+
+#include <bob/cmdline_arguments.h>
+#include <bob/network.h>
+#include <bob/pending_punish.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 #include <polybob/base/system/shell.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/engine/storage.h>
 #include <polybob/game/generated/protocol.h>
-
-#include <bob/cmdline_arguments.h>
-#include <bob/network.h>
-#include <bob/pending_punish.h>
-
-#include <cstdarg>
 #include <stdlib.h>
-#include <thread>
 #include <unistd.h>
 
-#include "gameserver.h"
+#include <cstdarg>
+#include <thread>
 
 CGameServer::CGameServer(CAntibotData *pData) :
 	m_pData(pData)

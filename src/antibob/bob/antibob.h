@@ -1,10 +1,9 @@
 #pragma once
 
-#include <polybob/antibot/antibot_data.h>
-#include <polybob/engine/shared/protocol_ex.h>
-
 #include <bob/console.h>
 #include <bob/gameserver.h>
+#include <polybob/antibot/antibot_data.h>
+#include <polybob/engine/shared/protocol_ex.h>
 
 class CAntibob : public CGameServer
 {
@@ -62,7 +61,7 @@ public:
 	// in ddnet code base
 	// only called for clients that properly joined first
 	// this is not called for clients that abort during the connection phase
-	virtual void OnPlayerDisconnect(class CAntibotPlayer *pPlayer, const char *pReason) {};
+	virtual void OnPlayerDisconnect(class CAntibotPlayer *pPlayer, const char *pReason) {}
 
 	virtual void OnKnownCheaterJoin(class CAntibotPlayer *pPlayer);
 

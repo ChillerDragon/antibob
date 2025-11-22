@@ -1,6 +1,6 @@
-#include <polybob/antibot/antibot_data.h>
-
 #include "gameworld.h"
+
+#include <polybob/antibot/antibot_data.h>
 
 const float CHARACTER_PHYS_SIZE = 28.0f;
 

@@ -1,9 +1,9 @@
-#include <cstdio>
+#include "cmdline_arguments.h"
 
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
-#include "cmdline_arguments.h"
+#include <cstdio>
 
 using polybob::str_copy;
 using polybob::str_length;

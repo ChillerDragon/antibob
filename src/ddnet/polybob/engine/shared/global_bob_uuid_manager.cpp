@@ -4,17 +4,18 @@
 
 #include <polybob/engine/uuid.h>
 
-namespace polybob {
-
-static CBobUuidManager CreateGlobalBobUuidManager()
+namespace polybob
 {
-	CBobUuidManager Manager;
-	RegisterUuids(&Manager);
-	RegisterTeehistorianUuids(&Manager);
-	polybob::RegisterGameUuids(&Manager);
-	return Manager;
-}
 
-CBobUuidManager g_BobUuidManager = CreateGlobalBobUuidManager();
+	static CBobUuidManager CreateGlobalBobUuidManager()
+	{
+		CBobUuidManager Manager;
+		RegisterUuids(&Manager);
+		RegisterTeehistorianUuids(&Manager);
+		polybob::RegisterGameUuids(&Manager);
+		return Manager;
+	}
+
+	CBobUuidManager g_BobUuidManager = CreateGlobalBobUuidManager();
 
 } // namespace polybob

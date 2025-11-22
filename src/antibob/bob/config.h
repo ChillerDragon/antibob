@@ -42,7 +42,7 @@ public:
 		m_pScriptName(pScriptName),
 		m_Type(Type),
 		m_Flags(Flags),
-		m_pHelp(pHelp) {};
+		m_pHelp(pHelp) {}
 };
 
 class CBobIntConfigVariable : public CBobConfigVariable
@@ -69,7 +69,7 @@ public:
 		m_Max(Max)
 	{
 		*m_pVariable = m_Default;
-	};
+	}
 };
 
 class CBobStringConfigVariable : public CBobConfigVariable

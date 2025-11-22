@@ -1,10 +1,9 @@
+#include "bobtest.h"
+
+#include <bob/console.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 #include <polybob/game/generated/protocolglue.h>
-
-#include <bob/console.h>
-
-#include "bobtest.h"
 
 void ExpectEscape(CBobTest &BobTest, const char *pInput, const char *pEscaped)
 {

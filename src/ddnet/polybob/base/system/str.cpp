@@ -1,24 +1,24 @@
 #include <polybob/base/system.h>
 #include <polybob/base/system/str.h>
-
 #include <string.h>
 #include <zlib.h>
 
-namespace polybob {
-
-void str_truncate(char *dst, int dst_size, const char *src, int truncation_len)
+namespace polybob
 {
-	int size = dst_size;
-	if(truncation_len < size)
+
+	void str_truncate(char *dst, int dst_size, const char *src, int truncation_len)
 	{
-		size = truncation_len + 1;
+		int size = dst_size;
+		if(truncation_len < size)
+		{
+			size = truncation_len + 1;
+		}
+		str_copy(dst, src, size);
 	}
-	str_copy(dst, src, size);
-}
 
-const char *str_rchr(const char *haystack, char needle)
-{
-	return strrchr(haystack, needle);
-}
+	const char *str_rchr(const char *haystack, char needle)
+	{
+		return strrchr(haystack, needle);
+	}
 
 } // namespace polybob

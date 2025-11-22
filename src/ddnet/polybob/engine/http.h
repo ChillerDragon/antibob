@@ -2,20 +2,21 @@
 
 #include <memory>
 
-namespace polybob {
-
-class IHttpRequest
+namespace polybob
 {
-};
 
-class IHttp
-{
-public:
-	virtual void Run(std::shared_ptr<IHttpRequest> pRequest) = 0;
+	class IHttpRequest
+	{
+	};
 
-	// IInterface
-	virtual void Shutdown() {}
-	virtual ~IHttp() {}
-};
+	class IHttp
+	{
+	public:
+		virtual void Run(std::shared_ptr<IHttpRequest> pRequest) = 0;
+
+		// IInterface
+		virtual void Shutdown() {}
+		virtual ~IHttp() {}
+	};
 
 } // namespace polybob

@@ -1,18 +1,19 @@
 #include <cstdint>
 
-namespace polybob {
-
-struct UPPER_LOWER
+namespace polybob
 {
-	int32_t upper;
-	int32_t lower;
-};
 
-enum
-{
-	NUM_TOLOWER = 1433,
-};
+	struct UPPER_LOWER
+	{
+		int32_t upper;
+		int32_t lower;
+	};
 
-extern const struct UPPER_LOWER tolowermap[];
+	enum
+	{
+		NUM_TOLOWER = 1433,
+	};
+
+	extern const struct UPPER_LOWER tolowermap[];
 
 } // namespace polybob

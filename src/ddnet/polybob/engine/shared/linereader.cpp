@@ -4,96 +4,97 @@
 
 #include <polybob/base/system.h>
 
-namespace polybob {
-
-CLineReader::CLineReader()
+namespace polybob
 {
-	m_pBuffer = nullptr;
-}
 
-CLineReader::~CLineReader()
-{
-	free(m_pBuffer);
-}
-
-bool CLineReader::OpenFile(IOHANDLE File)
-{
-	if(!File)
+	CLineReader::CLineReader()
 	{
-		return false;
-	}
-	char *pBuffer = io_read_all_str(File);
-	io_close(File);
-	if(pBuffer == nullptr)
-	{
-		return false;
-	}
-	OpenBuffer(pBuffer);
-	return true;
-}
-
-void CLineReader::OpenBuffer(char *pBuffer)
-{
-	dbg_assert(pBuffer != nullptr, "Line reader initialized without valid buffer");
-
-	m_pBuffer = pBuffer;
-	m_BufferPos = 0;
-	m_ReadLastLine = false;
-
-	// Skip UTF-8 BOM
-	if(m_pBuffer[0] == '\xEF' && m_pBuffer[1] == '\xBB' && m_pBuffer[2] == '\xBF')
-	{
-		m_BufferPos += 3;
-	}
-}
-
-const char *CLineReader::Get()
-{
-	dbg_assert(m_pBuffer != nullptr, "Line reader not initialized");
-	if(m_ReadLastLine)
-	{
-		return nullptr;
+		m_pBuffer = nullptr;
 	}
 
-	unsigned LineStart = m_BufferPos;
-	while(true)
+	CLineReader::~CLineReader()
 	{
-		if(m_pBuffer[m_BufferPos] == '\0' || m_pBuffer[m_BufferPos] == '\n' || (m_pBuffer[m_BufferPos] == '\r' && m_pBuffer[m_BufferPos + 1] == '\n'))
+		free(m_pBuffer);
+	}
+
+	bool CLineReader::OpenFile(IOHANDLE File)
+	{
+		if(!File)
 		{
-			if(m_pBuffer[m_BufferPos] == '\0')
+			return false;
+		}
+		char *pBuffer = io_read_all_str(File);
+		io_close(File);
+		if(pBuffer == nullptr)
+		{
+			return false;
+		}
+		OpenBuffer(pBuffer);
+		return true;
+	}
+
+	void CLineReader::OpenBuffer(char *pBuffer)
+	{
+		dbg_assert(pBuffer != nullptr, "Line reader initialized without valid buffer");
+
+		m_pBuffer = pBuffer;
+		m_BufferPos = 0;
+		m_ReadLastLine = false;
+
+		// Skip UTF-8 BOM
+		if(m_pBuffer[0] == '\xEF' && m_pBuffer[1] == '\xBB' && m_pBuffer[2] == '\xBF')
+		{
+			m_BufferPos += 3;
+		}
+	}
+
+	const char *CLineReader::Get()
+	{
+		dbg_assert(m_pBuffer != nullptr, "Line reader not initialized");
+		if(m_ReadLastLine)
+		{
+			return nullptr;
+		}
+
+		unsigned LineStart = m_BufferPos;
+		while(true)
+		{
+			if(m_pBuffer[m_BufferPos] == '\0' || m_pBuffer[m_BufferPos] == '\n' || (m_pBuffer[m_BufferPos] == '\r' && m_pBuffer[m_BufferPos + 1] == '\n'))
 			{
-				m_ReadLastLine = true;
-			}
-			else
-			{
-				if(m_pBuffer[m_BufferPos] == '\r')
+				if(m_pBuffer[m_BufferPos] == '\0')
 				{
+					m_ReadLastLine = true;
+				}
+				else
+				{
+					if(m_pBuffer[m_BufferPos] == '\r')
+					{
+						m_pBuffer[m_BufferPos] = '\0';
+						++m_BufferPos;
+					}
 					m_pBuffer[m_BufferPos] = '\0';
 					++m_BufferPos;
 				}
-				m_pBuffer[m_BufferPos] = '\0';
-				++m_BufferPos;
-			}
 
-			if(!str_utf8_check(&m_pBuffer[LineStart]))
-			{
-				// Skip lines containing invalid UTF-8
-				if(m_ReadLastLine)
+				if(!str_utf8_check(&m_pBuffer[LineStart]))
+				{
+					// Skip lines containing invalid UTF-8
+					if(m_ReadLastLine)
+					{
+						return nullptr;
+					}
+					LineStart = m_BufferPos;
+					continue;
+				}
+				// Skip trailing empty line
+				if(m_ReadLastLine && m_pBuffer[LineStart] == '\0')
 				{
 					return nullptr;
 				}
-				LineStart = m_BufferPos;
-				continue;
+				return &m_pBuffer[LineStart];
 			}
-			// Skip trailing empty line
-			if(m_ReadLastLine && m_pBuffer[LineStart] == '\0')
-			{
-				return nullptr;
-			}
-			return &m_pBuffer[LineStart];
+			++m_BufferPos;
 		}
-		++m_BufferPos;
 	}
-}
 
 } // namespace polybob

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <polybob/base/system.h>
-
 #include <bob/config.h>
+#include <polybob/base/system.h>
 
 #include <vector>
 

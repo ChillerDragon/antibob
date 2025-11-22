@@ -3,23 +3,24 @@
 #pragma once
 #include <polybob/base/types.h>
 
-namespace polybob {
-
-// buffered stream for reading lines
-class CLineReader
+namespace polybob
 {
-	char *m_pBuffer;
-	unsigned m_BufferPos;
-	bool m_ReadLastLine;
 
-public:
-	CLineReader();
-	~CLineReader();
+	// buffered stream for reading lines
+	class CLineReader
+	{
+		char *m_pBuffer;
+		unsigned m_BufferPos;
+		bool m_ReadLastLine;
 
-	bool OpenFile(IOHANDLE File);
-	void OpenBuffer(char *pBuffer); // Buffer must have been allocated with malloc, will be freed by the line reader
+	public:
+		CLineReader();
+		~CLineReader();
 
-	const char *Get(); // Returned string is valid until the line reader is destroyed
-};
+		bool OpenFile(IOHANDLE File);
+		void OpenBuffer(char *pBuffer); // Buffer must have been allocated with malloc, will be freed by the line reader
+
+		const char *Get(); // Returned string is valid until the line reader is destroyed
+	};
 
 } // namespace polybob

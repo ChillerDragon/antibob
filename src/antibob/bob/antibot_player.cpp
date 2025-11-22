@@ -1,14 +1,13 @@
+#include "antibot_player.h"
+
+#include <bob/antibob.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system/net.h>
 #include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/jobs.h>
 
-#include <bob/antibob.h>
-
 #include <cstdint>
 #include <memory>
-
-#include "antibot_player.h"
 
 using namespace polybob;
 

@@ -1,7 +1,8 @@
-#include <polybob/antibot/antibot_data.h>
-
 #include "collision.h"
+
 #include "polybob/game/mapitems.h"
+
+#include <polybob/antibot/antibot_data.h>
 
 void CBobCollision::OnInit(CAntibotRoundData *pRoundData)
 {

@@ -1,8 +1,8 @@
+#include "pending_punish.h"
+
 #include <bob/antibob.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
-
-#include "pending_punish.h"
 
 using namespace polybob;
 

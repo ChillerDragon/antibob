@@ -1,10 +1,10 @@
-#include <cstdlib>
+#include "console.h"
+
+#include <bob/antibob.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
-#include <bob/antibob.h>
-
-#include "console.h"
+#include <cstdlib>
 
 int CBobResult::NumRequiredParamaters() const
 {
