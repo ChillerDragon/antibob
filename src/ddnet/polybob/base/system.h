@@ -76,8 +76,7 @@ namespace polybob {
 #if defined(__cplusplus)
 [[noreturn]]
 #endif
-void
-dbg_assert_imp(const char *filename, int line, const char *fmt, ...)
+void dbg_assert_imp(const char *filename, int line, const char *fmt, ...)
 	GNUC_ATTRIBUTE((format(printf, 3, 4)));
 
 #ifdef __clang_analyzer__
@@ -91,8 +90,7 @@ bool dbg_assert_has_failed();
 #if defined(__cplusplus)
 [[noreturn]]
 #endif
-void
-dbg_break();
+void dbg_break();
 
 typedef std::function<void(const char *message)> DBG_ASSERT_HANDLER;
 void dbg_assert_set_handler(DBG_ASSERT_HANDLER handler);

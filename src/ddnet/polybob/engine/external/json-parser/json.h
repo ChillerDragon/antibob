@@ -59,7 +59,7 @@ typedef struct
 	int settings;
 
 	/* Custom allocator support (leave null to use malloc/free)
-    */
+	 */
 
 	void *(*mem_alloc)(size_t, int zero, void *user_data);
 	void (*mem_free)(void *, void *user_data);
@@ -117,7 +117,7 @@ typedef struct _json_value
 
 				struct _json_value *value;
 
-			} * values;
+			} *values;
 
 #if defined(__cplusplus) && __cplusplus >= 201103L
 			decltype(values) begin() const
@@ -162,7 +162,7 @@ typedef struct _json_value
 #ifdef JSON_TRACK_SOURCE
 
 	/* Location of the value in the source JSON
-       */
+	 */
 	unsigned int line, col;
 
 #endif

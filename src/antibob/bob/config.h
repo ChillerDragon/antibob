@@ -42,7 +42,7 @@ public:
 		m_pScriptName(pScriptName),
 		m_Type(Type),
 		m_Flags(Flags),
-		m_pHelp(pHelp){};
+		m_pHelp(pHelp) {};
 };
 
 class CBobIntConfigVariable : public CBobConfigVariable

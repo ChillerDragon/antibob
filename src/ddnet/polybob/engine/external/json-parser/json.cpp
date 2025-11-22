@@ -237,7 +237,7 @@ json_value *json_parse_ex(json_settings *settings,
 	json_int_t num_fraction = 0;
 
 	/* Skip UTF-8 BOM
-    */
+	 */
 	if(length >= 3 && ((unsigned char)json[0]) == 0xEF && ((unsigned char)json[1]) == 0xBB && ((unsigned char)json[2]) == 0xBF)
 	{
 		json += 3;
