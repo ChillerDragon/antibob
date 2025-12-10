@@ -69,12 +69,7 @@ jobs:
         # git checkout a85d5d00b7752d496eae5d2e442ae6a3064db182
         mkdir build
         cd build
-        cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} \
-          -DCMAKE_BUILD_TYPE=Debug \
-          -Werror=dev \
-          -DDEV=ON \
-          -DANTIBOT=ON \
-          -DCLIENT=OFF ..
+        cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} -DCMAKE_BUILD_TYPE=Debug -Werror=dev -DDEV=ON -DANTIBOT=ON -DCLIENT=OFF ..
         cmake --build . --config Debug --target everything ${{ matrix.build-args }}
 
     - name: Check abi
