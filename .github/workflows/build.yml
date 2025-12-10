@@ -20,23 +20,28 @@ jobs:
         - name: ubuntu-latest
           os: ubuntu-latest
           cmake-init-env: CXXFLAGS=-Werror
+          server-bin: DDNet-Server
         - name: ubuntu-22.04
           os: ubuntu-22.04
           cmake-path: /usr/bin/
           cmake-args: -G Ninja -DTEST_MYSQL=ON
           cmake-init-env: CXXFLAGS=-Werror
+          server-bin: DDNet-Server
         - name: macOS-latest
           os: macOS-latest
           cmake-init-env: CXXFLAGS=-Werror
+          server-bin: DDNet-Server
         - name: windows-latest
           os: windows-latest
           cmake-args: -A x64 -DEXCEPTION_HANDLING=ON
           cmake-init-env: CXXFLAGS=/WX LDFLAGS=/WX
           package-file: "*-win64.zip"
+          server-bin: DDNet-Server.exe
         - name: windows-latest-mingw
           os: windows-latest
           cmake-args: -G Ninja -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DEXCEPTION_HANDLING=ON -DCMAKE_RC_COMPILER=windres -DCMAKE_AR=ar
           cmake-init-env: CXXFLAGS=-Werror LDFLAGS=-Werror
+          server-bin: DDNet-Server.exe
 
     steps:
     - uses: actions/checkout@v4
@@ -70,7 +75,7 @@ jobs:
         mkdir build
         cd build
         cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} -DCMAKE_BUILD_TYPE=Debug -Werror=dev -DDEV=ON -DANTIBOT=ON -DCLIENT=OFF ..
-        cmake --build . --config Debug --target DDNet-Server ${{ matrix.build-args }}
+        cmake --build . --config Debug --target ${{ matrix.server-bin}} ${{ matrix.build-args }}
 
     - name: Check abi
       run: |
@@ -85,7 +90,8 @@ jobs:
 
     - name: Run server
       run: |
+        ls build
         cp build/libantibot.so ../ddnet/build
         cd ../ddnet/build
-        ./DDNet-Server shutdown
+        ./${{ matrix.server-bin}} shutdown
 
