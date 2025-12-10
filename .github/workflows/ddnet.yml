@@ -1,0 +1,148 @@
+name: ddnet
+
+on:
+  push:
+    branches-ignore:
+      - gh-readonly-queue/**
+  pull_request:
+  merge_group:
+
+jobs:
+  build-cmake:
+    runs-on: ${{ matrix.os }}
+    env:
+      CARGO_HTTP_MULTIPLEXING: false
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [ubuntu-latest-fancy, macOS-latest, windows-latest, ubuntu-22.04, windows-latest-mingw]
+        include:
+        - name: ubuntu-latest-fancy
+          os: ubuntu-latest
+          cmake-args: -G Ninja
+          cmake-init-env: CXXFLAGS=-Werror
+          package-file: "*-linux_x86_64.tar.xz"
+        - name: ubuntu-22.04
+          os: ubuntu-22.04
+          cmake-path: /usr/bin/
+          cmake-args: -G Ninja -DTEST_MYSQL=ON
+          cmake-init-env: CXXFLAGS=-Werror
+          gtest-env: GTEST_FILTER=-*SQLite*
+          package-file: "*-linux_x86_64.tar.xz"
+        - name: macOS-latest
+          os: macOS-latest
+          cmake-args: -G Ninja
+          cmake-init-env: CXXFLAGS=-Werror
+          package-file: "*-macos.dmg"
+        - name: windows-latest
+          os: windows-latest
+          cmake-args: -A x64 -DEXCEPTION_HANDLING=ON
+          cmake-init-env: CXXFLAGS=/WX LDFLAGS=/WX
+          package-file: "*-win64.zip"
+        - name: windows-latest-mingw
+          os: windows-latest
+          cmake-args: -G Ninja -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DEXCEPTION_HANDLING=ON -DCMAKE_RC_COMPILER=windres -DCMAKE_AR=ar
+          cmake-init-env: CXXFLAGS=-Werror LDFLAGS=-Werror
+          package-file: "*-win64.zip"
+          # Delete outdated libwinpthread-1.dll after configuring to workaround https://github.com/ddnet/ddnet/issues/10203 when using MinGW.
+          # Adding this condition into the individual steps is not possible without using bash shell consistently, which does not work for windows-latest.
+          workaround-issue10203-run-after-configure: rm libwinpthread-1.dll
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Prepare Linux
+      if: contains(matrix.os, 'ubuntu')
+      run: |
+        sudo apt-get update -y
+        # mount: /var/lib/grub/esp: special device /dev/disk/by-id/scsi-... does not exist.
+        # sudo apt-get upgrade -y
+        sudo apt-get install pkg-config ninja-build libfreetype6-dev libnotify-dev libsdl2-dev libsqlite3-dev libvulkan-dev glslang-tools spirv-tools libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libswscale-dev libx264-dev libpng-dev valgrind gcovr libglew-dev -y
+
+    - name: Prepare Linux (non-fancy)
+      if: contains(matrix.os, 'ubuntu') && !contains(matrix.name, 'fancy')
+      run: |
+        curl -LO https://github.com/Kitware/CMake/releases/download/v3.13.4/cmake-3.13.4-Linux-x86_64.tar.gz
+        sudo tar --strip-components 1 -C /usr -xf cmake-3.13.4-Linux-x86_64.tar.gz
+        # Our minimum supported Rust version (MSRV)
+        rustup default 1.63.0
+        sudo rm -rf /var/lib/mysql/ /var/run/mysqld
+        sudo mkdir /var/lib/mysql/ /var/run/mysqld/
+        sudo chown mysql:mysql /var/lib/mysql/ /var/run/mysqld/
+        sudo mysqld --initialize-insecure --user=mysql --basedir=/usr --datadir=/var/lib/mysql/
+        sudo /usr/bin/mysqld_safe --basedir=/usr --datadir='/var/lib/mysql/' &
+        sleep 10
+        sudo mysql <<EOF
+        CREATE DATABASE ddnet;
+        CREATE USER 'ddnet'@'localhost' IDENTIFIED BY 'thebestpassword';
+        GRANT ALL PRIVILEGES ON ddnet.* TO 'ddnet'@'localhost';
+        FLUSH PRIVILEGES;
+        EOF
+
+    - name: Prepare Linux (fancy)
+      if: contains(matrix.os, 'ubuntu') && contains(matrix.name, 'fancy')
+      run: |
+        sudo apt-get install cmake libmariadb-dev libwebsockets-dev mariadb-server -y
+        sudo systemctl stop mysql
+        sudo rm -rf /var/lib/mysql/
+        sudo mysql_install_db --user=mysql --datadir=/var/lib/mysql/
+        cd /usr; sudo mysqld_safe --datadir='/var/lib/mysql/' --no-watch
+        sleep 10
+        sudo mysql <<EOF
+        CREATE DATABASE ddnet;
+        CREATE USER 'ddnet'@'localhost' IDENTIFIED BY 'thebestpassword';
+        GRANT ALL PRIVILEGES ON ddnet.* TO 'ddnet'@'localhost';
+        FLUSH PRIVILEGES;
+        EOF
+
+    - name: Prepare macOS
+      if: contains(matrix.os, 'macOS')
+      run: |
+        brew update || true
+        brew install pkg-config sdl2 ffmpeg ninja molten-vk vulkan-headers glslang spirv-tools rust || true
+        brew upgrade freetype
+        pip3 install --break-system-packages dmgbuild
+        echo /Library/Frameworks/Python.framework/Versions/3.12/bin >> $GITHUB_PATH
+        sudo rm -rf /Library/Developer/CommandLineTools
+
+    - name: Prepare Windows MinGW
+      if: contains(matrix.os, 'windows') && contains(matrix.name, 'mingw')
+      run: |
+        rustup toolchain install stable-x86_64-pc-windows-gnu
+        rustup target add x86_64-pc-windows-gnu
+        rustup default stable-x86_64-pc-windows-gnu
+        rustup set default-host x86_64-pc-windows-gnu
+
+    - name: Cache Rust dependencies
+      uses: Swatinem/rust-cache@v2
+      with:
+          workspaces: |
+              src/mastersrv
+              src/masterping
+              ./
+
+    - name: Build mastersrv
+      if: ${{ !contains(matrix.os, 'ubuntu-22.04') }}
+      run: |
+        cd src/mastersrv
+        cargo build
+
+    - name: Build masterping
+      if: ${{ !contains(matrix.os, 'ubuntu-22.04') }}
+      run: |
+        cd src/masterping
+        cargo build
+
+    - name: Build in debug mode
+      run: |
+        git clone --recursive https://github.com/ddnet/ddnet.git
+        cd ddnet
+        mkdir debug
+        cd debug
+        ${{ matrix.cmake-path }}cmake --version
+        ${{ matrix.cmake-path }}cmake -E env ${{ matrix.cmake-init-env }} ${{ matrix.cmake-path }}cmake ${{ matrix.cmake-args }} -DCMAKE_BUILD_TYPE=Debug -Werror=dev -DDOWNLOAD_GTEST=ON -DDEV=ON -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=. -DANTIBOT=ON ..
+        ${{ matrix.workaround-issue10203-run-after-configure }}
+        ${{ matrix.cmake-path }}cmake --build . --config Debug --target everything
+
