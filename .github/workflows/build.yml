@@ -70,7 +70,7 @@ jobs:
         mkdir build
         cd build
         cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} -DCMAKE_BUILD_TYPE=Debug -Werror=dev -DDEV=ON -DANTIBOT=ON -DCLIENT=OFF ..
-        cmake --build . --config Debug --target everything ${{ matrix.build-args }}
+        cmake --build . --config Debug --target DDNet-Server ${{ matrix.build-args }}
 
     - name: Check abi
       run: |
@@ -80,8 +80,8 @@ jobs:
       run: |
           mkdir build
           cd build
-          cmake ..
-          make
+          cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} -DCMAKE_BUILD_TYPE=Debug -Werror=dev  ..
+          cmake --build . --config Debug ${{ matrix.build-args }}
 
     - name: Run server
       run: |
