@@ -1,0 +1,3 @@
+[submodule "src/external/ddnet_base"]
+	path = src/external/ddnet_base
+	url = https://github.com/ddnet-community/ddnet_base

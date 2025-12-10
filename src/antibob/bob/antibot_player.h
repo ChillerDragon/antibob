@@ -1,12 +1,12 @@
 #pragma once
 
 #include <bob/detection_event.h>
-#include <polybob/base/lock.h>
-#include <polybob/base/types.h>
-#include <polybob/engine/shared/http.h>
-#include <polybob/engine/shared/jobs.h>
-#include <polybob/engine/shared/protocol.h>
-#include <polybob/game/generated/protocol.h>
+#include <ddnet_base/base/lock.h>
+#include <ddnet_base/base/types.h>
+#include <ddnet_base/engine/shared/http.h>
+#include <ddnet_base/engine/shared/jobs.h>
+#include <ddnet_base/engine/shared/protocol.h>
+#include <ddnet_base/generated/protocol.h>
 
 #include <cstdint>
 #include <memory>

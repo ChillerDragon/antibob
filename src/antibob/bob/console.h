@@ -1,11 +1,11 @@
 #pragma once
 
 #include <bob/config.h>
-#include <polybob/base/system.h>
 
+#include <ddnet_base/base/str.h>
+
+#include <cstdlib>
 #include <vector>
-
-using namespace polybob;
 
 #define MAX_ARGS 10
 

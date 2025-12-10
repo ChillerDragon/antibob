@@ -79,25 +79,13 @@ include_directories(
     src/ddnet
 )
 
-# Find all source files
-file(GLOB_RECURSE POLYBOB_SRCS
-    src/ddnet/polybob/*/*.cpp
-    src/ddnet/polybob/base/unicode/*.cpp
-    src/ddnet/polybob/base/system/*.cpp
-    src/ddnet/polybob/game/generated/*.cpp
-    src/ddnet/polybob/engine/shared/*.cpp
-)
-
 file(GLOB_RECURSE ANTIBOB_SRCS
     src/antibob/interface.cpp
     src/antibob/*/*.cpp
 )
 
 # External dependencies
-set(DEPENDENCIES
-    src/ddnet/polybob/engine/external/md5/md5.cpp
-    src/ddnet/polybob/engine/external/json-parser/json.cpp
-)
+add_subdirectory(src/external/ddnet_base)
 
 # Generate git revision
 execute_process(
@@ -114,12 +102,11 @@ file(WRITE ${CMAKE_BINARY_DIR}/generated/git_revision.cpp
 set(DEPENDENCIES ${DEPENDENCIES} ${CMAKE_BINARY_DIR}/generated/git_revision.cpp)
 
 add_library(antibot SHARED
-    ${POLYBOB_SRCS}
     ${ANTIBOB_SRCS}
     ${DEPENDENCIES}
 )
 
-target_link_libraries(antibot z)
+target_link_libraries(antibot z ddnet_base)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
@@ -156,7 +143,7 @@ file(GLOB_RECURSE TESTS_SRCS
 foreach(TEST_SRC ${TESTS_SRCS})
     get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
     add_executable(${TEST_NAME}_bob_test ${TEST_SRC} ${BOBTEST_FRAMEWORK_SRCS})
-    target_link_libraries(${TEST_NAME}_bob_test antibot z curl)
+    target_link_libraries(${TEST_NAME}_bob_test antibot z curl ddnet_base)
     target_compile_options(${TEST_NAME}_bob_test PRIVATE ${OUR_FLAGS_OWN})
     include_directories(src/test)
 endforeach()
