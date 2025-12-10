@@ -75,7 +75,7 @@ jobs:
         mkdir build
         cd build
         cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} -DCMAKE_BUILD_TYPE=Debug -Werror=dev -DDEV=ON -DANTIBOT=ON -DCLIENT=OFF ..
-        cmake --build . --config Debug --target everything ${{ matrix.build-args }}
+        cmake --build . --config Debug --target game-server ${{ matrix.build-args }}
 
     - name: Check abi
       run: |
