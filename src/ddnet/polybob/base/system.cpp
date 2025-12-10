@@ -3,6 +3,7 @@
 #include "lock.h"
 #include "logger.h"
 
+#include <polybob/base/system/shell.h>
 #include <sys/types.h>
 
 #include <atomic>
