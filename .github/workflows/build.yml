@@ -15,13 +15,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        name: [ubuntu-latest, macOS-latest, windows-latest, ubuntu-22.04, windows-latest-mingw]
         include:
-        - os: ubuntu-latest
-          cmake-args: -G Ninja
+        - name: ubuntu-latest
+          os: ubuntu-latest
           cmake-init-env: CXXFLAGS=-Werror
-          package-file: "*-linux_x86_64.tar.xz"
-          fancy: true
+        - name: ubuntu-22.04
+          os: ubuntu-22.04
+          cmake-path: /usr/bin/
+          cmake-args: -G Ninja -DTEST_MYSQL=ON
+          cmake-init-env: CXXFLAGS=-Werror
+        - name: macOS-latest
+          os: macOS-latest
+          cmake-init-env: CXXFLAGS=-Werror
+        - name: windows-latest
+          os: windows-latest
+          cmake-args: -A x64 -DEXCEPTION_HANDLING=ON
+          cmake-init-env: CXXFLAGS=/WX LDFLAGS=/WX
+          package-file: "*-win64.zip"
+        - name: windows-latest-mingw
+          os: windows-latest
+          cmake-args: -G Ninja -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DEXCEPTION_HANDLING=ON -DCMAKE_RC_COMPILER=windres -DCMAKE_AR=ar
+          cmake-init-env: CXXFLAGS=-Werror LDFLAGS=-Werror
 
     steps:
     - uses: actions/checkout@v4
@@ -36,25 +51,12 @@ jobs:
         # sudo apt-get upgrade -y
         sudo apt-get install curl libcurl4-openssl-dev pkg-config ninja-build libfreetype6-dev libnotify-dev libsdl2-dev libsqlite3-dev libvulkan-dev glslang-tools spirv-tools libavcodec-dev libavformat-dev libavutil-dev libswresample-dev libswscale-dev libx264-dev libpng-dev valgrind gcovr libglew-dev -y
 
-    - name: Prepare Linux (non-fancy)
-      if: ${{ contains(matrix.os, 'ubuntu') && !matrix.fancy }}
+    - name: Prepare macOS
+      if: contains(matrix.os, 'macOS')
       run: |
-        curl -LO https://github.com/Kitware/CMake/releases/download/v3.13.4/cmake-3.13.4-Linux-x86_64.tar.gz
-        sudo tar --strip-components 1 -C /usr -xf cmake-3.13.4-Linux-x86_64.tar.gz
-        # Our minimum supported Rust version (MSRV)
-        rustup default 1.63.0
-        sudo rm -rf /var/lib/mysql/ /var/run/mysqld
-        sudo mkdir /var/lib/mysql/ /var/run/mysqld/
-        sudo chown mysql:mysql /var/lib/mysql/ /var/run/mysqld/
-        sudo mysqld --initialize-insecure --user=mysql --basedir=/usr --datadir=/var/lib/mysql/
-        sudo /usr/bin/mysqld_safe --basedir=/usr --datadir='/var/lib/mysql/' &
-        sleep 10
-        sudo mysql <<EOF
-        CREATE DATABASE ddnet;
-        CREATE USER 'ddnet'@'localhost' IDENTIFIED BY 'thebestpassword';
-        GRANT ALL PRIVILEGES ON ddnet.* TO 'ddnet'@'localhost';
-        FLUSH PRIVILEGES;
-        EOF
+        brew update || true
+        brew install pkg-config cmake || true
+        sudo rm -rf /Library/Developer/CommandLineTools
 
     - name: Cache Rust dependencies
       uses: Swatinem/rust-cache@v2
@@ -67,7 +69,12 @@ jobs:
         # git checkout a85d5d00b7752d496eae5d2e442ae6a3064db182
         mkdir build
         cd build
-        cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} -DCMAKE_BUILD_TYPE=Debug -Werror=dev -DDEV=ON -DANTIBOT=ON ..
+        cmake -E env ${{ matrix.cmake-init-env }} cmake ${{ matrix.cmake-args }} \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -Werror=dev \
+          -DDEV=ON \
+          -DANTIBOT=ON \
+          -DCLIENT=OFF ..
         cmake --build . --config Debug --target everything ${{ matrix.build-args }}
 
     - name: Check abi
