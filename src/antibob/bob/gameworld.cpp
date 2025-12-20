@@ -26,6 +26,8 @@ const CAntibotCharacterData *CBobGameWorld::IntersectCharacter(
 
 	for(const CAntibotCharacterData &Entity : m_pRoundData->m_aCharacters)
 	{
+		if(!Entity.m_Alive)
+			continue;
 		if(&Entity == pNotThis)
 			continue;
 
