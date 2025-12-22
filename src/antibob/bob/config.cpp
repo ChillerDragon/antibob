@@ -37,6 +37,22 @@ void CBobConfigManager::OnInit()
 #undef MACRO_CONFIG_STR
 }
 
+CBobConfigVariable *CBobConfigManager::FindConfig(const char *pCommand)
+{
+	for(auto *pVariable : m_vpAllVariables)
+	{
+		if(!str_startswith(pCommand, pVariable->m_pScriptName))
+			continue;
+		// Detect substrings. For example ab_kick_all should not match ab_kick
+		const char *pEnd = pCommand + str_length(pVariable->m_pScriptName);
+		if(*pEnd != ' ' && *pEnd != '\0')
+			continue;
+
+		return pVariable;
+	}
+	return nullptr;
+}
+
 bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibob)
 {
 	for(auto *pVariable : m_vpAllVariables)
@@ -112,6 +128,38 @@ void CBobConfigManager::PrintConfigs(CAntibob *pAntibob)
 	}
 
 	pAntibob->LogInfo("%s", aVariables);
+}
+
+bool CBobConfigManager::PrintHelp(const char *pCommand, CAntibob *pAntibob)
+{
+	CBobConfigVariable *pVar = FindConfig(pCommand);
+	if(!pVar)
+		return false;
+
+	pAntibob->LogInfo("Config: %s %s", pVar->m_pScriptName, pVar->m_pHelp);
+
+	CBobStringConfigVariable *pStr = nullptr;
+	CBobIntConfigVariable *pInt = nullptr;
+	switch(pVar->m_Type)
+	{
+	case CBobConfigVariable::EVarType::INT:
+		pInt = (CBobIntConfigVariable *)pVar;
+		pAntibob->LogInfo(
+			"Type: int, Min: %d, Max: %d, Default: %d",
+			pInt->m_Min,
+			pInt->m_Max,
+			pInt->m_Default);
+		break;
+	case CBobConfigVariable::EVarType::STRING:
+		pStr = (CBobStringConfigVariable *)pVar;
+		pAntibob->LogInfo(
+			"Type: string, Max length: %zu, Default: %s",
+			pStr->m_MaxSize,
+			pStr->m_pDefault);
+		break;
+	}
+
+	return true;
 }
 
 CBobConfigManager::~CBobConfigManager()

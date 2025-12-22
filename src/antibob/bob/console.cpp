@@ -247,6 +247,10 @@ void CBobConsole::PrintCmdHelp(const char *pCommand)
 			return;
 		}
 	}
+
+	if(m_pConfigManager->PrintHelp(pCommand, m_pAntibob))
+		return;
+
 	m_pAntibob->LogInfo("no such command '%s'", pCommand);
 }
 
