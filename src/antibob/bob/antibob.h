@@ -7,6 +7,8 @@
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/engine/shared/protocol_ex.h>
 
+class CAntibotPlayer;
+
 class CAntibob : public CGameServer
 {
 public:
@@ -49,30 +51,44 @@ public:
 	virtual bool OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
 	// WARNING: this is only used by 0.6!
-	//          see also OnStartInfoNetMessage7 if you need 0.7 support
+	//          if you need to run code on initial skin info or skin change use `OnSkinInfo()` instead
 	virtual void OnStartInfoNetMessage(const polybob::CNetMsg_Cl_StartInfo *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
+	// WARNING: this is only used by 0.7!
+	//          if you need to run code on initial skin info or skin change use `OnSkinInfo()` instead
 	virtual void OnStartInfoNetMessage7(const polybob::protocol7::CNetMsg_Cl_StartInfo *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
 	virtual void OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput);
 
+	// WARNING: this is not fully implemented yet! Skin changes are not supported yet!
+	//
+	// called when the client sent a new skin info
+	// this happens on join and when users request
+	// a skin change.
+	// It is called for 0.6 and 0.7 connections.
+	// The new skin data is already written to
+	//
+	// `pPlayer->m_TeeInfos`
+	//
+	virtual void OnSkinInfo(CAntibotPlayer *pPlayer) {};
+
 	// send http request with player name and ip
 	// to backend configured by ab_cheater_api_url
-	virtual void LookupPlayer(class CAntibotPlayer *pPlayer);
+	virtual void LookupPlayer(CAntibotPlayer *pPlayer);
 
 	// same as IGameController::OnPlayerConnect(CPlayer *pPlayer)
 	// in ddnet code base
 	// is called when the client is fully online and
 	// sent its name and skin info already
-	virtual void OnPlayerConnect(class CAntibotPlayer *pPlayer);
+	virtual void OnPlayerConnect(CAntibotPlayer *pPlayer);
 
 	// same as IGameController::OnPlayerDisconnect(CPlayer *pPlayer, const char *pReason)
 	// in ddnet code base
 	// only called for clients that properly joined first
 	// this is not called for clients that abort during the connection phase
-	virtual void OnPlayerDisconnect(class CAntibotPlayer *pPlayer, const char *pReason) {}
+	virtual void OnPlayerDisconnect(CAntibotPlayer *pPlayer, const char *pReason) {}
 
-	virtual void OnKnownCheaterJoin(class CAntibotPlayer *pPlayer);
+	virtual void OnKnownCheaterJoin(CAntibotPlayer *pPlayer);
 
 	//
 	// ddnet antibot interface hooks

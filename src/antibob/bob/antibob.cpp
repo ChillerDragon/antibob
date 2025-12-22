@@ -249,6 +249,7 @@ void CAntibob::OnStartInfoNetMessage(const polybob::CNetMsg_Cl_StartInfo *pMsg, 
 	pPlayer->m_TeeInfos.m_UseCustomColor = pMsg->m_UseCustomColor;
 	pPlayer->m_TeeInfos.m_ColorBody = pMsg->m_ColorBody;
 	pPlayer->m_TeeInfos.m_ColorFeet = pMsg->m_ColorFeet;
+	OnSkinInfo(pPlayer);
 
 	// client is ready to enter
 	pPlayer->m_IsReady = true;
@@ -266,6 +267,7 @@ void CAntibob::OnStartInfoNetMessage7(const polybob::protocol7::CNetMsg_Cl_Start
 
 	pPlayer->m_TeeInfos = CTeeInfo(pMsg->m_apSkinPartNames, pMsg->m_aUseCustomColors, pMsg->m_aSkinPartColors);
 	pPlayer->m_TeeInfos.FromSixup();
+	OnSkinInfo(pPlayer);
 
 	// client is ready to enter
 	pPlayer->m_IsReady = true;
