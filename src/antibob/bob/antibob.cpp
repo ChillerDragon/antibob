@@ -1,5 +1,6 @@
 #include "antibob.h"
 
+#include "bob/str.h"
 #include "polybob/game/server/teeinfo.h"
 
 #include <bob/antibot_player.h>
@@ -51,6 +52,68 @@ void CAntibob::RegisterCommands()
 	}
 #include <bob/commands.h>
 #undef CONSOLE_COMMAND
+}
+
+void CAntibob::TrackBan(int ClientId, const char *pReason)
+{
+	if(ClientId < 0 || ClientId >= ANTIBOT_MAX_CLIENTS)
+		return;
+	if(!str_startswith(pReason, "You have been banned"))
+		return;
+
+	CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
+	char aAddr[512];
+	net_addr_str(&pPlayer->m_Addr, aAddr, sizeof(aAddr), false);
+
+	// TODO: the ClientName is an empty string
+	//       https://github.com/ddnet/ddnet/issues/10428
+
+	log_info("antibot", "player got banned ip=%s name='%s'", aAddr, pPlayer->Name());
+
+	if(!Config()->m_AbTrackBans)
+		return;
+	if(Config()->m_AbTrackBans < 2 && str_find(pReason, "by vote"))
+		return;
+
+	const char *pFilename = "antibob_bans.txt";
+	IOHANDLE File = Storage()->OpenFile(pFilename, IOFLAG_APPEND, IStorage::TYPE_SAVE);
+	if(!File)
+	{
+		log_error("antibot", "failed to open file %s", pFilename);
+		return;
+	}
+
+	int Minutes;
+	if(!str_extract_ban_minutes(pReason, &Minutes))
+	{
+		log_error("antibot", "failed to extract ban time from reason: %s", pReason);
+
+		// fallback value
+		Minutes = 120;
+	}
+
+	// we can not pass on pReason otherwise we need to
+	// properly escape quoting to avoid command injection
+	// when the file is being loaded with the `exec` command again
+	char aReason[512] = "antibot";
+
+	char aDate[512];
+	str_timestamp(aDate, sizeof(aDate));
+
+	char aLine[512];
+	str_format(
+		aLine,
+		sizeof(aLine),
+		"ban \"%s\" %d \"%s\" # ban date: %s, name: %s, reason: %s",
+		aAddr,
+		Minutes,
+		aReason,
+		aDate,
+		pPlayer->Name(),
+		pReason);
+	io_write(File, aLine, str_length(aLine));
+	io_write_newline(File);
+	io_close(File);
 }
 
 //
@@ -435,54 +498,7 @@ void CAntibob::OnEngineClientJoin(int ClientId)
 
 void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 {
-	if(str_startswith(pReason, "You have been banned") && ClientId >= 0 && ClientId < ANTIBOT_MAX_CLIENTS)
-	{
-		CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
-		char aAddr[512];
-		net_addr_str(&pPlayer->m_Addr, aAddr, sizeof(aAddr), false);
-
-		// TODO: the ClientName is an empty string
-		//       https://github.com/ddnet/ddnet/issues/10428
-
-		log_info("antibot", "player got banned ip=%s name='%s'", aAddr, pPlayer->Name());
-
-		if(Config()->m_AbTrackBans)
-		{
-			const char *pFilename = "antibob_bans.txt";
-			IOHANDLE File = Storage()->OpenFile(pFilename, IOFLAG_APPEND, IStorage::TYPE_SAVE);
-			if(!File)
-			{
-				log_error("antibot", "failed to open file %s", pFilename);
-				return;
-			}
-
-			// this could be a config or parsed from the ban string
-			int Minutes = 120;
-
-			// we can not pass on pReason otherwise we need to
-			// properly escape quoting to avoid command injection
-			// when the file is being loaded with the `exec` command again
-			char aReason[512] = "antibot";
-
-			char aDate[512];
-			str_timestamp(aDate, sizeof(aDate));
-
-			char aLine[512];
-			str_format(
-				aLine,
-				sizeof(aLine),
-				"ban \"%s\" %d \"%s\" # ban date: %s, name: %s, reason: %s",
-				aAddr,
-				Minutes,
-				aReason,
-				aDate,
-				pPlayer->Name(),
-				pReason);
-			io_write(File, aLine, str_length(aLine));
-			io_write_newline(File);
-			io_close(File);
-		}
-	}
+	TrackBan(ClientId, pReason);
 
 	if(m_Network.m_aClients[ClientId].m_State >= CAntibotClient::EState::READY)
 		OnPlayerDisconnect(m_apPlayers[ClientId], pReason);

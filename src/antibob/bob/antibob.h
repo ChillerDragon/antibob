@@ -22,6 +22,7 @@ public:
 	//
 
 	void RegisterCommands();
+	void TrackBan(int ClientId, const char *pReason);
 
 	//
 	// helpers
