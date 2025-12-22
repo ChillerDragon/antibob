@@ -44,7 +44,7 @@ namespace polybob
 		m_ColorFeet = ColorFeet;
 	}
 
-	CTeeInfo::CTeeInfo(const char *apSkinPartNames[protocol7::NUM_SKINPARTS], int aUseCustomColors[protocol7::NUM_SKINPARTS], int aSkinPartColors[protocol7::NUM_SKINPARTS])
+	CTeeInfo::CTeeInfo(const char * const apSkinPartNames[protocol7::NUM_SKINPARTS], int const aUseCustomColors[protocol7::NUM_SKINPARTS], int const aSkinPartColors[protocol7::NUM_SKINPARTS])
 	{
 		for(int Part = 0; Part < protocol7::NUM_SKINPARTS; Part++)
 		{

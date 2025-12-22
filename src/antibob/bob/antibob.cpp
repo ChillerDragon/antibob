@@ -1,4 +1,5 @@
 #include "antibob.h"
+#include "polybob/game/server/teeinfo.h"
 
 #include <bob/antibot_player.h>
 #include <bob/console.h>
@@ -184,6 +185,23 @@ void CAntibob::OnStartInfoNetMessage(const polybob::CNetMsg_Cl_StartInfo *pMsg, 
 	pPlayer->m_TeeInfos.m_UseCustomColor = pMsg->m_UseCustomColor;
 	pPlayer->m_TeeInfos.m_ColorBody = pMsg->m_ColorBody;
 	pPlayer->m_TeeInfos.m_ColorFeet = pMsg->m_ColorFeet;
+
+	// client is ready to enter
+	pPlayer->m_IsReady = true;
+	CNetMsg_Sv_ReadyToEnter ReadyMsg;
+}
+
+void CAntibob::OnStartInfoNetMessage7(const polybob::protocol7::CNetMsg_Cl_StartInfo *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker)
+{
+	CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
+
+	if(pPlayer->m_IsReady)
+		return;
+
+	str_copy(pPlayer->m_aName, pMsg->m_pName);
+
+	pPlayer->m_TeeInfos = CTeeInfo(pMsg->m_apSkinPartNames, pMsg->m_aUseCustomColors, pMsg->m_aSkinPartColors);
+	pPlayer->m_TeeInfos.FromSixup();
 
 	// client is ready to enter
 	pPlayer->m_IsReady = true;

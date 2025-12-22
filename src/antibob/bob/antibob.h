@@ -47,8 +47,11 @@ public:
 	// return true to drop the message
 	virtual bool OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
-	// WARNING: this is only used by 0.6! The 0.7 version is not supported yet!
+	// WARNING: this is only used by 0.6!
+	//          see also OnStartInfoNetMessage7 if you need 0.7 support
 	virtual void OnStartInfoNetMessage(const polybob::CNetMsg_Cl_StartInfo *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
+
+	virtual void OnStartInfoNetMessage7(const polybob::protocol7::CNetMsg_Cl_StartInfo *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
 	virtual void OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput);
 

@@ -65,6 +65,9 @@ public:
 	//          and this risks implementation differences
 	//          and things like server side set skins
 	//          or ratelimits will never be covered correctly
+	//          --
+	//          right now it does not even support skin changes
+	//          and only looks at the first info being sent
 	polybob::CTeeInfo m_TeeInfos;
 
 	// WARNING: this value might be wrong

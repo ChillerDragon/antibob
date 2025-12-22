@@ -2,6 +2,7 @@
 
 #include "bob/antibob.h"
 #include "bob/gameserver.h"
+#include "polybob/game/generated/protocol7.h"
 
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/log.h>
@@ -185,6 +186,8 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int Msg
 		{
 			if(Msg == polybob::protocol7::NETMSGTYPE_CL_SAY)
 				return pAntibob->OnSayNetMessage7(static_cast<polybob::protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
+			else if(Msg == polybob::protocol7::NETMSGTYPE_CL_STARTINFO)
+				pAntibob->OnStartInfoNetMessage7(static_cast<polybob::protocol7::CNetMsg_Cl_StartInfo *>(pRawMsg), ClientId, &Unpacker);
 		}
 		else
 		{
