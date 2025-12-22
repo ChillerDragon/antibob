@@ -171,6 +171,25 @@ bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, 
 	return false;
 }
 
+void CAntibob::OnStartInfoNetMessage(const polybob::CNetMsg_Cl_StartInfo *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker)
+{
+	CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
+
+	if(pPlayer->m_IsReady)
+		return;
+
+	str_copy(pPlayer->m_aName, pMsg->m_pName);
+
+	str_copy(pPlayer->m_TeeInfos.m_aSkinName, pMsg->m_pSkin, sizeof(pPlayer->m_TeeInfos.m_aSkinName));
+	pPlayer->m_TeeInfos.m_UseCustomColor = pMsg->m_UseCustomColor;
+	pPlayer->m_TeeInfos.m_ColorBody = pMsg->m_ColorBody;
+	pPlayer->m_TeeInfos.m_ColorFeet = pMsg->m_ColorFeet;
+
+	// client is ready to enter
+	pPlayer->m_IsReady = true;
+	CNetMsg_Sv_ReadyToEnter ReadyMsg;
+}
+
 void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput)
 {
 	CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
@@ -356,6 +375,19 @@ void CAntibob::OnEngineTick()
 			continue;
 
 		pPlayer->OnTick();
+
+		if((Server()->Tick() % 200) == 0)
+		{
+			if(m_pRoundData)
+			{
+				// https://github.com/ddnet-insta/antibot-insta/issues/38
+				// even if we listen for name change net messages
+				// we will eventually get out of sync because of non matching ratelimits
+				// and name changes forced by the server such as duplicated names
+				// so every 200 ticks we resync to the name the server set
+				str_copy(pPlayer->m_aName, m_pRoundData->m_aCharacters[pPlayer->GetCid()].m_aName);
+			}
+		}
 
 		if(pPlayer->m_pLookupJob && pPlayer->m_pLookupJob->Done())
 		{

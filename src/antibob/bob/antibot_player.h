@@ -7,6 +7,7 @@
 #include <polybob/engine/shared/jobs.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/game/generated/protocol.h>
+#include <polybob/game/server/teeinfo.h>
 
 #include <cstdint>
 #include <memory>
@@ -55,6 +56,44 @@ public:
 	bool m_Sixup;
 	polybob::NETADDR m_Addr;
 
+	// WARNING: this might not reflect the correct info
+	//          it is only a best guess of what the current skin
+	//          information looks like.
+	//          We can not get a perfect value for this
+	//          because the ddnet antibot abi does not pass it
+	//          so we have to reimplement the protocol
+	//          and this risks implementation differences
+	//          and things like server side set skins
+	//          or ratelimits will never be covered correctly
+	polybob::CTeeInfo m_TeeInfos;
+
+	// WARNING: this value might be wrong
+	//
+	// use `CAntibob::ClientName()` instead if possible
+	// because its value comes straight from the ddnet server
+	// and is passed through the antibot abi
+	//
+	// the `m_aName` variable is only a fallback for when the
+	// other name is not available anymore
+	// that is only on client drop as far as i know
+	// see https://github.com/ddnet/ddnet/issues/10428
+	//
+	// Because `m_aName` is set by the antibot module
+	// it might go out of sync if there is a server side name change
+	// that was not properly picked up by the antibot module.
+	// It only looks at the network traffic so things like
+	// name change ratelimits and other edge cases will never be
+	// reflected correctly.
+	char m_aName[polybob::MAX_NAME_LENGTH];
+
+	// WARNING: this value might be wrong
+	//
+	// Use `CAntibob::ClientName()` instead if possible
+	// and it should be possible all the time
+	// except during client drop
+	// https://github.com/ddnet-insta/antibot-insta/issues/38
+	const char *Name() { return m_aName; }
+
 	// Server()->Tick() of the player join
 	int64_t m_JoinTick = 0;
 
@@ -75,9 +114,9 @@ public:
 	void DumpInputHistory();
 	void OnTick();
 
-	// same as ddnet's CPlayer::m_Ready
+	// same as ddnet's CPlayer::m_IsReady
 	// indicating if the client info was already sent
-	bool m_Ready = false;
+	bool m_IsReady = false;
 
 	std::unordered_map<int, CDetectionEvent> m_DetectionEvents;
 

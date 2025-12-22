@@ -191,7 +191,7 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int Msg
 			if(Msg == polybob::NETMSGTYPE_CL_SAY)
 				return pAntibob->OnSayNetMessage(static_cast<polybob::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
 			else if(Msg == polybob::NETMSGTYPE_CL_STARTINFO)
-				pAntibob->m_apPlayers[ClientId]->m_Ready = true;
+				pAntibob->OnStartInfoNetMessage(static_cast<polybob::CNetMsg_Cl_StartInfo *>(pRawMsg), ClientId, &Unpacker);
 		}
 	}
 	return false;

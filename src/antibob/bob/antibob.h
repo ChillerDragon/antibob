@@ -1,5 +1,7 @@
 #pragma once
 
+#include "polybob/game/generated/protocol.h"
+
 #include <bob/console.h>
 #include <bob/gameserver.h>
 #include <polybob/antibot/antibot_data.h>
@@ -44,6 +46,9 @@ public:
 
 	// return true to drop the message
 	virtual bool OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
+
+	// WARNING: this is only used by 0.6! The 0.7 version is not supported yet!
+	virtual void OnStartInfoNetMessage(const polybob::CNetMsg_Cl_StartInfo *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
 	virtual void OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput);
 

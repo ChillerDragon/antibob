@@ -85,6 +85,7 @@ file(GLOB_RECURSE POLYBOB_SRCS
     src/ddnet/polybob/base/unicode/*.cpp
     src/ddnet/polybob/base/system/*.cpp
     src/ddnet/polybob/game/generated/*.cpp
+    src/ddnet/polybob/game/server/*.cpp
     src/ddnet/polybob/engine/shared/*.cpp
 )
 

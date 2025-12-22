@@ -57,7 +57,7 @@ bool CGameServer::IsClientReady(int ClientId) const
 {
 	if(!m_apPlayers[ClientId])
 		return false;
-	return m_apPlayers[ClientId]->m_Ready;
+	return m_apPlayers[ClientId]->m_IsReady;
 }
 
 void CGameServer::AddJob(std::shared_ptr<polybob::IJob> pJob)
