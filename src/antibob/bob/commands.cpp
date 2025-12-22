@@ -14,6 +14,12 @@ void CAntibob::ComCmdHelp(CBobResult *pResult, void *pUserData)
 	pSelf->m_Console.PrintCmdHelp(pResult->GetString(0));
 }
 
+void CAntibob::ComConfigs(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+	pSelf->m_Console.PrintConfigs();
+}
+
 void CAntibob::ComCmdlist(CBobResult *pResult, void *pUserData)
 {
 	CAntibob *pSelf = (CAntibob *)pUserData;

@@ -97,6 +97,23 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibo
 	return false;
 }
 
+void CBobConfigManager::PrintConfigs(CAntibob *pAntibob)
+{
+	char aVariables[2048];
+	aVariables[0] = '\0';
+
+	int i = 0;
+	for(const auto *pVar : m_vpAllVariables)
+	{
+		str_append(aVariables, pVar->m_pScriptName);
+		i++;
+		if(i != m_vpAllVariables.size())
+			str_append(aVariables, ", ");
+	}
+
+	pAntibob->LogInfo("%s", aVariables);
+}
+
 CBobConfigManager::~CBobConfigManager()
 {
 	for(auto *pVariable : m_vpAllVariables)

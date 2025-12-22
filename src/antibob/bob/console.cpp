@@ -250,6 +250,11 @@ void CBobConsole::PrintCmdHelp(const char *pCommand)
 	m_pAntibob->LogInfo("no such command '%s'", pCommand);
 }
 
+void CBobConsole::PrintConfigs()
+{
+	m_pConfigManager->PrintConfigs(m_pAntibob);
+}
+
 void CBobConsole::PrintCmdlist()
 {
 	char aCommands[2048];

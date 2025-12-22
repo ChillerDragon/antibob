@@ -70,7 +70,7 @@ public:
 	//
 	// `pPlayer->m_TeeInfos`
 	//
-	virtual void OnSkinInfo(CAntibotPlayer *pPlayer) {};
+	virtual void OnSkinInfo(CAntibotPlayer *pPlayer) {}
 
 	// send http request with player name and ip
 	// to backend configured by ab_cheater_api_url

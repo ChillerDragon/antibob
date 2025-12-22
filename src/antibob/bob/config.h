@@ -95,5 +95,7 @@ public:
 	void OnInit();
 	// returns true if the console command operated on a config
 	bool OnConsoleCommand(const char *pCommand, class CAntibob *pAntibob);
+	void PrintConfigs(class CAntibob *pAntibob);
+
 	~CBobConfigManager();
 };

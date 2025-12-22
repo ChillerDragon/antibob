@@ -115,6 +115,7 @@ public:
 	bool ExecuteCmd(const char *pCommand);
 
 	void PrintCmdHelp(const char *pCommand);
+	void PrintConfigs();
 	void PrintCmdlist();
 
 	// reads a tw console string that might be quoted or not
