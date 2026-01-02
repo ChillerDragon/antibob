@@ -16,7 +16,7 @@ void CAntibobAbi::OnInit()
 
 	if(ServerAbiVersion() != OwnAbiVersion())
 	{
-		log_error("antibot", "antibob abi version missmatch server=%d antibob=%d", ServerAbiVersion(), OwnAbiVersion());
+		log_error("antibot", "antibob abi version mismatch server=%d antibob=%d", ServerAbiVersion(), OwnAbiVersion());
 	}
 }
 

@@ -1,0 +1,25 @@
+[files]
+extend-exclude = [
+	"src/ddnet/polybob/",
+
+	# tests with invalid words
+	"src/test/bob/console.cpp",
+]
+
+[default]
+extend-ignore-re = [
+	'lod',
+	'LOD',
+	'Lod',
+	'PARM',
+	'PNGs',
+	'SEH',
+	'UPnP',
+	'Datas',
+	'datas',
+	'iy',
+	'cl_nameplates_ids_seperate_line',
+	'0x510E527FUL',
+	'I\*\*nteger',
+	's\*\*tring',
+]
