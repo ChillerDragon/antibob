@@ -55,7 +55,7 @@ public:
 	// turns event id into short friendly name
 	static const char *EventToStr(int EventId);
 
-	// truns event id into event description
+	// turns event id into event description
 	static const char *EventToDesc(int EventId);
 
 	// given a list of events it writes a string into

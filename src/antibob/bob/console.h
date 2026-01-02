@@ -45,7 +45,7 @@ public:
 	const char *GetString(unsigned Index) const { return m_aaArgs[Index]; }
 	// int GetVictim() const { return 0; }
 	int NumArguments() const { return m_NumArgs; }
-	int NumRequiredParamaters() const;
+	int NumRequiredParameters() const;
 	int m_ClientId = -1;
 
 	char m_aRawArgs[2028];

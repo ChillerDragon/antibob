@@ -6,7 +6,7 @@
 
 #include <cstdlib>
 
-int CBobResult::NumRequiredParamaters() const
+int CBobResult::NumRequiredParameters() const
 {
 	int Num = 0;
 	for(auto Param : m_vParams)
@@ -148,7 +148,7 @@ bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 		m_NumArgs++;
 	}
 
-	int NumMin = NumRequiredParamaters();
+	int NumMin = NumRequiredParameters();
 	int NumMax = m_vParams.size();
 	int NumGot = NumArguments();
 	if(NumGot < NumMin || NumGot > NumMax)
@@ -277,7 +277,7 @@ void CBobConsole::PrintCmdlist()
 }
 
 // TODO: this is not matching the ddnet implementation!
-//       whis needs unit tests and has to be corrected
+//       which needs unit tests and has to be corrected
 //       for example "foo bar \\" baz" parses differently
 bool CBobConsole::ParseStringQuotes(const char *pStringInput, char *pOut, int OutSize)
 {

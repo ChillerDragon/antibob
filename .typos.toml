@@ -17,6 +17,7 @@ extend-ignore-re = [
 	'UPnP',
 	'Datas',
 	'datas',
+	'Iy',
 	'iy',
 	'cl_nameplates_ids_seperate_line',
 	'0x510E527FUL',
