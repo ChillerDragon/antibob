@@ -158,7 +158,7 @@ void CAntibob::RconDump(const char *pSearch, int MinConfidence)
 
 		char aEvents[512];
 		aEvents[0] = '\0';
-		if(pPlayer->m_DetectionEvents.size() != 0)
+		if(!pPlayer->m_DetectionEvents.empty())
 			CDetectionEvent::EventsToIdStr(pPlayer->m_DetectionEvents, MinConfidence, aEvents, sizeof(aEvents));
 
 		LogInfo("cid=%d name='%s' %s", i, pName, aEvents);
@@ -186,7 +186,7 @@ void CAntibob::RconEvents(int ClientId)
 		return;
 	}
 
-	if(pPlayer->m_DetectionEvents.size() == 0)
+	if(pPlayer->m_DetectionEvents.empty())
 	{
 		LogInfo("player '%s' did not trigger any detections yet", ClientName(ClientId));
 		return;
