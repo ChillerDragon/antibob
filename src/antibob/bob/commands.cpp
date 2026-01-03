@@ -96,6 +96,7 @@ void CAntibob::ComKickEvents(CBobResult *pResult, void *pUserData)
 			pPlayer->GetCid(),
 			pSelf->ClientName(pPlayer->GetCid()),
 			aPlayerEvents);
+		pSelf->Kick(pPlayer->GetCid(), "antibot");
 		Matches++;
 	}
 	log_info("antibot", "kicked %d players based on matching events", Matches);
