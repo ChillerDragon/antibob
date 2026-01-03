@@ -10,6 +10,7 @@ CONSOLE_COMMAND("configs", "", ComConfigs, this, "lists all antibot config varia
 CONSOLE_COMMAND("cmdlist", "", ComCmdlist, this, "lists all antibot commands (see also 'help' and 'configs')")
 CONSOLE_COMMAND("dump", "?i[min confidence]?r[search]", ComDump, this, "shows current antibot data for all players")
 CONSOLE_COMMAND("events", "i[client id]", ComEvents, this, "shows details about triggered detections for a given player")
+CONSOLE_COMMAND("kick_events", "s[comma sep event ids]", ComKickEvents, this, "kick all players that triggered the given events or more")
 CONSOLE_COMMAND("version", "", ComVersion, this, "shows version of the antibob module")
 CONSOLE_COMMAND("pending", "", ComPendingPunishments, this, "list pending punishments")
 CONSOLE_COMMAND("known", "", ComKnownCheaters, this, "list players that were already caught cheating")

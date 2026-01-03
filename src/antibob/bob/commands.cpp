@@ -1,6 +1,7 @@
 #include <bob/antibob.h>
 #include <bob/version.h>
 #include <polybob/base/log.h>
+#include <polybob/base/system/str.h>
 
 void CAntibob::ComTest(CBobResult *pResult, void *pUserData)
 {
@@ -38,6 +39,66 @@ void CAntibob::ComEvents(CBobResult *pResult, void *pUserData)
 {
 	CAntibob *pSelf = (CAntibob *)pUserData;
 	pSelf->RconEvents(pResult->GetInteger(0));
+}
+
+void CAntibob::ComKickEvents(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+	const char *pEventIds = pResult->GetString(0);
+	char aEventId[16];
+	std::vector<int> vEventIds;
+	while((pEventIds = str_next_token(pEventIds, ",", aEventId, sizeof(aEventId))))
+	{
+		if(!aEventId[0])
+			continue;
+
+		int EventId;
+		if(!str_toint(aEventId, &EventId))
+		{
+			log_warn("antibot", "failed to parse event id '%s' not a valid number", aEventId);
+			continue;
+		}
+		vEventIds.emplace_back(EventId);
+	}
+
+	if(vEventIds.empty())
+	{
+		log_error("antibob", "need to provide at least one valid event id");
+		return;
+	}
+
+	int Matches = 0;
+	for(CAntibotPlayer *pPlayer : pSelf->m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+		if(pPlayer->m_DetectionEvents.empty())
+			continue;
+
+		bool MissingEvents = false;
+		for(int EventId : vEventIds)
+		{
+			if(pPlayer->m_DetectionEvents.count(EventId))
+				continue;
+
+			MissingEvents = true;
+			break;
+		}
+		if(MissingEvents)
+			break;
+
+		char aPlayerEvents[512];
+		CDetectionEvent::EventsToIdStr(pPlayer->m_DetectionEvents, 0, aPlayerEvents, sizeof(aPlayerEvents));
+
+		log_info(
+			"antibot",
+			"kicking cid=%d name='%s' with events: %s",
+			pPlayer->GetCid(),
+			pSelf->ClientName(pPlayer->GetCid()),
+			aPlayerEvents);
+		Matches++;
+	}
+	log_info("antibot", "kicked %d players based on matching events", Matches);
 }
 
 void CAntibob::ComVersion(CBobResult *pResult, void *pUserData)
