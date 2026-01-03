@@ -294,7 +294,7 @@ void CAntibob::LookupPlayer(CAntibotPlayer *pPlayer)
 {
 	if(Config()->m_AbCheaterApiUrl[0] == '\0')
 		return;
-	if(!str_startswith(Config()->m_AbCheaterApiUrl, "https://"))
+	if(!str_startswith(Config()->m_AbCheaterApiUrl, "https://") && !str_startswith(Config()->m_AbCheaterApiUrl, "http://"))
 	{
 		log_error(
 			"antibot",
