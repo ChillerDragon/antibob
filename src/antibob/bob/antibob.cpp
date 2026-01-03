@@ -131,7 +131,7 @@ bool CAntibob::IsTimeouted(int ClientId)
 	// to determine that 1 second no send means timeout
 	// but should kinda work because regular clients even as spectators
 	// are supposed to send way more often
-	return TicksWithoutSend > Server()->TickSpeed();
+	return TicksWithoutSend > CNetwork::TickSpeed();
 }
 
 //

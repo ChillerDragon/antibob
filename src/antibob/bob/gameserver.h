@@ -74,10 +74,10 @@ public:
 	// ClientId - players client id
 	// EventId - event id should be defined in detection_events.h like BOB_DE_SAMPLE
 	// pInfo - optional additional information about this specific occurrence (free text)
-	void Detect(int ClientId, int EventId, const char *pInfo = nullptr, int Confidence = 90);
+	void Detect(int ClientId, int EventId, const char *pInfo = nullptr, int Confidence = 90) const;
 
 private:
-	void LogEvent(int ClientId, int EventId, const char *pInfo = nullptr);
+	void LogEvent(int ClientId, int EventId, const char *pInfo = nullptr) const;
 
 public:
 	//
@@ -86,13 +86,13 @@ public:
 
 	// it is recommended to use Punish() instead of Kick()
 	void Kick(int ClientId, const char *pReason = nullptr) const;
-	void LogInfo(const char *pFormat, ...)
 
 	// This is bool because it might not ban
 	bool Ban(int ClientId, int TimeInMinutes, const char *pReason = nullptr) const;
 	bool Ban(const NETADDR &Ip, int TimeInMinutes, const char *pReason = nullptr) const;
 
+	void LogInfo(const char *pFormat, ...) const
 		GNUC_ATTRIBUTE((format(printf, 2, 3)));
-	void LogError(const char *pFormat, ...)
+	void LogError(const char *pFormat, ...) const
 		GNUC_ATTRIBUTE((format(printf, 2, 3)));
 };

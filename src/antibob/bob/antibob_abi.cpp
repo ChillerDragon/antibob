@@ -22,14 +22,14 @@ void CAntibobAbi::OnInit()
 
 #undef LOOKUP_SYM
 
-int CAntibobAbi::ServerAbiVersion()
+int CAntibobAbi::ServerAbiVersion() const
 {
 	if(!m_pfnVersion)
 		return 0;
 	return m_pfnVersion();
 }
 
-bool CAntibobAbi::Rcon(const char *pLine)
+bool CAntibobAbi::Rcon(const char *pLine) const
 {
 	if(!m_pfnRcon)
 		return false;

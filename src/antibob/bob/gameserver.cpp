@@ -88,14 +88,14 @@ void CGameServer::Punish(int ClientId, const char *pReason, int TimeInMinutes, C
 	m_PunishController.SchedulePunish(ClientId, pReason, TimeInMinutes, Punish);
 }
 
-void CGameServer::Detect(int ClientId, int EventId, const char *pInfo, int Confidence)
+void CGameServer::Detect(int ClientId, int EventId, const char *pInfo, int Confidence) const
 {
 	m_apPlayers[ClientId]->Detect(EventId, pInfo, Confidence);
 	if(Config()->m_AbLogEvents)
 		LogEvent(ClientId, EventId, pInfo);
 }
 
-void CGameServer::LogEvent(int ClientId, int EventId, const char *pInfo)
+void CGameServer::LogEvent(int ClientId, int EventId, const char *pInfo) const
 {
 	// TODO: this filename will conflict when multiple servers try to write to it
 	//       ideally the filename would include the port of the server
@@ -131,7 +131,6 @@ void CGameServer::Kick(int ClientId, const char *pReason) const
 	m_pData->m_pfnKick(ClientId, pReason, m_pData->m_pUser);
 }
 
-void CGameServer::LogInfo(const char *pFormat, ...)
 bool CGameServer::Ban(const NETADDR &Ip, int TimeInMinutes, const char *pReason) const
 {
 	if(!pReason || pReason[0] == '\0')
@@ -159,6 +158,7 @@ bool CGameServer::Ban(int ClientId, int TimeInMinutes, const char *pReason) cons
 	return false;
 }
 
+void CGameServer::LogInfo(const char *pFormat, ...) const
 {
 	va_list Args;
 	va_start(Args, pFormat);
@@ -169,7 +169,7 @@ bool CGameServer::Ban(int ClientId, int TimeInMinutes, const char *pReason) cons
 	m_pData->m_pfnLog(aBuf, m_pData->m_pUser);
 }
 
-void CGameServer::LogError(const char *pFormat, ...)
+void CGameServer::LogError(const char *pFormat, ...) const
 {
 	va_list Args;
 	va_start(Args, pFormat);

@@ -93,15 +93,15 @@ public:
 	std::vector<CBobConfigVariable *> m_vpAllVariables;
 	void OnInit();
 
-	CBobConfigVariable *FindConfig(const char *pCommand);
+	CBobConfigVariable *FindConfig(const char *pCommand) const;
 
 	// returns true if the console command operated on a config
-	bool OnConsoleCommand(const char *pCommand, class CAntibob *pAntibob);
-	void PrintConfigs(class CAntibob *pAntibob);
+	bool OnConsoleCommand(const char *pCommand, class CAntibob *pAntibob) const;
+	void PrintConfigs(class CAntibob *pAntibob) const;
 
 	// returns false if the `pCommand` does not start with a valid config variable
 	// it prints nothing in that case
-	bool PrintHelp(const char *pCommand, class CAntibob *pAntibob);
+	bool PrintHelp(const char *pCommand, class CAntibob *pAntibob) const;
 
 	~CBobConfigManager();
 };

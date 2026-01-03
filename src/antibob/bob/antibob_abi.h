@@ -13,14 +13,14 @@ public:
 
 	// returns 0 if the server does not
 	// support the antibob version abi
-	int ServerAbiVersion();
+	int ServerAbiVersion() const;
 
 	// can fail with error log if the server
 	// does not support the abi
 	// returns false if the server does not support it
-	bool Rcon(const char *pLine);
+	bool Rcon(const char *pLine) const;
 
-	int OwnAbiVersion() { return 1100; }
+	static int OwnAbiVersion() { return 1100; }
 
 private:
 	FVersion m_pfnVersion = nullptr;
