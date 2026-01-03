@@ -13,7 +13,7 @@ class CAntibob : public CGameServer
 {
 public:
 	CAntibob(CAntibotData *pData);
-	virtual ~CAntibob() = default;
+	~CAntibob() override = default;
 
 #define CONSOLE_COMMAND(name, params, callback, user, help) static void callback(CBobResult *pResult, void *pUserData);
 #include <bob/commands.h>
