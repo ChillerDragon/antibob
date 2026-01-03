@@ -132,6 +132,33 @@ void CGameServer::Kick(int ClientId, const char *pReason) const
 }
 
 void CGameServer::LogInfo(const char *pFormat, ...)
+bool CGameServer::Ban(const NETADDR &Ip, int TimeInMinutes, const char *pReason) const
+{
+	if(!pReason || pReason[0] == '\0')
+		pReason = Config()->m_AbKickReason;
+
+	char aBuf[512];
+	char aAddr[128];
+	net_addr_str(&Ip, aAddr, sizeof(aAddr), false);
+	str_format(aBuf, sizeof(aBuf), "ban %s %d \"%s\"", aAddr, TimeInMinutes, pReason);
+	if(m_BobAbi.Rcon(aBuf))
+		return true;
+	return false;
+}
+
+bool CGameServer::Ban(int ClientId, int TimeInMinutes, const char *pReason) const
+{
+	if(!m_apPlayers[ClientId])
+		return false;
+
+	if(Ban(m_apPlayers[ClientId]->m_Addr, TimeInMinutes, pReason))
+		return true;
+
+	log_error("antibob", "antibob rcon abi not supported falling back to kick");
+	Kick(ClientId, pReason);
+	return false;
+}
+
 {
 	va_list Args;
 	va_start(Args, pFormat);
