@@ -5,14 +5,14 @@
 #include <bob/pending_punish.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
-#include <polybob/base/system/shell.h>
+#include <polybob/base/system/net.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/engine/storage.h>
 #include <polybob/game/generated/protocol.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #include <cstdarg>
+#include <cstdlib>
 #include <thread>
 
 CGameServer::CGameServer(CAntibotData *pData) :

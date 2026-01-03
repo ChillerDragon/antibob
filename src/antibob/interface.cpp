@@ -3,8 +3,6 @@
 #include <bob/antibob.h>
 #include <polybob/antibot/antibot_interface.h>
 
-#include <cstring>
-
 extern "C" {
 
 #define ANTIBOT_CLASS CAntibob // <= YOUR CLASS HERE

@@ -2,7 +2,6 @@
 
 #include <bob/antibob.h>
 #include <bob/console.h>
-#include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
 #include <algorithm>
