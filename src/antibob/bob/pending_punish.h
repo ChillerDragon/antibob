@@ -1,5 +1,7 @@
 #pragma once
 
+#include <polybob/base/types.h>
+
 #include <cstdint>
 #include <vector>
 
@@ -12,9 +14,10 @@ public:
 		BAN,
 	};
 
-	CPendingPunish(int ClientId, const char *pReason, int TimeInMinutes, EPunish Punish);
+	CPendingPunish(int ClientId, const polybob::NETADDR &Ip, const char *pReason, int TimeInMinutes, EPunish Punish);
 
 	int m_ClientId;
+	polybob::NETADDR m_Ip;
 	char m_aReason[512];
 	int m_TimeInMinutes;
 	EPunish m_Punish;
@@ -33,5 +36,5 @@ public:
 	void OnTick();
 	void OnPlayerDisconnect(int ClientId);
 	void SchedulePunish(int ClientId, const char *pReason, int TimeInMinutes, CPendingPunish::EPunish Punish);
-	void ListPendingPunishments();
+	void ListPendingPunishments() const;
 };
