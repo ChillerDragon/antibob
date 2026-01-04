@@ -22,7 +22,7 @@ class CGameServer
 {
 public:
 	CGameServer(CAntibotData *pData);
-	~CGameServer();
+	virtual ~CGameServer();
 
 	CAntibotData *m_pData = nullptr;
 	polybob::IStorage *m_pStorage = nullptr;
