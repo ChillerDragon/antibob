@@ -2,9 +2,9 @@
 
 class CCmdlineArguments
 {
-	int GetNumArguments();
+	static int GetNumArguments();
 	char **AllocateArguments();
-	void FreeArguments(char **ppArguments, int Num);
+	static void FreeArguments(char **ppArguments, int Num);
 
 	char **m_ppArguments = nullptr;
 	int m_NumArgs = 0;

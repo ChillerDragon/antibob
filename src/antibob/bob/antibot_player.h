@@ -95,7 +95,7 @@ public:
 	// and it should be possible all the time
 	// except during client drop
 	// https://github.com/ddnet-insta/antibot-insta/issues/38
-	const char *Name() { return m_aName; }
+	const char *Name() const { return m_aName; }
 
 	// Server()->Tick() of the player join
 	int64_t m_JoinTick = 0;

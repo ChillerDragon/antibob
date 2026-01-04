@@ -74,12 +74,12 @@ public:
 
 	bool OnEngineClientMessage(int ClientId, const void *pMsgData, int MsgSize, int Flags, class CAntibob *pAntibob);
 
-	bool IsSixup(int ClientId) { return m_aClients[ClientId].m_Sixup; }
+	bool IsSixup(int ClientId) const { return m_aClients[ClientId].m_Sixup; }
 	// const char *ClientName(int ClientId) { return m_aClients[ClientId].m_aName; }
-	int MaxClients() { return ANTIBOT_MAX_CLIENTS; }
-	bool ClientIngame(int ClientId) { return m_aClients[ClientId].m_Active; }
+	static int MaxClients() { return ANTIBOT_MAX_CLIENTS; }
+	bool ClientIngame(int ClientId) const { return m_aClients[ClientId].m_Active; }
 	int Tick() const;
-	int TickSpeed() const { return 50; }
+	static int TickSpeed() { return 50; }
 
 	bool RepackMsg(const polybob::CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup);
 	bool SendMsg(polybob::CMsgPacker *pMsg, int Flags, int ClientId);

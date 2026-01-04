@@ -131,7 +131,7 @@ bool CAntibob::IsTimeouted(int ClientId)
 	// to determine that 1 second no send means timeout
 	// but should kinda work because regular clients even as spectators
 	// are supposed to send way more often
-	return TicksWithoutSend > Server()->TickSpeed();
+	return TicksWithoutSend > CNetwork::TickSpeed();
 }
 
 //
@@ -158,7 +158,7 @@ void CAntibob::RconDump(const char *pSearch, int MinConfidence)
 
 		char aEvents[512];
 		aEvents[0] = '\0';
-		if(pPlayer->m_DetectionEvents.size() != 0)
+		if(!pPlayer->m_DetectionEvents.empty())
 			CDetectionEvent::EventsToIdStr(pPlayer->m_DetectionEvents, MinConfidence, aEvents, sizeof(aEvents));
 
 		LogInfo("cid=%d name='%s' %s", i, pName, aEvents);
@@ -186,7 +186,7 @@ void CAntibob::RconEvents(int ClientId)
 		return;
 	}
 
-	if(pPlayer->m_DetectionEvents.size() == 0)
+	if(pPlayer->m_DetectionEvents.empty())
 	{
 		LogInfo("player '%s' did not trigger any detections yet", ClientName(ClientId));
 		return;
@@ -219,8 +219,12 @@ void CAntibob::RconEvents(int ClientId)
 bool CAntibob::OnSayNetMessage(const polybob::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker)
 {
 	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
-		if(Config()->m_AbAutoKick)
+	{
+		if(Config()->m_AbAutoPunishment >= 2)
+			Ban(ClientId, Config()->m_AbAutoPunishment, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
+		else if(Config()->m_AbAutoPunishment == 1)
 			Kick(ClientId, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
+	}
 	if(str_find_nocase(pMsg->m_pMessage, "i hack"))
 		Detect(ClientId, BOB_DE_SELFREPORT, "said 'i hack'");
 	// if(str_find_nocase(pMsg->m_pMessage, "uwu"))
@@ -253,7 +257,6 @@ void CAntibob::OnStartInfoNetMessage(const polybob::CNetMsg_Cl_StartInfo *pMsg, 
 
 	// client is ready to enter
 	pPlayer->m_IsReady = true;
-	CNetMsg_Sv_ReadyToEnter ReadyMsg;
 }
 
 void CAntibob::OnStartInfoNetMessage7(const polybob::protocol7::CNetMsg_Cl_StartInfo *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker)
@@ -271,7 +274,6 @@ void CAntibob::OnStartInfoNetMessage7(const polybob::protocol7::CNetMsg_Cl_Start
 
 	// client is ready to enter
 	pPlayer->m_IsReady = true;
-	CNetMsg_Sv_ReadyToEnter ReadyMsg;
 }
 
 void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput)
@@ -296,7 +298,7 @@ void CAntibob::LookupPlayer(CAntibotPlayer *pPlayer)
 {
 	if(Config()->m_AbCheaterApiUrl[0] == '\0')
 		return;
-	if(!str_startswith(Config()->m_AbCheaterApiUrl, "https://"))
+	if(!str_startswith(Config()->m_AbCheaterApiUrl, "https://") && !str_startswith(Config()->m_AbCheaterApiUrl, "http://"))
 	{
 		log_error(
 			"antibot",

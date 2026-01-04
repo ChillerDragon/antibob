@@ -5,14 +5,14 @@
 #include <bob/pending_punish.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
-#include <polybob/base/system/shell.h>
+#include <polybob/base/system/net.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/engine/storage.h>
 #include <polybob/game/generated/protocol.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #include <cstdarg>
+#include <cstdlib>
 #include <thread>
 
 CGameServer::CGameServer(CAntibotData *pData) :
@@ -88,14 +88,14 @@ void CGameServer::Punish(int ClientId, const char *pReason, int TimeInMinutes, C
 	m_PunishController.SchedulePunish(ClientId, pReason, TimeInMinutes, Punish);
 }
 
-void CGameServer::Detect(int ClientId, int EventId, const char *pInfo, int Confidence)
+void CGameServer::Detect(int ClientId, int EventId, const char *pInfo, int Confidence) const
 {
 	m_apPlayers[ClientId]->Detect(EventId, pInfo, Confidence);
 	if(Config()->m_AbLogEvents)
 		LogEvent(ClientId, EventId, pInfo);
 }
 
-void CGameServer::LogEvent(int ClientId, int EventId, const char *pInfo)
+void CGameServer::LogEvent(int ClientId, int EventId, const char *pInfo) const
 {
 	// TODO: this filename will conflict when multiple servers try to write to it
 	//       ideally the filename would include the port of the server
@@ -131,7 +131,34 @@ void CGameServer::Kick(int ClientId, const char *pReason) const
 	m_pData->m_pfnKick(ClientId, pReason, m_pData->m_pUser);
 }
 
-void CGameServer::LogInfo(const char *pFormat, ...)
+bool CGameServer::Ban(const NETADDR &Ip, int TimeInMinutes, const char *pReason) const
+{
+	if(!pReason || pReason[0] == '\0')
+		pReason = Config()->m_AbKickReason;
+
+	char aBuf[512];
+	char aAddr[128];
+	net_addr_str(&Ip, aAddr, sizeof(aAddr), false);
+	str_format(aBuf, sizeof(aBuf), "ban %s %d \"%s\"", aAddr, TimeInMinutes, pReason);
+	if(m_BobAbi.Rcon(aBuf))
+		return true;
+	return false;
+}
+
+bool CGameServer::Ban(int ClientId, int TimeInMinutes, const char *pReason) const
+{
+	if(!m_apPlayers[ClientId])
+		return false;
+
+	if(Ban(m_apPlayers[ClientId]->m_Addr, TimeInMinutes, pReason))
+		return true;
+
+	log_error("antibob", "antibob rcon abi not supported falling back to kick");
+	Kick(ClientId, pReason);
+	return false;
+}
+
+void CGameServer::LogInfo(const char *pFormat, ...) const
 {
 	va_list Args;
 	va_start(Args, pFormat);
@@ -142,7 +169,7 @@ void CGameServer::LogInfo(const char *pFormat, ...)
 	m_pData->m_pfnLog(aBuf, m_pData->m_pUser);
 }
 
-void CGameServer::LogError(const char *pFormat, ...)
+void CGameServer::LogError(const char *pFormat, ...) const
 {
 	va_list Args;
 	va_start(Args, pFormat);

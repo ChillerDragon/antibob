@@ -2,7 +2,6 @@
 
 #include <bob/antibob.h>
 #include <bob/console.h>
-#include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
 #include <algorithm>
@@ -37,7 +36,7 @@ void CBobConfigManager::OnInit()
 #undef MACRO_CONFIG_STR
 }
 
-CBobConfigVariable *CBobConfigManager::FindConfig(const char *pCommand)
+CBobConfigVariable *CBobConfigManager::FindConfig(const char *pCommand) const
 {
 	for(auto *pVariable : m_vpAllVariables)
 	{
@@ -53,7 +52,7 @@ CBobConfigVariable *CBobConfigManager::FindConfig(const char *pCommand)
 	return nullptr;
 }
 
-bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibob)
+bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibob) const
 {
 	for(auto *pVariable : m_vpAllVariables)
 	{
@@ -113,7 +112,7 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibo
 	return false;
 }
 
-void CBobConfigManager::PrintConfigs(CAntibob *pAntibob)
+void CBobConfigManager::PrintConfigs(CAntibob *pAntibob) const
 {
 	char aVariables[2048];
 	aVariables[0] = '\0';
@@ -130,7 +129,7 @@ void CBobConfigManager::PrintConfigs(CAntibob *pAntibob)
 	pAntibob->LogInfo("%s", aVariables);
 }
 
-bool CBobConfigManager::PrintHelp(const char *pCommand, CAntibob *pAntibob)
+bool CBobConfigManager::PrintHelp(const char *pCommand, CAntibob *pAntibob) const
 {
 	CBobConfigVariable *pVar = FindConfig(pCommand);
 	if(!pVar)
