@@ -3,3 +3,7 @@ build/
 antibob_test
 .cache
 compile_commands.json
+
+# Jetbrains
+cmake-build-*/
+.idea/
