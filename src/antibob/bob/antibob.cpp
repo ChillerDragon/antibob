@@ -296,11 +296,11 @@ void CAntibob::LookupPlayer(CAntibotPlayer *pPlayer)
 {
 	if(Config()->m_AbCheaterApiUrl[0] == '\0')
 		return;
-	if(!str_startswith(Config()->m_AbCheaterApiUrl, "https://"))
+	if(!str_startswith(Config()->m_AbCheaterApiUrl, "https://") && !str_startswith(Config()->m_AbCheaterApiUrl, "http://"))
 	{
 		log_error(
 			"antibot",
-			"invalid ab_cheater_api_url value '%s' it is missing the https:// prefix",
+			"invalid ab_cheater_api_url value '%s' it is missing the http(s):// prefix",
 			Config()->m_AbCheaterApiUrl);
 		return;
 	}
