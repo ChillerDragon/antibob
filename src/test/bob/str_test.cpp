@@ -1,10 +1,6 @@
 #include "bobtest.h"
 
-#include <bob/console.h>
 #include <bob/str.h>
-#include <polybob/base/log.h>
-#include <polybob/base/system.h>
-#include <polybob/game/generated/protocolglue.h>
 
 int main()
 {

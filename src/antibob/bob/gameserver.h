@@ -10,7 +10,6 @@
 #include <bob/pending_punish.h>
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/system.h>
-#include <polybob/engine/message.h>
 #include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/jobs.h>
 #include <polybob/engine/storage.h>
