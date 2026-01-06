@@ -86,6 +86,11 @@ public:
 
 	// it is recommended to use Punish() instead of Kick()
 	void Kick(int ClientId, const char *pReason = nullptr) const;
+
+	// This is bool because it might not ban
+	bool Ban(int ClientId, int TimeInMinutes, const char *pReason = nullptr);
+	bool Ban(const NETADDR &Ip, int TimeInMinutes, const char *pReason = nullptr);
+
 	void LogInfo(const char *pFormat, ...)
 		GNUC_ATTRIBUTE((format(printf, 2, 3)));
 	void LogError(const char *pFormat, ...)

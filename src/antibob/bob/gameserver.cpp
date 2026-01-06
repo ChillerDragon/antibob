@@ -5,6 +5,7 @@
 #include <bob/pending_punish.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
+#include <polybob/base/system/net.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/engine/storage.h>
 #include <polybob/game/generated/protocol.h>
@@ -125,8 +126,35 @@ void CGameServer::LogEvent(int ClientId, int EventId, const char *pInfo)
 void CGameServer::Kick(int ClientId, const char *pReason) const
 {
 	if(!pReason || pReason[0] == '\0')
-		pReason = Config()->m_AbKickReason;
+		pReason = Config()->m_AbPunishmentReason;
 	m_pData->m_pfnKick(ClientId, pReason, m_pData->m_pUser);
+}
+
+bool CGameServer::Ban(const NETADDR &Ip, int TimeInMinutes, const char *pReason)
+{
+	if(!pReason || pReason[0] == '\0')
+		pReason = Config()->m_AbPunishmentReason;
+
+	char aBuf[512];
+	char aAddr[128];
+	net_addr_str(&Ip, aAddr, sizeof(aAddr), false);
+	str_format(aBuf, sizeof(aBuf), "ban %s %d \"%s\"", aAddr, TimeInMinutes, pReason);
+	if(m_BobAbi.Rcon(aBuf))
+		return true; // Successful ban
+	return false;
+}
+
+bool CGameServer::Ban(int ClientId, int TimeInMinutes, const char *pReason)
+{
+	if(!m_apPlayers[ClientId])
+		return false;
+
+	if(Ban(m_apPlayers[ClientId]->m_Addr, TimeInMinutes, pReason))
+		return true; // Successful ban
+
+	log_error("antibob", "antibob rcon abi not supported falling back to kick");
+	Kick(ClientId, pReason);
+	return false;
 }
 
 void CGameServer::LogInfo(const char *pFormat, ...)
