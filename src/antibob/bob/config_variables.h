@@ -22,9 +22,9 @@ MACRO_CONFIG_STR(SvName, sv_name, 128, "unnamed server", CFGFLAG_SERVER, "Server
 
 // antibot internal variables are conventionally prefixed with ab
 // short for anti bob
-MACRO_CONFIG_INT(AbAutoKick, ab_auto_kick, 1, 0, 100, CFGFLAG_SERVER, "0=off 1=kick 2+=ban time in minutes")
-MACRO_CONFIG_STR(AbKickReason, ab_kick_reason, 64, "antibob auto kick", CFGFLAG_SERVER, "shown to players that get kicked if ab_auto_kick is set")
-MACRO_CONFIG_INT(AbPunishInterval, ab_punish_interval, 120, 1, 600, CFGFLAG_SERVER, "delay in seconds between punish waves")
+MACRO_CONFIG_INT(AbAutoKick, ab_auto_kick, 1, 0, 10000, CFGFLAG_SERVER, "0=off 1=kick 2+=ban time in minutes")
+MACRO_CONFIG_STR(AbKickReason, ab_kick_reason, 64, "antibob", CFGFLAG_SERVER, "shown to players that get kicked if ab_auto_kick is set")
+MACRO_CONFIG_INT(AbKickInterval, ab_kick_interval, 120, 1, 600, CFGFLAG_SERVER, "delay in seconds between punish waves (see ab_auto_kick)")
 MACRO_CONFIG_INT(AbLogEvents, ab_log_events, 0, 0, 1, CFGFLAG_SERVER, "log all suspicious player events into antibob_events.txt in the tw folder (unsafe with multiple servers)")
 MACRO_CONFIG_STR(AbCheaterApiUrl, ab_cheater_api_url, 256, "", CFGFLAG_SERVER, "base url of api that implements GET /player?name=:playername&addr=:ipaddr endpoint has to start with https://")
 MACRO_CONFIG_STR(AbCheaterApiToken, ab_cheater_api_token, 256, "", CFGFLAG_SERVER, "security token http header for ab_cheater_api_url")

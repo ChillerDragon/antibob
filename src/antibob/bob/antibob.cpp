@@ -219,8 +219,12 @@ void CAntibob::RconEvents(int ClientId)
 bool CAntibob::OnSayNetMessage(const polybob::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker)
 {
 	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
-		if(Config()->m_AbAutoKick)
+	{
+		if(Config()->m_AbAutoKick >= 2)
+			Ban(ClientId, Config()->m_AbAutoKick, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
+		else if(Config()->m_AbAutoKick == 1)
 			Kick(ClientId, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
+	}
 	if(str_find_nocase(pMsg->m_pMessage, "i hack"))
 		Detect(ClientId, BOB_DE_SELFREPORT, "said 'i hack'");
 	// if(str_find_nocase(pMsg->m_pMessage, "uwu"))
