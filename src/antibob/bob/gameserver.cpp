@@ -1,6 +1,7 @@
 #include "gameserver.h"
 
 #include <bob/cmdline_arguments.h>
+#include <bob/console.h>
 #include <bob/network.h>
 #include <bob/pending_punish.h>
 #include <polybob/base/log.h>
@@ -138,7 +139,9 @@ bool CGameServer::Ban(const NETADDR &Ip, int TimeInMinutes, const char *pReason)
 	char aBuf[512];
 	char aAddr[128];
 	net_addr_str(&Ip, aAddr, sizeof(aAddr), false);
-	str_format(aBuf, sizeof(aBuf), "ban %s %d \"%s\"", aAddr, TimeInMinutes, pReason);
+	char aEscapedReason[1024];
+	CBobConsole::EscapeRconString(aEscapedReason, pReason);
+	str_format(aBuf, sizeof(aBuf), "ban %s %d \"%s\"", aAddr, TimeInMinutes, aEscapedReason);
 	if(m_BobAbi.Rcon(aBuf))
 		return true; // Successful ban
 	return false;
