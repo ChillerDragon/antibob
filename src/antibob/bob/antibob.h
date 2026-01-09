@@ -82,7 +82,7 @@ public:
 	// Called when someone used the /antibot chat command
 	virtual void ChatCmdAntibot(int ClientId, const char *pArgs);
 
-	virtual bool OnChatCommand(int ClientId, const char *pCommandWithArgs);
+	virtual bool OnChatCommand(int ClientId, const char *pCommand, const char *pArgs);
 
 	// Called for both 0.7 and 0.7 chat messages
 	// return true to drop the message

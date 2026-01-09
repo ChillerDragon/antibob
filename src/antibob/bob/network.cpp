@@ -188,6 +188,11 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int Msg
 				return pAntibob->OnSayNetMessage7(static_cast<polybob::protocol7::CNetMsg_Cl_Say *>(pRawMsg), ClientId, &Unpacker);
 			else if(Msg == polybob::protocol7::NETMSGTYPE_CL_STARTINFO)
 				pAntibob->OnStartInfoNetMessage7(static_cast<polybob::protocol7::CNetMsg_Cl_StartInfo *>(pRawMsg), ClientId, &Unpacker);
+			else if(Msg == polybob::protocol7::NETMSGTYPE_CL_COMMAND)
+			{
+				polybob::protocol7::CNetMsg_Cl_Command *pCommand = static_cast<polybob::protocol7::CNetMsg_Cl_Command *>(pRawMsg);
+				return pAntibob->OnChatCommand(ClientId, pCommand->m_pName, pCommand->m_pArguments);
+			}
 		}
 		else
 		{

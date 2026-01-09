@@ -52,4 +52,37 @@ namespace polybob
 		return tok + len;
 	}
 
+	int str_isspace(char c)
+	{
+		return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+	}
+
+	char *str_skip_to_whitespace(char *str)
+	{
+		while(*str && !str_isspace(*str))
+			str++;
+		return str;
+	}
+
+	const char *str_skip_to_whitespace_const(const char *str)
+	{
+		while(*str && !str_isspace(*str))
+			str++;
+		return str;
+	}
+
+	char *str_skip_whitespaces(char *str)
+	{
+		while(*str && str_isspace(*str))
+			str++;
+		return str;
+	}
+
+	const char *str_skip_whitespaces_const(const char *str)
+	{
+		while(*str && str_isspace(*str))
+			str++;
+		return str;
+	}
+
 } // namespace polybob

@@ -615,11 +615,6 @@ namespace polybob
 		}
 	}
 
-	int str_isspace(char c)
-	{
-		return c == ' ' || c == '\n' || c == '\r' || c == '\t';
-	}
-
 	char str_uppercase(char c)
 	{
 		if(c >= 'a' && c <= 'z')

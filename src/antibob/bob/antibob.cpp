@@ -1,19 +1,18 @@
 #include "antibob.h"
 
-#include "bob/str.h"
-#include "polybob/game/server/teeinfo.h"
-
 #include <bob/antibot_player.h>
 #include <bob/console.h>
 #include <bob/detection_event.h>
 #include <bob/gameserver.h>
 #include <bob/network.h>
+#include <bob/str.h>
 #include <bob/version.h>
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/log.h>
 #include <polybob/base/logger.h>
 #include <polybob/base/system.h>
 #include <polybob/base/system/net.h>
+#include <polybob/base/system/str.h>
 #include <polybob/engine/message.h>
 #include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/packer.h>
@@ -23,6 +22,7 @@
 #include <polybob/game/generated/protocol.h>
 #include <polybob/game/generated/protocol7.h>
 #include <polybob/game/generated/protocolglue.h>
+#include <polybob/game/server/teeinfo.h>
 
 #include <memory>
 
@@ -315,18 +315,13 @@ void CAntibob::ChatCmdAntibot(int ClientId, const char *pArgs)
 	SendChatTarget(ClientId, aBuf);
 }
 
-bool CAntibob::OnChatCommand(int ClientId, const char *pCommandWithArgs)
+bool CAntibob::OnChatCommand(int ClientId, const char *pCommand, const char *pArgs)
 {
 	if(Config()->m_AbAntibotChatCommand)
 	{
-		if(!str_comp(pCommandWithArgs, "antibot"))
+		if(!str_comp(pCommand, "antibot"))
 		{
-			ChatCmdAntibot(ClientId, "");
-			return true;
-		}
-		else if(str_startswith(pCommandWithArgs, "antibot "))
-		{
-			ChatCmdAntibot(ClientId, pCommandWithArgs + str_length("antibot "));
+			ChatCmdAntibot(ClientId, pArgs);
 			return true;
 		}
 	}
@@ -337,8 +332,22 @@ bool CAntibob::OnChatMessage(int ClientId, const char *pMessage, bool IsWhisper)
 {
 	// drop chat commands supported by the antibot module
 	// and do not pass them on to the server
-	if(pMessage[0] == '/' && OnChatCommand(ClientId, pMessage + 1))
-		return true;
+	if(pMessage[0] == '/')
+	{
+		char aCommand[2048];
+		const char *pArgs = "";
+		int i = 0;
+		while(pMessage[i] != '\0' && pMessage[i] != ' ' && i + 1 < sizeof(aCommand))
+		{
+			aCommand[i] = pMessage[i];
+			i++;
+		}
+		aCommand[i] = '\0';
+		if(pMessage[i])
+			pArgs = str_skip_whitespaces_const(pMessage + i);
+		if(OnChatCommand(ClientId, aCommand, ""))
+			return true;
+	}
 
 	if(str_find_nocase(pMessage, "i am using a cheat client"))
 	{
