@@ -328,26 +328,37 @@ bool CAntibob::OnChatCommand(int ClientId, const char *pCommand, const char *pAr
 	return false;
 }
 
+bool CAntibob::IsAntibobChatCommand(int ClientId, const char *pMessage)
+{
+	if(pMessage[0] != '/')
+		return false;
+
+	char aCommand[2048];
+	const char *pArgs = "";
+	int i = 0;
+	while(pMessage[i] != '\0' && pMessage[i] != ' ' && i + 1 < sizeof(aCommand))
+	{
+		aCommand[i] = pMessage[i];
+		i++;
+	}
+	aCommand[i] = '\0';
+	if(pMessage[i])
+		pArgs = str_skip_whitespaces_const(pMessage + i);
+	if(OnChatCommand(ClientId, aCommand, ""))
+		return true;
+	return false;
+}
+
 bool CAntibob::OnChatMessage(int ClientId, const char *pMessage, bool IsWhisper)
 {
 	// drop chat commands supported by the antibot module
 	// and do not pass them on to the server
-	if(pMessage[0] == '/')
-	{
-		char aCommand[2048];
-		const char *pArgs = "";
-		int i = 0;
-		while(pMessage[i] != '\0' && pMessage[i] != ' ' && i + 1 < sizeof(aCommand))
-		{
-			aCommand[i] = pMessage[i];
-			i++;
-		}
-		aCommand[i] = '\0';
-		if(pMessage[i])
-			pArgs = str_skip_whitespaces_const(pMessage + i);
-		if(OnChatCommand(ClientId, aCommand, ""))
-			return true;
-	}
+	if(IsAntibobChatCommand(ClientId, pMessage))
+		return true;
+
+	// Example for punishments and chat parsing
+
+	/*
 
 	if(str_find_nocase(pMessage, "i am using a cheat client"))
 	{
@@ -358,8 +369,19 @@ bool CAntibob::OnChatMessage(int ClientId, const char *pMessage, bool IsWhisper)
 	}
 	if(str_find_nocase(pMessage, "i hack"))
 		Detect(ClientId, BOB_DE_SELFREPORT, "said 'i hack'");
-	// if(str_find_nocase(pMessage, "uwu"))
-	// 	Punish(ClientId, "no uwu allowed", 0, CPendingPunish::EPunish::KICK);
+	if(str_find_nocase(pMessage, "uwu"))
+	{
+		// the kick will be delayed based on the ab_kick_interval config
+		// this is to obfuscate what was detected when so bot developers can not
+		// try and error bypassing the detection
+		Punish(ClientId, "no uwu allowed", 0, CPendingPunish::EPunish::KICK);
+
+		// the return true hides any "uwu" message from the chat
+		return true;
+	}
+
+	*/
+
 	return false;
 }
 
