@@ -28,6 +28,9 @@ All sample use cases are shown in antibot.cpp already.
 ```
 git clone git@github.com:ChillerDragon/antibob
 cd antibob
+mkdir build
+cd build
+cmake ..
 make
 ```
 
