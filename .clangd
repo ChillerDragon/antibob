@@ -1,0 +1,11 @@
+Style:
+  AngledHeaders:
+    #
+    # your fork headers here
+    #
+
+    #
+    # antibob headers
+    #
+    - "bob/.*"
+    - "polybob/.*"
