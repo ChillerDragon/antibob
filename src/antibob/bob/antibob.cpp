@@ -288,8 +288,38 @@ void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTi
 	// 	log_info("antibot", "player is walking %s", pInput->m_Direction == -1 ? "left" : "right");
 }
 
+void CAntibob::ChatCmdAntibot(int ClientId, const char *pArgs)
+{
+	char aBuf[512];
+	str_format(aBuf, sizeof(aBuf), "antibob v" ANTIBOB_VERSION " git rev: %s, built on: " ANTIBOB_BUILD_DATE, BOB_GIT_SHORTREV_HASH);
+	SendChatTarget(ClientId, aBuf);
+}
+
+bool CAntibob::OnChatCommand(int ClientId, const char *pCommandWithArgs)
+{
+	if(Config()->m_AbAntibotChatCommand)
+	{
+		if(!str_comp(pCommandWithArgs, "antibot"))
+		{
+			ChatCmdAntibot(ClientId, "");
+			return true;
+		}
+		else if(str_startswith(pCommandWithArgs, "antibot "))
+		{
+			ChatCmdAntibot(ClientId, pCommandWithArgs + str_length("antibot "));
+			return true;
+		}
+	}
+	return false;
+}
+
 bool CAntibob::OnChatMessage(int ClientId, const char *pMessage, bool IsWhisper)
 {
+	// drop chat commands supported by the antibot module
+	// and do not pass them on to the server
+	if(pMessage[0] == '/' && OnChatCommand(ClientId, pMessage + 1))
+		return true;
+
 	if(str_find_nocase(pMessage, "i am using a cheat client"))
 	{
 		if(Config()->m_AbAutoKick >= 2)

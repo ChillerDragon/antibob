@@ -78,6 +78,11 @@ public:
 	//
 	virtual void OnSkinInfo(CAntibotPlayer *pPlayer) {}
 
+	// Called when someone used the /antibot chat command
+	virtual void ChatCmdAntibot(int ClientId, const char *pArgs);
+
+	virtual bool OnChatCommand(int ClientId, const char *pCommandWithArgs);
+
 	// Called for both 0.7 and 0.7 chat messages
 	// return true to drop the message
 	virtual bool OnChatMessage(int ClientId, const char *pMessage, bool IsWhisper);

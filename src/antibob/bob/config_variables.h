@@ -30,6 +30,7 @@ MACRO_CONFIG_STR(AbCheaterApiUrl, ab_cheater_api_url, 256, "", CFGFLAG_SERVER, "
 MACRO_CONFIG_STR(AbCheaterApiToken, ab_cheater_api_token, 256, "", CFGFLAG_SERVER, "security token http header for ab_cheater_api_url")
 MACRO_CONFIG_INT(AbDumpConfidence, ab_dump_confidence, 50, 0, 100, CFGFLAG_SERVER, "minimum no false positive event confidence for dump command event list")
 MACRO_CONFIG_INT(AbTrackBans, ab_track_bans, 0, 0, 2, CFGFLAG_SERVER, "write bans to the file antibob_bans.txt (0=off, 1=no votes, 2=all)")
+MACRO_CONFIG_INT(AbAntibotChatCommand, ab_antibot_chat_command, 1, 0, 1, CFGFLAG_SERVER, "enable /antibot info chat command")
 
 //
 // Add config variables for forks below this comment to avoid merge conflicts.
