@@ -101,6 +101,22 @@ public:
 		return Result;
 	}
 
+	template<class T, typename std::enable_if<polybob::protocol7::is_sixup<T>::value, int>::type = 1>
+	int SendPackMsg(const T *pMsg, int Flags, int ClientId)
+	{
+		int Result = 0;
+		if(ClientId == -1)
+		{
+			for(int i = 0; i < MaxClients(); i++)
+				if(ClientIngame(i) && IsSixup(i))
+					Result = SendPackMsgOne(pMsg, Flags, i);
+		}
+		else if(IsSixup(ClientId))
+			Result = SendPackMsgOne(pMsg, Flags, ClientId);
+
+		return Result;
+	}
+
 	template<class T>
 	int SendPackMsgOne(const T *pMsg, int Flags, int ClientId)
 	{
@@ -110,6 +126,12 @@ public:
 		if(pMsg->Pack(&Packer))
 			return -1;
 		return SendMsg(&Packer, Flags, ClientId);
+	}
+
+	template<class T>
+	int SendPackMsgTranslate(const T *pMsg, int Flags, int ClientId)
+	{
+		return SendPackMsgOne(pMsg, Flags, ClientId);
 	}
 
 	int SendPackMsgTranslate(const polybob::CNetMsg_Sv_Chat *pMsg, int Flags, int ClientId)

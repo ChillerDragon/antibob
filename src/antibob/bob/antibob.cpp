@@ -134,6 +134,26 @@ bool CAntibob::IsTimeouted(int ClientId)
 	return TicksWithoutSend > Server()->TickSpeed();
 }
 
+void CAntibob::SendChatCommand(int ClientId, const char *pName, const char *pArgs, const char *pHelp)
+{
+	if(Server()->IsSixup(ClientId))
+	{
+		protocol7::CNetMsg_Sv_CommandInfo Msg;
+		Msg.m_pName = pName;
+		Msg.m_pArgsFormat = pArgs;
+		Msg.m_pHelpText = pHelp;
+		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL | MSGFLAG_NORECORD, ClientId);
+	}
+	else
+	{
+		CNetMsg_Sv_CommandInfo Msg;
+		Msg.m_pName = pName;
+		Msg.m_pArgsFormat = pArgs;
+		Msg.m_pHelpText = pHelp;
+		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL | MSGFLAG_NORECORD, ClientId);
+	}
+}
+
 //
 // rcon commands
 //
@@ -359,6 +379,10 @@ void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 {
 	if(!m_pRoundData)
 		return;
+
+	int ClientId = pPlayer->GetCid();
+	if(Config()->m_AbAntibotChatCommand)
+		SendChatCommand(ClientId, "antibot", "", "antibob antibot module info");
 
 	LookupPlayer(pPlayer);
 

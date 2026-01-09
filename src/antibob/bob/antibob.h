@@ -31,6 +31,7 @@ public:
 	//
 
 	bool IsTimeouted(int ClientId);
+	void SendChatCommand(int ClientId, const char *pName, const char *pArgs, const char *pHelp);
 
 	//
 	// rcon commands
