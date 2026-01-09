@@ -44,9 +44,15 @@ public:
 	// antibob special hooks
 	//
 
+	// WARNING: this is only used by 0.6 connections!
+	//          if you need to run code on any chat message sent by 0.6 or 0.7 use `OnChatMessage()` instead
+	//
 	// return true to drop the message
 	virtual bool OnSayNetMessage(const polybob::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
+	// WARNING: this is only used by 0.7 connections!
+	//          if you need to run code on any chat message sent by 0.6 or 0.7 use `OnChatMessage()` instead
+	//
 	// return true to drop the message
 	virtual bool OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker);
 
@@ -71,6 +77,10 @@ public:
 	// `pPlayer->m_TeeInfos`
 	//
 	virtual void OnSkinInfo(CAntibotPlayer *pPlayer) {}
+
+	// Called for both 0.7 and 0.7 chat messages
+	// return true to drop the message
+	virtual bool OnChatMessage(int ClientId, const char *pMessage, bool IsWhisper);
 
 	// send http request with player name and ip
 	// to backend configured by ab_cheater_api_url

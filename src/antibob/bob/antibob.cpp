@@ -218,25 +218,19 @@ void CAntibob::RconEvents(int ClientId)
 
 bool CAntibob::OnSayNetMessage(const polybob::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker)
 {
-	if(str_find_nocase(pMsg->m_pMessage, "i am using a cheat client"))
-	{
-		if(Config()->m_AbAutoKick >= 2)
-			Ban(ClientId, Config()->m_AbAutoKick, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
-		else if(Config()->m_AbAutoKick == 1)
-			Kick(ClientId, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
-	}
-	if(str_find_nocase(pMsg->m_pMessage, "i hack"))
-		Detect(ClientId, BOB_DE_SELFREPORT, "said 'i hack'");
-	// if(str_find_nocase(pMsg->m_pMessage, "uwu"))
-	// 	Punish(ClientId, "no uwu allowed", 0, CPendingPunish::EPunish::KICK);
+	bool IsWhisper = str_startswith_nocase(pMsg->m_pMessage, "/w ") ||
+			 str_startswith_nocase(pMsg->m_pMessage, "/whisper ") ||
+			 str_startswith_nocase(pMsg->m_pMessage, "/converse ") ||
+			 str_startswith_nocase(pMsg->m_pMessage, "/c ");
+	if(OnChatMessage(ClientId, pMsg->m_pMessage, IsWhisper))
+		return true;
 	return false;
 }
 
 bool CAntibob::OnSayNetMessage7(const polybob::protocol7::CNetMsg_Cl_Say *pMsg, int ClientId, const polybob::CUnpacker *pUnpacker)
 {
-	if(pMsg->m_Mode == polybob::protocol7::CHAT_WHISPER)
-		if(str_find_nocase(pMsg->m_pMessage, "i use a cheat"))
-			Kick(ClientId, "self report");
+	if(OnChatMessage(ClientId, pMsg->m_pMessage, pMsg->m_Mode == protocol7::CHAT_WHISPER))
+		return true;
 	return false;
 }
 
@@ -292,6 +286,22 @@ void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTi
 	// log_info("antibot", "player is aiming at x=%d y=%d", pInput->m_TargetX, pInput->m_TargetY);
 	// if(pInput->m_Direction)
 	// 	log_info("antibot", "player is walking %s", pInput->m_Direction == -1 ? "left" : "right");
+}
+
+bool CAntibob::OnChatMessage(int ClientId, const char *pMessage, bool IsWhisper)
+{
+	if(str_find_nocase(pMessage, "i am using a cheat client"))
+	{
+		if(Config()->m_AbAutoKick >= 2)
+			Ban(ClientId, Config()->m_AbAutoKick, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
+		else if(Config()->m_AbAutoKick == 1)
+			Kick(ClientId, Config()->m_AbKickReason[0] ? Config()->m_AbKickReason : "self report");
+	}
+	if(str_find_nocase(pMessage, "i hack"))
+		Detect(ClientId, BOB_DE_SELFREPORT, "said 'i hack'");
+	// if(str_find_nocase(pMessage, "uwu"))
+	// 	Punish(ClientId, "no uwu allowed", 0, CPendingPunish::EPunish::KICK);
+	return false;
 }
 
 void CAntibob::LookupPlayer(CAntibotPlayer *pPlayer)
