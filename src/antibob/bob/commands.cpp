@@ -2,6 +2,7 @@
 #include <bob/version.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system/str.h>
+#include <polybob/engine/shared/jobs.h>
 
 void CAntibob::ComTest(CBobResult *pResult, void *pUserData)
 {
@@ -174,4 +175,36 @@ void CAntibob::ComRedirectKnownCheaters(CBobResult *pResult, void *pUserData)
 
 	if(!GotKnown)
 		log_info("antibot", "no known cheaters currently on the server");
+}
+
+void CAntibob::ComPlayerJobs(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+	if(!pSelf->m_pRoundData)
+	{
+		log_error("antibot", "missing round data");
+		return;
+	}
+	int TotalQueued = 0;
+	int TotalRunning = 0;
+	for(const CAntibotPlayer *pPlayer : pSelf->m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+		if(pPlayer->m_vpComputeJobs.empty())
+			continue;
+
+		int Queued = 0;
+		int Running = 0;
+		for(const auto &Job : pPlayer->m_vpComputeJobs)
+		{
+			if(Job->State() == polybob::IJob::STATE_RUNNING)
+				Running++;
+			if(Job->State() == polybob::IJob::STATE_QUEUED)
+				Queued++;
+		}
+
+		log_info("antibot", "cid=%d queued=%d running=%d", pPlayer->GetCid(), Queued, Running);
+	}
+	log_info("antibot", "total queued=%d running=%d", TotalQueued, TotalRunning);
 }
