@@ -343,5 +343,7 @@ namespace polybob
 	void secure_random_fill(void *bytes, unsigned length);
 	int secure_rand();
 	int secure_rand_below(int below);
+	unsigned bytes_be_to_uint(const unsigned char *bytes);
+	void uint_to_bytes_be(unsigned char *bytes, unsigned value);
 
 } // namespace polybob
