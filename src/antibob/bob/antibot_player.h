@@ -13,10 +13,12 @@
 #include <memory>
 #include <unordered_map>
 
+class CAntibob;
+
 class CAbstractLookupPlayerJob : public polybob::IJob
 {
 public:
-	CAbstractLookupPlayerJob(class CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr, const char *pApiUrl, const char *pApiToken);
+	CAbstractLookupPlayerJob(CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr, const char *pApiUrl, const char *pApiToken);
 
 	// output
 	bool m_KnownCheater = false;
@@ -34,7 +36,7 @@ protected:
 class CLookupPlayerJob : public CAbstractLookupPlayerJob
 {
 public:
-	CLookupPlayerJob(class CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr, const char *pApiUrl, const char *pApiToken);
+	CLookupPlayerJob(CAntibob *pAntibob, int ClientId, const char *pName, const char *pAddr, const char *pApiUrl, const char *pApiToken);
 
 protected:
 	void Run() override REQUIRES(!m_Lock);
@@ -42,6 +44,46 @@ protected:
 private:
 	polybob::CLock m_Lock;
 	std::shared_ptr<polybob::CHttpRequest> m_pGetRequest GUARDED_BY(m_Lock);
+};
+
+// Input to the worker thread
+class CPlayerComputeRequest
+{
+public:
+	int m_ClientId = 0;
+	int m_Jumped = 0;
+
+	//
+	// put your variables below
+	//
+};
+
+// Output of the worker thread
+class CPlayerComputeResult
+{
+public:
+	bool m_IsCheating = false;
+
+	//
+	// put your variables below
+	//
+};
+
+class CPlayerComputeJob : public polybob::IJob
+{
+public:
+	CPlayerComputeJob(CAntibob *pAntibob, int ClientId, const CPlayerComputeRequest &Request);
+
+	// output
+	CPlayerComputeResult m_Result;
+
+protected:
+	void Run() override;
+
+	// input
+	CAntibob *m_pAntibob;
+	int m_ClientId;
+	CPlayerComputeRequest m_Request;
 };
 
 class CAntibotPlayer
@@ -111,6 +153,7 @@ public:
 	//       and some results should be cached
 	//       to avoid spamming http requests
 	std::shared_ptr<CAbstractLookupPlayerJob> m_pLookupJob = nullptr;
+	std::vector<std::shared_ptr<CPlayerComputeJob>> m_vpComputeJobs;
 	polybob::CNetObj_PlayerInput m_aInputs[10];
 	int m_SentInputs = 0;
 	bool InputHistoryValid() const { return m_SentInputs > std::size(m_aInputs); }

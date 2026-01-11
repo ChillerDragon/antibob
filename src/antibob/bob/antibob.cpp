@@ -15,6 +15,7 @@
 #include <polybob/base/system/str.h>
 #include <polybob/engine/message.h>
 #include <polybob/engine/shared/http.h>
+#include <polybob/engine/shared/jobs.h>
 #include <polybob/engine/shared/packer.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/engine/shared/protocol_ex.h>
@@ -24,6 +25,7 @@
 #include <polybob/game/generated/protocolglue.h>
 #include <polybob/game/server/teeinfo.h>
 
+#include <algorithm>
 #include <memory>
 
 CAntibob::CAntibob(CAntibotData *pData) :
@@ -406,6 +408,26 @@ void CAntibob::LookupPlayer(CAntibotPlayer *pPlayer)
 	AddJob(pPlayer->m_pLookupJob);
 }
 
+bool CAntibob::StartComputeJob(CAntibotPlayer *pPlayer, CPlayerComputeRequest &Request)
+{
+	// max of 10 jobs per player to not overload the worker thread
+	// if there is some kind of bug
+	if(pPlayer->m_vpComputeJobs.size() > 10)
+		return false;
+
+	int ClientId = pPlayer->GetCid();
+	Request.m_ClientId = ClientId;
+	auto pJob = std::make_shared<CPlayerComputeJob>(this, ClientId, Request);
+	pPlayer->m_vpComputeJobs.emplace_back(pJob);
+	AddJob(pJob);
+	return true;
+}
+
+void CAntibob::OnComputeJobResult(CAntibotPlayer *pPlayer, CPlayerComputeResult &Result)
+{
+	// log_info("antibot", "got result for cid=%d cheating=%d", pPlayer->GetCid(), Result.m_IsCheating);
+}
+
 void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 {
 	if(!m_pRoundData)
@@ -528,6 +550,10 @@ void CAntibob::OnHammerFireReloading(int ClientId)
 
 void CAntibob::OnHammerFire(int ClientId)
 {
+	log_info("antibot", "hammer fire! starting job");
+	CPlayerComputeRequest Request = {};
+	if(!StartComputeJob(m_apPlayers[ClientId], Request))
+		log_error("antibot", "failed to start job!");
 }
 
 void CAntibob::OnHammerHit(int ClientId, int TargetId)
@@ -580,6 +606,32 @@ void CAntibob::OnEngineTick()
 			}
 			pPlayer->m_pLookupJob = nullptr;
 		}
+
+		pPlayer->m_vpComputeJobs.erase(
+			std::remove_if(
+				pPlayer->m_vpComputeJobs.begin(),
+				pPlayer->m_vpComputeJobs.end(),
+				[this, pPlayer](const std::shared_ptr<CPlayerComputeJob> &pJob) {
+					// this should not be null ever anyways?
+					if(!pJob)
+						return true;
+					switch(pJob->State())
+					{
+					case polybob::IJob::STATE_ABORTED:
+						return true;
+						break;
+					case polybob::IJob::STATE_RUNNING:
+					case polybob::IJob::STATE_QUEUED:
+						return false;
+						break;
+					case polybob::IJob::STATE_DONE:
+						OnComputeJobResult(pPlayer, pJob->m_Result);
+						return true;
+						break;
+					}
+					return true;
+				}),
+			pPlayer->m_vpComputeJobs.end());
 	}
 }
 

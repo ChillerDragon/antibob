@@ -26,6 +26,13 @@ CLookupPlayerJob::CLookupPlayerJob(CAntibob *pAntibob, int ClientId, const char 
 {
 }
 
+CPlayerComputeJob::CPlayerComputeJob(CAntibob *pAntibob, int ClientId, const CPlayerComputeRequest &Request)
+{
+	m_pAntibob = pAntibob;
+	m_ClientId = ClientId;
+	m_Request = Request;
+}
+
 void CLookupPlayerJob::Run()
 {
 	char aUrl[2048];
@@ -74,6 +81,22 @@ void CLookupPlayerJob::Run()
 	// TODO: somehow that did not work
 	// const json_value &Json = *pJson;
 	// const json_value &Names = Json["names"];
+}
+
+void CPlayerComputeJob::Run()
+{
+	// Put your heavy compute tasks here! this is running on a worker thread.
+	// Use m_Request read only as your input
+	// and write your result to m_Result.
+	// You can process the result on the main thread in CAntibob::OnComputeJobResult()
+
+	/*
+	m_Result.m_IsCheating = false;
+	if(m_Request.m_Jumped == 1)
+	{
+		m_Result.m_IsCheating = true;
+	}
+	*/
 }
 
 CAntibotPlayer::CAntibotPlayer(int ClientId, uint32_t UniqueClientId, int64_t JoinTick, bool Sixup, const char *pAddr) :

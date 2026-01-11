@@ -13,6 +13,7 @@ It is just meant to be a framework for you to write your own.
 - tests
 - github CI
 - OOP wrapper around antibot api
+- ddnet styled job system with multi threaded compute example
 - console command system like in ddnet ``antibot cmdlist``
 - config system similar to ddnet for example ``antibot ab_auto_kick 1``
 - helper methods for sending chat messages (including automatic 0.6/0.7 translation)

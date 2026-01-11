@@ -2,6 +2,7 @@
 
 #include "polybob/game/generated/protocol.h"
 
+#include <bob/antibot_player.h>
 #include <bob/console.h>
 #include <bob/gameserver.h>
 #include <polybob/antibot/antibot_data.h>
@@ -92,6 +93,15 @@ public:
 	// send http request with player name and ip
 	// to backend configured by ab_cheater_api_url
 	virtual void LookupPlayer(CAntibotPlayer *pPlayer);
+
+	// if you need to do any heavy calculation that should not happen on the main thread
+	// you can define your input in CPlayerComputeRequest and your output in CPlayerComputeResult
+	// and start a worker job by calling this method.
+	//
+	// returns false if the job failed to queue.
+	virtual bool StartComputeJob(CAntibotPlayer *pPlayer, CPlayerComputeRequest &Request);
+
+	virtual void OnComputeJobResult(CAntibotPlayer *pPlayer, CPlayerComputeResult &Result);
 
 	// same as IGameController::OnPlayerConnect(CPlayer *pPlayer)
 	// in ddnet code base
