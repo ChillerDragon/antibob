@@ -19,6 +19,7 @@ It is just meant to be a framework for you to write your own.
 - helper methods for sending chat messages (including automatic 0.6/0.7 translation)
 - fully self contained and batteries included (no ddnet source code needed)
 - feels like the ddnet code base with access to functions such as ``str_copy`` and more (needs ``using namespace polybob;``)
+- custom abi extension for running rcon commands (works only with [ddnet-insta](https://github.com/ddnet-insta/ddnet-insta) servers)
 
 You can explore the most interesting code at [src/antibob/bob/antibot.cpp](https://github.com/ChillerDragon/antibob/blob/master/src/antibob/bob/antibob.cpp)
 the rest are just helpers that you should not have to worry about until you run into their limits.
