@@ -13,6 +13,7 @@
 #include <memory>
 #include <unordered_map>
 
+class CNetwork;
 class CAntibob;
 
 class CAbstractLookupPlayerJob : public polybob::IJob
@@ -88,8 +89,15 @@ protected:
 
 class CAntibotPlayer
 {
+	CAntibob *m_pAntibob;
+
 public:
-	CAntibotPlayer(int ClientId, uint32_t UniqueClientId, int64_t JoinTick, bool Sixup, const char *pAddr);
+	CAntibotPlayer(CAntibob *pAntibob, int ClientId, uint32_t UniqueClientId, bool Sixup, const char *pAddr);
+
+	CAntibob *Antibob();
+	const CAntibob *Antibob() const;
+	CNetwork *Server();
+	const CNetwork *Server() const;
 
 	// starting 1 to make 0 the special value "no client id"
 	uint32_t m_UniqueClientId = 0;

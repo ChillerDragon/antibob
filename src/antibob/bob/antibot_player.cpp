@@ -1,6 +1,7 @@
 #include "antibot_player.h"
 
 #include <bob/antibob.h>
+#include <bob/network.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system/net.h>
 #include <polybob/engine/shared/http.h>
@@ -100,17 +101,39 @@ void CPlayerComputeJob::Run()
 	*/
 }
 
-CAntibotPlayer::CAntibotPlayer(int ClientId, uint32_t UniqueClientId, int64_t JoinTick, bool Sixup, const char *pAddr) :
-	m_ClientId(ClientId), m_UniqueClientId(UniqueClientId), m_JoinTick(JoinTick), m_Sixup(Sixup)
+CAntibotPlayer::CAntibotPlayer(CAntibob *pAntibob, int ClientId, uint32_t UniqueClientId, bool Sixup, const char *pAddr) :
+	m_ClientId(ClientId), m_UniqueClientId(UniqueClientId), m_Sixup(Sixup)
 {
+	m_pAntibob = pAntibob;
+	m_JoinTick = Server()->Tick();
 	net_addr_from_str(&m_Addr, pAddr);
 	for(CNetObj_PlayerInput &Input : m_aInputs)
 		Input = {};
 }
 
+CAntibob *CAntibotPlayer::Antibob()
+{
+	return m_pAntibob;
+}
+
+const CAntibob *CAntibotPlayer::Antibob() const
+{
+	return m_pAntibob;
+}
+
+CNetwork *CAntibotPlayer::Server()
+{
+	return Antibob()->Server();
+}
+
+const CNetwork *CAntibotPlayer::Server() const
+{
+	return m_pAntibob->Server();
+}
+
 int CAntibotPlayer::ConnectedSinceSeconds() const
 {
-	return m_JoinTick / SERVER_TICK_SPEED;
+	return (Server()->Tick() - m_JoinTick) / Server()->TickSpeed();
 }
 
 int CAntibotPlayer::ConnectedSinceMinutes() const
