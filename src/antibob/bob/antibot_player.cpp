@@ -5,6 +5,7 @@
 #include <polybob/base/system/net.h>
 #include <polybob/engine/shared/http.h>
 #include <polybob/engine/shared/jobs.h>
+#include <polybob/engine/shared/protocol.h>
 
 #include <cstdint>
 #include <memory>
@@ -105,6 +106,16 @@ CAntibotPlayer::CAntibotPlayer(int ClientId, uint32_t UniqueClientId, int64_t Jo
 	net_addr_from_str(&m_Addr, pAddr);
 	for(CNetObj_PlayerInput &Input : m_aInputs)
 		Input = {};
+}
+
+int CAntibotPlayer::ConnectedSinceSeconds() const
+{
+	return m_JoinTick / SERVER_TICK_SPEED;
+}
+
+int CAntibotPlayer::ConnectedSinceMinutes() const
+{
+	return ConnectedSinceSeconds() / 60;
 }
 
 void CAntibotPlayer::DumpInputHistory()

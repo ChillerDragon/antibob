@@ -142,6 +142,12 @@ public:
 	// Server()->Tick() of the player join
 	int64_t m_JoinTick = 0;
 
+	// Since how many seconds the player is connected
+	int ConnectedSinceSeconds() const;
+
+	// Since how many minutes the player is connected
+	int ConnectedSinceMinutes() const;
+
 	// Server()->Tick() of when this client
 	// send his last net message
 	// used to determine timeouts

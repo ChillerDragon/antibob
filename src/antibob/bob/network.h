@@ -4,6 +4,7 @@
 #include <polybob/base/system.h>
 #include <polybob/engine/message.h>
 #include <polybob/engine/shared/packer.h>
+#include <polybob/engine/shared/protocol.h>
 #include <polybob/game/generated/protocol.h>
 #include <polybob/game/generated/protocol7.h>
 
@@ -79,7 +80,7 @@ public:
 	int MaxClients() { return ANTIBOT_MAX_CLIENTS; }
 	bool ClientIngame(int ClientId) { return m_aClients[ClientId].m_Active; }
 	int Tick() const;
-	int TickSpeed() const { return 50; }
+	int TickSpeed() const { return SERVER_TICK_SPEED; }
 
 	bool RepackMsg(const polybob::CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup);
 	bool SendMsg(polybob::CMsgPacker *pMsg, int Flags, int ClientId);
