@@ -206,6 +206,8 @@ void CAntibob::ComSampleJob(CBobResult *pResult, void *pUserData)
 	// fill your input data here
 	Request.m_Data.m_Bob.m_Jumped = false;
 
+	log_info("COMMAND", "pResult->m_ClientId=%d", pResult->m_ClientId);
+
 	if(!pSelf->StartComputeJob(pResult->m_ClientId, pPlayer, Request))
 		log_warn("antibot", "failed to start job");
 	else

@@ -93,6 +93,7 @@ void CPlayerComputeJob::Run()
 	// You can process the result on the main thread in CAntibob::OnComputeJobResult()
 
 	m_Result.m_Type = m_Request.m_Type;
+	m_Result.m_RunnerUniqueClientId = m_Request.m_RunnerUniqueClientId;
 
 	switch(m_Request.m_Type)
 	{
