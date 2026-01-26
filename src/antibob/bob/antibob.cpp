@@ -419,7 +419,7 @@ bool CAntibob::StartComputeJob(int RunnerClientId, CAntibotPlayer *pPlayer, CPla
 	int ClientId = pPlayer->GetCid();
 	Request.m_RunnerClientId = RunnerClientId;
 	Request.m_RunnerUniqueClientId = 0;
-	if(RunnerClientId > 0 && RunnerClientId <= ANTIBOT_MAX_CLIENTS)
+	if(RunnerClientId >= 0 && RunnerClientId < ANTIBOT_MAX_CLIENTS)
 	{
 		CAntibotPlayer *pAdmin = m_apPlayers[RunnerClientId];
 		if(pAdmin)
