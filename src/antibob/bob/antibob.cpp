@@ -419,9 +419,11 @@ bool CAntibob::StartComputeJob(int RunnerClientId, CAntibotPlayer *pPlayer, CPla
 	int ClientId = pPlayer->GetCid();
 	Request.m_RunnerClientId = RunnerClientId;
 	Request.m_RunnerUniqueClientId = 0;
+	log_info("xxx", "runner cide=%d", RunnerClientId);
 	if(RunnerClientId >= 0 && RunnerClientId < ANTIBOT_MAX_CLIENTS)
 	{
 		CAntibotPlayer *pAdmin = m_apPlayers[RunnerClientId];
+		log_info("XXX", "pAdmin=%p", pAdmin);
 		if(pAdmin)
 		{
 			Request.m_RunnerUniqueClientId = pAdmin->m_UniqueClientId;
@@ -435,10 +437,21 @@ bool CAntibob::StartComputeJob(int RunnerClientId, CAntibotPlayer *pPlayer, CPla
 
 void CAntibob::OnComputeJobResult(CAntibotPlayer *pPlayer, CPlayerComputeResult &Result)
 {
+	CAntibotPlayer *pRunnerOrNull = GetPlayerByUniqueClientId(Result.m_RunnerUniqueClientId);
+
 	switch(Result.m_Type)
 	{
 	case EPlayerJobType::BOB_SAMPLE:
-		log_info("antibot", "sample job for cid=%d finished cheating=%d", pPlayer->GetCid(), Result.m_Data.m_Bob.m_IsCheating);
+		if(!pRunnerOrNull)
+		{
+			log_warn("antibot", "sample job finished but runner already left");
+		}
+		else
+		{
+			char aBuf[512];
+			str_format(aBuf, sizeof(aBuf), "sample job for cid=%d finished cheating=%d", pPlayer->GetCid(), Result.m_Data.m_Bob.m_IsCheating);
+			Server()->SendRconLine(pRunnerOrNull->GetCid(), aBuf);
+		}
 		break;
 	default:
 		log_warn("antibot", "unhandled player job for cid=%d finished executing", pPlayer->GetCid());

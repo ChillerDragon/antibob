@@ -46,7 +46,10 @@ CAntibotPlayer *CGameServer::GetPlayerByUniqueClientId(int UniqueClientId)
 		if(!pPlayer)
 			continue;
 		if(pPlayer->m_UniqueClientId != UniqueClientId)
+		{
+			log_info("XXX", "no match %u %u", pPlayer->m_UniqueClientId, UniqueClientId);
 			continue;
+		}
 
 		return pPlayer;
 	}
