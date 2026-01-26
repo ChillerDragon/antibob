@@ -1,5 +1,7 @@
 #include <bob/antibob.h>
+#include <bob/antibot_player.h>
 #include <bob/version.h>
+#include <polybob/antibot/antibot_data.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system/str.h>
 #include <polybob/engine/shared/jobs.h>
@@ -175,6 +177,39 @@ void CAntibob::ComRedirectKnownCheaters(CBobResult *pResult, void *pUserData)
 
 	if(!GotKnown)
 		log_info("antibot", "no known cheaters currently on the server");
+}
+
+void CAntibob::ComSampleJob(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+	if(!pSelf->m_pRoundData)
+	{
+		log_error("antibot", "missing round data");
+		return;
+	}
+	int ClientId = pResult->GetInteger(0);
+	if(ClientId < 0 || ClientId >= ANTIBOT_MAX_CLIENTS)
+	{
+		log_error("antibot", "invalid cid=%d", ClientId);
+		return;
+	}
+	CAntibotPlayer *pPlayer = pSelf->m_apPlayers[ClientId];
+	if(!pPlayer)
+	{
+		log_error("antibot", "cid=%d not online", ClientId);
+		return;
+	}
+	CPlayerComputeRequest Request = {
+		.m_Type = EPlayerJobType::BOB_SAMPLE,
+	};
+
+	// fill your input data here
+	Request.m_Data.m_Bob.m_Jumped = false;
+
+	if(!pSelf->StartComputeJob(pResult->m_ClientId, pPlayer, Request))
+		log_warn("antibot", "failed to start job");
+	else
+		log_info("antibot", "started sample compute job for player with cid=%d", ClientId);
 }
 
 void CAntibob::ComPlayerJobs(CBobResult *pResult, void *pUserData)

@@ -98,8 +98,13 @@ public:
 	// you can define your input in CPlayerComputeRequest and your output in CPlayerComputeResult
 	// and start a worker job by calling this method.
 	//
-	// returns false if the job failed to queue.
-	virtual bool StartComputeJob(CAntibotPlayer *pPlayer, CPlayerComputeRequest &Request);
+	// @param RunnerClientId the id of the admin that started the job can be -1 for econ/fifo or scheduled jobs
+	// @param pPlayer the target player which is being inspected in the compute job
+	//                for example the player who sent the inputs that are being checked for suspicious activity
+	// @param Request the input data for the request fill the union according to the m_Type
+	//
+	// @return false if it failed to queue (probably ran into per player ratelimit)
+	virtual bool StartComputeJob(int RunnerClientId, CAntibotPlayer *pPlayer, CPlayerComputeRequest &Request);
 
 	virtual void OnComputeJobResult(CAntibotPlayer *pPlayer, CPlayerComputeResult &Result);
 

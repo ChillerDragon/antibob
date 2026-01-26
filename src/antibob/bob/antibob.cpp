@@ -26,6 +26,7 @@
 #include <polybob/game/server/teeinfo.h>
 
 #include <algorithm>
+#include <cstdint>
 #include <memory>
 
 CAntibob::CAntibob(CAntibotData *pData) :
@@ -408,7 +409,7 @@ void CAntibob::LookupPlayer(CAntibotPlayer *pPlayer)
 	AddJob(pPlayer->m_pLookupJob);
 }
 
-bool CAntibob::StartComputeJob(CAntibotPlayer *pPlayer, CPlayerComputeRequest &Request)
+bool CAntibob::StartComputeJob(int RunnerClientId, CAntibotPlayer *pPlayer, CPlayerComputeRequest &Request)
 {
 	// max of 10 jobs per player to not overload the worker thread
 	// if there is some kind of bug
@@ -416,8 +417,17 @@ bool CAntibob::StartComputeJob(CAntibotPlayer *pPlayer, CPlayerComputeRequest &R
 		return false;
 
 	int ClientId = pPlayer->GetCid();
-	Request.m_ClientId = ClientId;
-	auto pJob = std::make_shared<CPlayerComputeJob>(this, ClientId, Request);
+	Request.m_RunnerClientId = RunnerClientId;
+	Request.m_RunnerUniqueClientId = 0;
+	if(RunnerClientId > 0 && RunnerClientId <= ANTIBOT_MAX_CLIENTS)
+	{
+		CAntibotPlayer *pAdmin = m_apPlayers[RunnerClientId];
+		if(pAdmin)
+		{
+			Request.m_RunnerUniqueClientId = pAdmin->m_UniqueClientId;
+		}
+	}
+	auto pJob = std::make_shared<CPlayerComputeJob>(this, Request);
 	pPlayer->m_vpComputeJobs.emplace_back(pJob);
 	AddJob(pJob);
 	return true;
@@ -425,7 +435,15 @@ bool CAntibob::StartComputeJob(CAntibotPlayer *pPlayer, CPlayerComputeRequest &R
 
 void CAntibob::OnComputeJobResult(CAntibotPlayer *pPlayer, CPlayerComputeResult &Result)
 {
-	// log_info("antibot", "got result for cid=%d cheating=%d", pPlayer->GetCid(), Result.m_IsCheating);
+	switch(Result.m_Type)
+	{
+	case EPlayerJobType::BOB_SAMPLE:
+		log_info("antibot", "sample job for cid=%d finished cheating=%d", pPlayer->GetCid(), Result.m_Data.m_Bob.m_IsCheating);
+		break;
+	default:
+		log_warn("antibot", "unhandled player job for cid=%d finished executing", pPlayer->GetCid());
+		break;
+	}
 }
 
 void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
@@ -550,10 +568,6 @@ void CAntibob::OnHammerFireReloading(int ClientId)
 
 void CAntibob::OnHammerFire(int ClientId)
 {
-	log_info("antibot", "hammer fire! starting job");
-	CPlayerComputeRequest Request = {};
-	if(!StartComputeJob(m_apPlayers[ClientId], Request))
-		log_error("antibot", "failed to start job!");
 }
 
 void CAntibob::OnHammerHit(int ClientId, int TargetId)

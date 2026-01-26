@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <thread>
 
 using namespace polybob;
 
@@ -28,10 +29,9 @@ CLookupPlayerJob::CLookupPlayerJob(CAntibob *pAntibob, int ClientId, const char 
 {
 }
 
-CPlayerComputeJob::CPlayerComputeJob(CAntibob *pAntibob, int ClientId, const CPlayerComputeRequest &Request)
+CPlayerComputeJob::CPlayerComputeJob(CAntibob *pAntibob, const CPlayerComputeRequest &Request)
 {
 	m_pAntibob = pAntibob;
-	m_ClientId = ClientId;
 	m_Request = Request;
 }
 
@@ -92,13 +92,23 @@ void CPlayerComputeJob::Run()
 	// and write your result to m_Result.
 	// You can process the result on the main thread in CAntibob::OnComputeJobResult()
 
-	/*
-	m_Result.m_IsCheating = false;
-	if(m_Request.m_Jumped == 1)
+	m_Result.m_Type = m_Request.m_Type;
+
+	switch(m_Request.m_Type)
 	{
-		m_Result.m_IsCheating = true;
+	case EPlayerJobType::BOB_SAMPLE:
+		// sleep 3 seconds to proof this is not blocking
+		// the main thread
+		log_info("antibot-worker", "doing heavy compute ..."); // the logger is thread safe
+		using namespace std::chrono_literals;
+		std::this_thread::sleep_for(3s);
+		m_Result.m_Data.m_Bob.m_IsCheating = false;
+		if(m_Request.m_Data.m_Bob.m_Jumped == 1)
+		{
+			m_Result.m_Data.m_Bob.m_IsCheating = true;
+		}
+		break;
 	}
-	*/
 }
 
 CAntibotPlayer::CAntibotPlayer(CAntibob *pAntibob, int ClientId, uint32_t UniqueClientId, bool Sixup, const char *pAddr) :

@@ -15,6 +15,7 @@ CONSOLE_COMMAND("version", "", ComVersion, this, "shows version of the antibob m
 CONSOLE_COMMAND("pending", "", ComPendingPunishments, this, "list pending punishments")
 CONSOLE_COMMAND("known", "", ComKnownCheaters, this, "list players that were already caught cheating")
 CONSOLE_COMMAND("redirect_cheaters", "i[port]", ComRedirectKnownCheaters, this, "redirect all players caught cheating already")
+CONSOLE_COMMAND("sample_job", "i[client id]", ComSampleJob, this, "launch a job for a player in the worker thread (just an example)")
 CONSOLE_COMMAND("player_jobs", "", ComPlayerJobs, this, "list amount of pending jobs per player")
 
 //

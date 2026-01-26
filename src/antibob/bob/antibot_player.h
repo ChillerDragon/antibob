@@ -47,33 +47,65 @@ private:
 	std::shared_ptr<polybob::CHttpRequest> m_pGetRequest GUARDED_BY(m_Lock);
 };
 
+enum class EPlayerJobType
+{
+	BOB_SAMPLE,
+
+	//
+	// put your types below here
+	//
+};
+
 // Input to the worker thread
 class CPlayerComputeRequest
 {
 public:
-	int m_ClientId = 0;
-	int m_Jumped = 0;
+	EPlayerJobType m_Type;
 
-	//
-	// put your variables below
-	//
+	// the client id of the admin that executed the command
+	// can be -1 for econ clients
+	int m_RunnerClientId;
+
+	// the unique client id of the admin that executed the command
+	// can be 0 for econ clients
+	uint32_t m_RunnerUniqueClientId;
+
+	union
+	{
+		struct
+		{
+			int m_Jumped;
+		} m_Bob;
+
+		//
+		// put your variables below
+		//
+	} m_Data = {};
 };
 
 // Output of the worker thread
 class CPlayerComputeResult
 {
 public:
-	bool m_IsCheating = false;
+	EPlayerJobType m_Type;
 
-	//
-	// put your variables below
-	//
+	union
+	{
+		struct
+		{
+			bool m_IsCheating;
+		} m_Bob;
+
+		//
+		// put your variables below
+		//
+	} m_Data = {};
 };
 
 class CPlayerComputeJob : public polybob::IJob
 {
 public:
-	CPlayerComputeJob(CAntibob *pAntibob, int ClientId, const CPlayerComputeRequest &Request);
+	CPlayerComputeJob(CAntibob *pAntibob, const CPlayerComputeRequest &Request);
 
 	// output
 	CPlayerComputeResult m_Result;
@@ -83,7 +115,6 @@ protected:
 
 	// input
 	CAntibob *m_pAntibob;
-	int m_ClientId;
 	CPlayerComputeRequest m_Request;
 };
 
