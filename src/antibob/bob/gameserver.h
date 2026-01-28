@@ -62,6 +62,7 @@ public:
 
 	void SendChat(int ClientId, int Team, const char *pMessage);
 	void SendChatTarget(int ClientId, const char *pMessage);
+	void SendBroadcast(const char *pText, int ClientId);
 
 	// schedules a punishment like kicking
 	// it will not be executed directly

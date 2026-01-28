@@ -83,6 +83,24 @@ void CGameServer::SendChatTarget(int ClientId, const char *pMessage)
 	Server()->SendPackMsg(&Msg, polybob::MSGFLAG_VITAL, ClientId);
 }
 
+void CGameServer::SendBroadcast(const char *pText, int ClientId)
+{
+	CNetMsg_Sv_Broadcast Msg;
+	Msg.m_pMessage = pText;
+
+	if(ClientId == -1)
+	{
+		Server()->SendPackMsg(&Msg, MSGFLAG_VITAL, ClientId);
+		return;
+	}
+
+	if(!m_apPlayers[ClientId])
+		return;
+
+	// Broadcasts to individual players are not recorded in demos
+	Server()->SendPackMsg(&Msg, MSGFLAG_VITAL | MSGFLAG_NORECORD, ClientId);
+}
+
 void CGameServer::Punish(int ClientId, const char *pReason, int TimeInMinutes, CPendingPunish::EPunish Punish)
 {
 	m_PunishController.SchedulePunish(ClientId, pReason, TimeInMinutes, Punish);
