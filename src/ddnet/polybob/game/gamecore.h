@@ -53,4 +53,8 @@ namespace polybob
 		float GetWeaponFireDelay(int Weapon) const;
 	};
 
+	// Do not use these function unless for legacy code!
+	void StrToInts(int *pInts, size_t NumInts, const char *pStr);
+	bool IntsToStr(const int *pInts, size_t NumInts, char *pStr, size_t StrSize);
+
 } // namespace polybob

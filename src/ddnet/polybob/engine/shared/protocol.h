@@ -35,7 +35,7 @@ namespace polybob
 
 		// the first thing sent by the client
 		// contains the version info for the client
-		NETMSG_INFO = 1,
+		NETMSG_INFO,
 
 		// sent by server
 		NETMSG_MAP_CHANGE, // sent when client should switch map
@@ -101,11 +101,26 @@ namespace polybob
 		MAX_SKIN_LENGTH = 24,
 
 		// message packing
-		MSGFLAG_VITAL = 1,
-		MSGFLAG_FLUSH = 2,
-		MSGFLAG_NORECORD = 4,
-		MSGFLAG_RECORD = 8,
-		MSGFLAG_NOSEND = 16
+		/**
+		 * Guaranteed to be delivered, resent on packet loss.
+		 */
+		MSGFLAG_VITAL = 1 << 0,
+		/**
+		 * Makes the message be sent immediately. Without this flag the message will be delayed until the next flush.
+		 */
+		MSGFLAG_FLUSH = 1 << 1,
+		/**
+		 * Don't write message to demo recorders. This flag is server-side only, where sent messages are recorded by default.
+		 */
+		MSGFLAG_NORECORD = 1 << 2,
+		/**
+		 * Write message to demo recorders. This flag is client-side only, where sent messages are not recorded by default.
+		 */
+		MSGFLAG_RECORD = 1 << 3,
+		/**
+		 * Don't send the message to client/server. Useful combined with @link MSGFLAG_RECORD @endlink to record a message without sending it.
+		 */
+		MSGFLAG_NOSEND = 1 << 4,
 	};
 
 	enum
@@ -115,14 +130,11 @@ namespace polybob
 		VERSION_DDRACE = 1,
 		VERSION_DDNET_OLD = 2,
 		VERSION_DDNET_WHISPER = 217,
-		VERSION_DDNET_GOODHOOK = 221,
-		VERSION_DDNET_RCONPROTECT = 408,
 		VERSION_DDNET_ANTIPING_PROJECTILE = 604,
 		VERSION_DDNET_UPDATER_FIXED = 707,
 		VERSION_DDNET_GAMETICK = 10042,
 		VERSION_DDNET_EARLY_VERSION = 13020,
 		VERSION_DDNET_MSG_LEGACY = 15040,
-		VERSION_DDNET_SWITCH = 15060,
 		VERSION_DDNET_INDEPENDENT_SPECTATORS_TEAM = 16000,
 		VERSION_DDNET_WEAPON_SHIELDS = 16010,
 		VERSION_DDNET_NEW_HUD = 16020,
@@ -135,12 +147,21 @@ namespace polybob
 		VERSION_DDNET_PREINPUT = 19040,
 		VERSION_DDNET_SAVE_CODE = 19060,
 		VERSION_DDNET_IMPORTANT_ALERT = 19060,
+		VERSION_DDNET_MAP_BESTTIME = 19070,
 	};
 
-	enum
+	namespace TuneZone
 	{
-		NUM_TUNEZONES = 256,
+		inline constexpr int OVERRIDE_NONE = -1;
+		inline constexpr int NUM = 256;
 	};
+
+	namespace FinishTime
+	{
+		inline constexpr int NOT_FINISHED_TIMESCORE = -9999;
+		inline constexpr int NOT_FINISHED_MILLIS = -1;
+		inline constexpr int UNSET = -2;
+	}
 
 	typedef std::bitset<MAX_CLIENTS> CClientMask;
 

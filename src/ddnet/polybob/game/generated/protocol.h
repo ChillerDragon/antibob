@@ -18,7 +18,10 @@ namespace polybob
 		FLAG_MISSING = -3,
 		FLAG_ATSTAND,
 		FLAG_TAKEN,
+	};
 
+	enum
+	{
 		SPEC_FREEVIEW = -1,
 		SPEC_FOLLOW = -2,
 	};
@@ -143,12 +146,24 @@ namespace polybob
 
 	enum
 	{
+		SAVESTATE_PENDING,
+		SAVESTATE_DONE,
+		SAVESTATE_FALLBACKFILE,
+		SAVESTATE_WARNING,
+		SAVESTATE_ERROR,
+		NUM_SAVESTATES
+	};
+
+	enum
+	{
 		PLAYERFLAG_PLAYING = 1 << 0,
 		PLAYERFLAG_IN_MENU = 1 << 1,
 		PLAYERFLAG_CHATTING = 1 << 2,
 		PLAYERFLAG_SCOREBOARD = 1 << 3,
 		PLAYERFLAG_AIM = 1 << 4,
 		PLAYERFLAG_SPEC_CAM = 1 << 5,
+		PLAYERFLAG_INPUT_ABSOLUTE = 1 << 6,
+		PLAYERFLAG_INPUT_MANUAL = 1 << 7,
 	};
 
 	enum
@@ -286,6 +301,14 @@ namespace polybob
 
 	enum
 	{
+		PICKUPFLAG_XFLIP = 1 << 0,
+		PICKUPFLAG_YFLIP = 1 << 1,
+		PICKUPFLAG_ROTATE = 1 << 2,
+		PICKUPFLAG_NO_PREDICT = 1 << 3,
+	};
+
+	enum
+	{
 		NETOBJTYPE_EX,
 		NETOBJTYPE_PLAYERINPUT,
 		NETOBJTYPE_PROJECTILE,
@@ -321,6 +344,7 @@ namespace polybob
 		NETOBJTYPE_DDNETPROJECTILE,
 		NETOBJTYPE_DDNETPICKUP,
 		NETOBJTYPE_DDNETSPECTATORINFO,
+		NETOBJTYPE_SPECTATORCOUNT,
 		NETEVENTTYPE_BIRTHDAY,
 		NETEVENTTYPE_FINISH,
 		NETOBJTYPE_MYOWNEVENT,
@@ -389,6 +413,11 @@ namespace polybob
 		NETMSGTYPE_SV_COMMANDINFOGROUPEND,
 		NETMSGTYPE_SV_CHANGEINFOCOOLDOWN,
 		NETMSGTYPE_SV_MAPSOUNDGLOBAL,
+		NETMSGTYPE_SV_PREINPUT,
+		NETMSGTYPE_SV_SAVECODE,
+		NETMSGTYPE_SV_SERVERALERT,
+		NETMSGTYPE_SV_MODERATORALERT,
+		NETMSGTYPE_CL_ENABLESPECTATORCOUNT,
 		OFFSET_MAPITEMTYPE_UUID
 	};
 
@@ -512,20 +541,10 @@ namespace polybob
 	struct CNetObj_ClientInfo
 	{
 		static constexpr int ms_MsgId = NETOBJTYPE_CLIENTINFO;
-		int m_Name0;
-		int m_Name1;
-		int m_Name2;
-		int m_Name3;
-		int m_Clan0;
-		int m_Clan1;
-		int m_Clan2;
+		int m_aName[4];
+		int m_aClan[3];
 		int m_Country;
-		int m_Skin0;
-		int m_Skin1;
-		int m_Skin2;
-		int m_Skin3;
-		int m_Skin4;
-		int m_Skin5;
+		int m_aSkin[6];
 		int m_UseCustomColor;
 		int m_ColorBody;
 		int m_ColorFeet;
@@ -566,6 +585,8 @@ namespace polybob
 		static constexpr int ms_MsgId = NETOBJTYPE_DDNETPLAYER;
 		int m_Flags;
 		int m_AuthLevel;
+		int m_FinishTimeSeconds;
+		int m_FinishTimeMillis;
 	};
 
 	struct CNetObj_GameInfoEx
@@ -625,6 +646,7 @@ namespace polybob
 		int m_Type;
 		int m_Subtype;
 		int m_SwitchNumber;
+		int m_Flags;
 	};
 
 	struct CNetObj_DDNetSpectatorInfo
@@ -635,6 +657,12 @@ namespace polybob
 		int m_Deadzone;
 		int m_FollowFactor;
 		int m_SpectatorCount;
+	};
+
+	struct CNetObj_SpectatorCount
+	{
+		static constexpr int ms_MsgId = NETOBJTYPE_SPECTATORCOUNT;
+		int m_NumSpectators;
 	};
 
 	struct CNetEvent_Common
@@ -1405,6 +1433,98 @@ namespace polybob
 		}
 	};
 
+	struct CNetMsg_Sv_PreInput
+	{
+		static constexpr int ms_MsgId = NETMSGTYPE_SV_PREINPUT;
+		int m_Direction;
+		int m_TargetX;
+		int m_TargetY;
+		int m_Jump;
+		int m_Fire;
+		int m_Hook;
+		int m_WantedWeapon;
+		int m_NextWeapon;
+		int m_PrevWeapon;
+		int m_Owner;
+		int m_IntendedTick;
+
+		bool Pack(CMsgPacker *pPacker) const
+		{
+			pPacker->AddInt(m_Direction);
+			pPacker->AddInt(m_TargetX);
+			pPacker->AddInt(m_TargetY);
+			pPacker->AddInt(m_Jump);
+			pPacker->AddInt(m_Fire);
+			pPacker->AddInt(m_Hook);
+			pPacker->AddInt(m_WantedWeapon);
+			pPacker->AddInt(m_NextWeapon);
+			pPacker->AddInt(m_PrevWeapon);
+			pPacker->AddInt(m_Owner);
+			pPacker->AddInt(m_IntendedTick);
+			return pPacker->Error() != 0;
+		}
+	};
+
+	struct CNetMsg_Sv_SaveCode
+	{
+		static constexpr int ms_MsgId = NETMSGTYPE_SV_SAVECODE;
+		int m_State;
+		const char *m_pError;
+		const char *m_pSaveRequester;
+		const char *m_pServerName;
+		const char *m_pGeneratedCode;
+		const char *m_pCode;
+		const char *m_pTeamMembers;
+
+		bool Pack(CMsgPacker *pPacker) const
+		{
+			pPacker->AddInt(m_State);
+			pPacker->AddString(m_pError, -1);
+			pPacker->AddString(m_pSaveRequester, -1);
+			pPacker->AddString(m_pServerName, -1);
+			pPacker->AddString(m_pGeneratedCode, -1);
+			pPacker->AddString(m_pCode, -1);
+			pPacker->AddString(m_pTeamMembers, -1);
+			return pPacker->Error() != 0;
+		}
+	};
+
+	struct CNetMsg_Sv_ServerAlert
+	{
+		static constexpr int ms_MsgId = NETMSGTYPE_SV_SERVERALERT;
+		const char *m_pMessage;
+
+		bool Pack(CMsgPacker *pPacker) const
+		{
+			pPacker->AddString(m_pMessage, -1);
+			return pPacker->Error() != 0;
+		}
+	};
+
+	struct CNetMsg_Sv_ModeratorAlert
+	{
+		static constexpr int ms_MsgId = NETMSGTYPE_SV_MODERATORALERT;
+		const char *m_pMessage;
+
+		bool Pack(CMsgPacker *pPacker) const
+		{
+			pPacker->AddString(m_pMessage, -1);
+			return pPacker->Error() != 0;
+		}
+	};
+
+	struct CNetMsg_Cl_EnableSpectatorCount
+	{
+		static constexpr int ms_MsgId = NETMSGTYPE_CL_ENABLESPECTATORCOUNT;
+		int m_Enable;
+
+		bool Pack(CMsgPacker *pPacker) const
+		{
+			pPacker->AddInt(m_Enable);
+			return pPacker->Error() != 0;
+		}
+	};
+
 	enum
 	{
 		SOUND_GUN_FIRE = 0,
@@ -1468,6 +1588,11 @@ namespace polybob
 		WEAPON_WORLD = -1, // death tiles etc
 	};
 
+	enum
+	{
+		TEAM_GAME = TEAM_RED,
+	};
+
 	class CNetObjHandler
 	{
 		const char *m_pMsgFailedOn;
@@ -1497,6 +1622,7 @@ namespace polybob
 		const char *FailedObjOn() const;
 
 		const char *GetMsgName(int Type) const;
+		int DumpObj(int Type, const void *pData, int Size) const;
 		void *SecureUnpackMsg(int Type, CUnpacker *pUnpacker);
 		bool TeeHistorianRecordMsg(int Type);
 		const char *FailedMsgOn() const;

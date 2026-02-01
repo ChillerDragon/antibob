@@ -18,17 +18,26 @@ namespace polybob
 			TEAM_RED,
 			TEAM_BLUE,
 			NUM_TEAMS,
+		};
 
+		enum
+		{
 			FLAG_MISSING = -3,
 			FLAG_ATSTAND,
 			FLAG_TAKEN,
+		};
 
+		enum
+		{
 			SPEC_FREEVIEW = 0,
 			SPEC_PLAYER,
 			SPEC_FLAGRED,
 			SPEC_FLAGBLUE,
 			NUM_SPECMODES,
+		};
 
+		enum
+		{
 			SKINPART_BODY = 0,
 			SKINPART_MARKING,
 			SKINPART_DECORATION,
@@ -1249,6 +1258,7 @@ namespace polybob
 			CNetObjHandler();
 
 			int ValidateObj(int Type, const void *pData, int Size);
+			int DumpObj(int Type, const void *pData, int Size) const;
 			const char *GetObjName(int Type) const;
 			int GetObjSize(int Type) const;
 			const char *FailedObjOn() const;
@@ -1259,5 +1269,5 @@ namespace polybob
 			const char *FailedMsgOn() const;
 		};
 
-	} // namespace protocol7
+	}
 } // namespace polybob

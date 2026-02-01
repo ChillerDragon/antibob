@@ -6,14 +6,13 @@ namespace polybob
 {
 	namespace protocol7
 	{
-
 		enum
 		{
 			NETMSG_NULL = 0,
 
 			// the first thing sent by the client
 			// contains the version info for the client
-			NETMSG_INFO = 1,
+			NETMSG_INFO,
 
 			// sent by server
 			NETMSG_MAP_CHANGE, // sent when client should switch map
@@ -56,6 +55,16 @@ namespace polybob
 
 		enum
 		{
+			NET_CTRLMSG_KEEPALIVE = 0,
+			NET_CTRLMSG_CONNECT,
+			NET_CTRLMSG_ACCEPT,
+			NET_CTRLMSG_UNUSED,
+			NET_CTRLMSG_CLOSE,
+			NET_CTRLMSG_TOKEN,
+		};
+
+		enum
+		{
 			MAX_NAME_LENGTH = 16,
 			MAX_NAME_ARRAY_SIZE = MAX_NAME_LENGTH * UTF8_BYTE_LENGTH + 1,
 			MAX_CLAN_LENGTH = 12,
@@ -64,5 +73,9 @@ namespace polybob
 			MAX_SKIN_ARRAY_SIZE = MAX_SKIN_LENGTH * UTF8_BYTE_LENGTH + 1,
 		};
 
-	} // namespace protocol7
+		namespace FinishTime
+		{
+			inline constexpr int NOT_FINISHED = -1;
+		}
+	}
 } // namespace polybob

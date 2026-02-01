@@ -483,6 +483,438 @@ namespace polybob
 			return -1;
 		}
 
+		int CNetObjHandler::DumpObj(int Type, const void *pData, int Size) const
+		{
+			char aRawData[512];
+			switch(Type)
+			{
+			case NETOBJTYPE_PLAYERINPUT:
+			{
+				CNetObj_PlayerInput *pObj = (CNetObj_PlayerInput *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_Direction=%d (min=-1 max=1)", aRawData, pObj->m_Direction);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_TargetX=%d", aRawData, pObj->m_TargetX);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_TargetY=%d", aRawData, pObj->m_TargetY);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				dbg_msg("snapshot", "%s\tm_Jump=%d (min=0 max=1)", aRawData, pObj->m_Jump);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 4, ((const int *)pData)[4], ((const int *)pData)[4]);
+				dbg_msg("snapshot", "%s\tm_Fire=%d", aRawData, pObj->m_Fire);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 5, ((const int *)pData)[5], ((const int *)pData)[5]);
+				dbg_msg("snapshot", "%s\tm_Hook=%d (min=0 max=1)", aRawData, pObj->m_Hook);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 6, ((const int *)pData)[6], ((const int *)pData)[6]);
+				dbg_msg("snapshot", "%s\tm_PlayerFlags=%d (mask=%d)", aRawData, pObj->m_PlayerFlags, PLAYERFLAG_ADMIN | PLAYERFLAG_CHATTING | PLAYERFLAG_SCOREBOARD | PLAYERFLAG_READY | PLAYERFLAG_DEAD | PLAYERFLAG_WATCHING | PLAYERFLAG_BOT | PLAYERFLAG_AIM);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 7, ((const int *)pData)[7], ((const int *)pData)[7]);
+				dbg_msg("snapshot", "%s\tm_WantedWeapon=%d (min=0 max=NUM_WEAPONS-1(%d))", aRawData, pObj->m_WantedWeapon, (int)NUM_WEAPONS - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 8, ((const int *)pData)[8], ((const int *)pData)[8]);
+				dbg_msg("snapshot", "%s\tm_NextWeapon=%d", aRawData, pObj->m_NextWeapon);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 9, ((const int *)pData)[9], ((const int *)pData)[9]);
+				dbg_msg("snapshot", "%s\tm_PrevWeapon=%d", aRawData, pObj->m_PrevWeapon);
+				return 0;
+			}
+
+			case NETOBJTYPE_PROJECTILE:
+			{
+				CNetObj_Projectile *pObj = (CNetObj_Projectile *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_VelX=%d", aRawData, pObj->m_VelX);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				dbg_msg("snapshot", "%s\tm_VelY=%d", aRawData, pObj->m_VelY);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 4, ((const int *)pData)[4], ((const int *)pData)[4]);
+				dbg_msg("snapshot", "%s\tm_Type=%d (min=0 max=NUM_WEAPONS-1(%d))", aRawData, pObj->m_Type, (int)NUM_WEAPONS - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 5, ((const int *)pData)[5], ((const int *)pData)[5]);
+				dbg_msg("snapshot", "%s\tm_StartTick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_StartTick, (int)max_int);
+				return 0;
+			}
+
+			case NETOBJTYPE_LASER:
+			{
+				CNetObj_Laser *pObj = (CNetObj_Laser *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_FromX=%d", aRawData, pObj->m_FromX);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				dbg_msg("snapshot", "%s\tm_FromY=%d", aRawData, pObj->m_FromY);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 4, ((const int *)pData)[4], ((const int *)pData)[4]);
+				dbg_msg("snapshot", "%s\tm_StartTick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_StartTick, (int)max_int);
+				return 0;
+			}
+
+			case NETOBJTYPE_PICKUP:
+			{
+				CNetObj_Pickup *pObj = (CNetObj_Pickup *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_Type=%d (min=0 max=7)", aRawData, pObj->m_Type);
+				return 0;
+			}
+
+			case NETOBJTYPE_FLAG:
+			{
+				CNetObj_Flag *pObj = (CNetObj_Flag *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_Team=%d (min=TEAM_RED(%d) max=TEAM_BLUE(%d))", aRawData, pObj->m_Team, (int)TEAM_RED, (int)TEAM_BLUE);
+				return 0;
+			}
+
+			case NETOBJTYPE_GAMEDATA:
+			{
+				CNetObj_GameData *pObj = (CNetObj_GameData *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_GameStartTick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_GameStartTick, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_GameStateFlags=%d (mask=%d)", aRawData, pObj->m_GameStateFlags, GAMESTATEFLAG_WARMUP | GAMESTATEFLAG_SUDDENDEATH | GAMESTATEFLAG_ROUNDOVER | GAMESTATEFLAG_GAMEOVER | GAMESTATEFLAG_PAUSED | GAMESTATEFLAG_STARTCOUNTDOWN);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_GameStateEndTick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_GameStateEndTick, (int)max_int);
+				return 0;
+			}
+
+			case NETOBJTYPE_GAMEDATATEAM:
+			{
+				CNetObj_GameDataTeam *pObj = (CNetObj_GameDataTeam *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_TeamscoreRed=%d", aRawData, pObj->m_TeamscoreRed);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_TeamscoreBlue=%d", aRawData, pObj->m_TeamscoreBlue);
+				return 0;
+			}
+
+			case NETOBJTYPE_GAMEDATAFLAG:
+			{
+				CNetObj_GameDataFlag *pObj = (CNetObj_GameDataFlag *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_FlagCarrierRed=%d (min=FLAG_MISSING(%d) max=MAX_CLIENTS-1(%d))", aRawData, pObj->m_FlagCarrierRed, (int)FLAG_MISSING, (int)MAX_CLIENTS - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_FlagCarrierBlue=%d (min=FLAG_MISSING(%d) max=MAX_CLIENTS-1(%d))", aRawData, pObj->m_FlagCarrierBlue, (int)FLAG_MISSING, (int)MAX_CLIENTS - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_FlagDropTickRed=%d (min=0 max=max_int(%d))", aRawData, pObj->m_FlagDropTickRed, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				dbg_msg("snapshot", "%s\tm_FlagDropTickBlue=%d (min=0 max=max_int(%d))", aRawData, pObj->m_FlagDropTickBlue, (int)max_int);
+				return 0;
+			}
+
+			case NETOBJTYPE_CHARACTERCORE:
+			{
+				CNetObj_CharacterCore *pObj = (CNetObj_CharacterCore *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_Tick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_Tick, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				dbg_msg("snapshot", "%s\tm_VelX=%d", aRawData, pObj->m_VelX);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 4, ((const int *)pData)[4], ((const int *)pData)[4]);
+				dbg_msg("snapshot", "%s\tm_VelY=%d", aRawData, pObj->m_VelY);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 5, ((const int *)pData)[5], ((const int *)pData)[5]);
+				dbg_msg("snapshot", "%s\tm_Angle=%d", aRawData, pObj->m_Angle);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 6, ((const int *)pData)[6], ((const int *)pData)[6]);
+				dbg_msg("snapshot", "%s\tm_Direction=%d (min=-1 max=1)", aRawData, pObj->m_Direction);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 7, ((const int *)pData)[7], ((const int *)pData)[7]);
+				dbg_msg("snapshot", "%s\tm_Jumped=%d (min=0 max=3)", aRawData, pObj->m_Jumped);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 8, ((const int *)pData)[8], ((const int *)pData)[8]);
+				dbg_msg("snapshot", "%s\tm_HookedPlayer=%d (min=-1 max=MAX_CLIENTS-1(%d))", aRawData, pObj->m_HookedPlayer, (int)MAX_CLIENTS - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 9, ((const int *)pData)[9], ((const int *)pData)[9]);
+				dbg_msg("snapshot", "%s\tm_HookState=%d (min=-1 max=5)", aRawData, pObj->m_HookState);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 10, ((const int *)pData)[10], ((const int *)pData)[10]);
+				dbg_msg("snapshot", "%s\tm_HookTick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_HookTick, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 11, ((const int *)pData)[11], ((const int *)pData)[11]);
+				dbg_msg("snapshot", "%s\tm_HookX=%d", aRawData, pObj->m_HookX);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 12, ((const int *)pData)[12], ((const int *)pData)[12]);
+				dbg_msg("snapshot", "%s\tm_HookY=%d", aRawData, pObj->m_HookY);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 13, ((const int *)pData)[13], ((const int *)pData)[13]);
+				dbg_msg("snapshot", "%s\tm_HookDx=%d", aRawData, pObj->m_HookDx);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 14, ((const int *)pData)[14], ((const int *)pData)[14]);
+				dbg_msg("snapshot", "%s\tm_HookDy=%d", aRawData, pObj->m_HookDy);
+				return 0;
+			}
+
+			case NETOBJTYPE_CHARACTER:
+			{
+				CNetObj_Character *pObj = (CNetObj_Character *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_Tick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_Tick, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				dbg_msg("snapshot", "%s\tm_VelX=%d", aRawData, pObj->m_VelX);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 4, ((const int *)pData)[4], ((const int *)pData)[4]);
+				dbg_msg("snapshot", "%s\tm_VelY=%d", aRawData, pObj->m_VelY);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 5, ((const int *)pData)[5], ((const int *)pData)[5]);
+				dbg_msg("snapshot", "%s\tm_Angle=%d", aRawData, pObj->m_Angle);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 6, ((const int *)pData)[6], ((const int *)pData)[6]);
+				dbg_msg("snapshot", "%s\tm_Direction=%d (min=-1 max=1)", aRawData, pObj->m_Direction);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 7, ((const int *)pData)[7], ((const int *)pData)[7]);
+				dbg_msg("snapshot", "%s\tm_Jumped=%d (min=0 max=3)", aRawData, pObj->m_Jumped);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 8, ((const int *)pData)[8], ((const int *)pData)[8]);
+				dbg_msg("snapshot", "%s\tm_HookedPlayer=%d (min=-1 max=MAX_CLIENTS-1(%d))", aRawData, pObj->m_HookedPlayer, (int)MAX_CLIENTS - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 9, ((const int *)pData)[9], ((const int *)pData)[9]);
+				dbg_msg("snapshot", "%s\tm_HookState=%d (min=-1 max=5)", aRawData, pObj->m_HookState);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 10, ((const int *)pData)[10], ((const int *)pData)[10]);
+				dbg_msg("snapshot", "%s\tm_HookTick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_HookTick, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 11, ((const int *)pData)[11], ((const int *)pData)[11]);
+				dbg_msg("snapshot", "%s\tm_HookX=%d", aRawData, pObj->m_HookX);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 12, ((const int *)pData)[12], ((const int *)pData)[12]);
+				dbg_msg("snapshot", "%s\tm_HookY=%d", aRawData, pObj->m_HookY);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 13, ((const int *)pData)[13], ((const int *)pData)[13]);
+				dbg_msg("snapshot", "%s\tm_HookDx=%d", aRawData, pObj->m_HookDx);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 14, ((const int *)pData)[14], ((const int *)pData)[14]);
+				dbg_msg("snapshot", "%s\tm_HookDy=%d", aRawData, pObj->m_HookDy);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 15, ((const int *)pData)[15], ((const int *)pData)[15]);
+				dbg_msg("snapshot", "%s\tm_Health=%d (min=0 max=10)", aRawData, pObj->m_Health);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 16, ((const int *)pData)[16], ((const int *)pData)[16]);
+				dbg_msg("snapshot", "%s\tm_Armor=%d (min=0 max=10)", aRawData, pObj->m_Armor);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 17, ((const int *)pData)[17], ((const int *)pData)[17]);
+				dbg_msg("snapshot", "%s\tm_AmmoCount=%d", aRawData, pObj->m_AmmoCount);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 18, ((const int *)pData)[18], ((const int *)pData)[18]);
+				dbg_msg("snapshot", "%s\tm_Weapon=%d (min=-1 max=NUM_WEAPONS-1(%d))", aRawData, pObj->m_Weapon, (int)NUM_WEAPONS - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 19, ((const int *)pData)[19], ((const int *)pData)[19]);
+				dbg_msg("snapshot", "%s\tm_Emote=%d (min=0 max=5)", aRawData, pObj->m_Emote);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 20, ((const int *)pData)[20], ((const int *)pData)[20]);
+				dbg_msg("snapshot", "%s\tm_AttackTick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_AttackTick, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 21, ((const int *)pData)[21], ((const int *)pData)[21]);
+				dbg_msg("snapshot", "%s\tm_TriggeredEvents=%d (mask=%d)", aRawData, pObj->m_TriggeredEvents, COREEVENTFLAG_GROUND_JUMP | COREEVENTFLAG_AIR_JUMP | COREEVENTFLAG_HOOK_ATTACH_PLAYER | COREEVENTFLAG_HOOK_ATTACH_GROUND | COREEVENTFLAG_HOOK_HIT_NOHOOK);
+				return 0;
+			}
+
+			case NETOBJTYPE_PLAYERINFO:
+			{
+				CNetObj_PlayerInfo *pObj = (CNetObj_PlayerInfo *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_PlayerFlags=%d (mask=%d)", aRawData, pObj->m_PlayerFlags, PLAYERFLAG_ADMIN | PLAYERFLAG_CHATTING | PLAYERFLAG_SCOREBOARD | PLAYERFLAG_READY | PLAYERFLAG_DEAD | PLAYERFLAG_WATCHING | PLAYERFLAG_BOT | PLAYERFLAG_AIM);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Score=%d", aRawData, pObj->m_Score);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_Latency=%d", aRawData, pObj->m_Latency);
+				return 0;
+			}
+
+			case NETOBJTYPE_SPECTATORINFO:
+			{
+				CNetObj_SpectatorInfo *pObj = (CNetObj_SpectatorInfo *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_SpecMode=%d (min=0 max=NUM_SPECMODES-1(%d))", aRawData, pObj->m_SpecMode, (int)NUM_SPECMODES - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_SpectatorId=%d (min=-1 max=MAX_CLIENTS-1(%d))", aRawData, pObj->m_SpectatorId, (int)MAX_CLIENTS - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				return 0;
+			}
+
+			case NETOBJTYPE_DE_CLIENTINFO:
+			{
+				CNetObj_De_ClientInfo *pObj = (CNetObj_De_ClientInfo *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_Local=%d (min=0 max=1)", aRawData, pObj->m_Local);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Team=%d (min=TEAM_SPECTATORS(%d) max=TEAM_BLUE(%d))", aRawData, pObj->m_Team, (int)TEAM_SPECTATORS, (int)TEAM_BLUE);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 4, ((const int *)pData)[4], ((const int *)pData)[4]);
+				dbg_msg("snapshot", "%s\tm_Country=%d", aRawData, pObj->m_Country);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 5, ((const int *)pData)[5], ((const int *)pData)[5]);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 6, ((const int *)pData)[6], ((const int *)pData)[6]);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 7, ((const int *)pData)[7], ((const int *)pData)[7]);
+				return 0;
+			}
+
+			case NETOBJTYPE_DE_GAMEINFO:
+			{
+				CNetObj_De_GameInfo *pObj = (CNetObj_De_GameInfo *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_GameFlags=%d (mask=%d)", aRawData, pObj->m_GameFlags, GAMEFLAG_TEAMS | GAMEFLAG_FLAGS | GAMEFLAG_SURVIVAL | GAMEFLAG_RACE);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_ScoreLimit=%d (min=0 max=max_int(%d))", aRawData, pObj->m_ScoreLimit, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_TimeLimit=%d (min=0 max=max_int(%d))", aRawData, pObj->m_TimeLimit, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				dbg_msg("snapshot", "%s\tm_MatchNum=%d (min=0 max=max_int(%d))", aRawData, pObj->m_MatchNum, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 4, ((const int *)pData)[4], ((const int *)pData)[4]);
+				dbg_msg("snapshot", "%s\tm_MatchCurrent=%d (min=0 max=max_int(%d))", aRawData, pObj->m_MatchCurrent, (int)max_int);
+				return 0;
+			}
+
+			case NETOBJTYPE_DE_TUNEPARAMS:
+			{
+				CNetObj_De_TuneParams *pObj = (CNetObj_De_TuneParams *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				return 0;
+			}
+
+			case NETEVENTTYPE_COMMON:
+			{
+				CNetEvent_Common *pObj = (CNetEvent_Common *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				return 0;
+			}
+
+			case NETEVENTTYPE_EXPLOSION:
+			{
+				CNetEvent_Explosion *pObj = (CNetEvent_Explosion *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				return 0;
+			}
+
+			case NETEVENTTYPE_SPAWN:
+			{
+				CNetEvent_Spawn *pObj = (CNetEvent_Spawn *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				return 0;
+			}
+
+			case NETEVENTTYPE_HAMMERHIT:
+			{
+				CNetEvent_HammerHit *pObj = (CNetEvent_HammerHit *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				return 0;
+			}
+
+			case NETEVENTTYPE_DEATH:
+			{
+				CNetEvent_Death *pObj = (CNetEvent_Death *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_ClientId=%d (min=0 max=MAX_CLIENTS-1(%d))", aRawData, pObj->m_ClientId, (int)MAX_CLIENTS - 1);
+				return 0;
+			}
+
+			case NETEVENTTYPE_SOUNDWORLD:
+			{
+				CNetEvent_SoundWorld *pObj = (CNetEvent_SoundWorld *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_SoundId=%d (min=0 max=NUM_SOUNDS-1(%d))", aRawData, pObj->m_SoundId, (int)NUM_SOUNDS - 1);
+				return 0;
+			}
+
+			case NETEVENTTYPE_DAMAGE:
+			{
+				CNetEvent_Damage *pObj = (CNetEvent_Damage *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_X=%d", aRawData, pObj->m_X);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Y=%d", aRawData, pObj->m_Y);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_ClientId=%d (min=0 max=MAX_CLIENTS-1(%d))", aRawData, pObj->m_ClientId, (int)MAX_CLIENTS - 1);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 3, ((const int *)pData)[3], ((const int *)pData)[3]);
+				dbg_msg("snapshot", "%s\tm_Angle=%d", aRawData, pObj->m_Angle);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 4, ((const int *)pData)[4], ((const int *)pData)[4]);
+				dbg_msg("snapshot", "%s\tm_HealthAmount=%d (min=0 max=9)", aRawData, pObj->m_HealthAmount);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 5, ((const int *)pData)[5], ((const int *)pData)[5]);
+				dbg_msg("snapshot", "%s\tm_ArmorAmount=%d (min=0 max=9)", aRawData, pObj->m_ArmorAmount);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 6, ((const int *)pData)[6], ((const int *)pData)[6]);
+				dbg_msg("snapshot", "%s\tm_Self=%d (min=0 max=1)", aRawData, pObj->m_Self);
+				return 0;
+			}
+
+			case NETOBJTYPE_PLAYERINFORACE:
+			{
+				CNetObj_PlayerInfoRace *pObj = (CNetObj_PlayerInfoRace *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_RaceStartTick=%d (min=0 max=max_int(%d))", aRawData, pObj->m_RaceStartTick, (int)max_int);
+				return 0;
+			}
+
+			case NETOBJTYPE_GAMEDATARACE:
+			{
+				CNetObj_GameDataRace *pObj = (CNetObj_GameDataRace *)pData;
+				if(sizeof(*pObj) != Size)
+					return -1;
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 0, ((const int *)pData)[0], ((const int *)pData)[0]);
+				dbg_msg("snapshot", "%s\tm_BestTime=%d (min=-1 max=max_int(%d))", aRawData, pObj->m_BestTime, (int)max_int);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 1, ((const int *)pData)[1], ((const int *)pData)[1]);
+				dbg_msg("snapshot", "%s\tm_Precision=%d (min=0 max=3)", aRawData, pObj->m_Precision);
+				str_format(aRawData, sizeof(aRawData), "\t\t%3d %12d\t%08x", 2, ((const int *)pData)[2], ((const int *)pData)[2]);
+				dbg_msg("snapshot", "%s\tm_RaceFlags=%d (mask=%d)", aRawData, pObj->m_RaceFlags, RACEFLAG_HIDE_KILLMSG | RACEFLAG_FINISHMSG_AS_CHAT | RACEFLAG_KEEP_WANTED_WEAPON);
+				return 0;
+			}
+			}
+			return -1;
+		}
+
 		void *CNetObjHandler::SecureUnpackMsg(int Type, CUnpacker *pUnpacker)
 		{
 			m_pMsgFailedOn = 0;
@@ -1091,5 +1523,6 @@ namespace polybob
 			m_pObjFailedOn = "";
 			return m_aMsgData;
 		}
-	} // namespace protocol7
+	}
+
 } // namespace polybob
