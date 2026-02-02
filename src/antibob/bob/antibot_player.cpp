@@ -151,6 +151,30 @@ int CAntibotPlayer::ConnectedSinceMinutes() const
 	return ConnectedSinceSeconds() / 60;
 }
 
+int CAntibotPlayer::NumPendingComputeJobs(EPlayerJobType Type)
+{
+	int Jobs = 0;
+	for(const auto &Job : m_vpComputeJobs)
+	{
+		// how thread safe is it to read the result
+		// of pending jobs? oof
+		if(Job->m_Result.m_Type != Type)
+			continue;
+
+		switch(Job->State())
+		{
+		case polybob::IJob::EJobState::STATE_ABORTED:
+		case polybob::IJob::EJobState::STATE_DONE:
+			break;
+		case polybob::IJob::EJobState::STATE_RUNNING:
+		case polybob::IJob::EJobState::STATE_QUEUED:
+			Jobs++;
+			break;
+		}
+	}
+	return Jobs;
+}
+
 void CAntibotPlayer::DumpInputHistory()
 {
 	log_info("antibot", "input history for cid=%d", m_ClientId);

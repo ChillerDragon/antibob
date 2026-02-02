@@ -199,6 +199,7 @@ public:
 	//       to avoid spamming http requests
 	std::shared_ptr<CAbstractLookupPlayerJob> m_pLookupJob = nullptr;
 	std::vector<std::shared_ptr<CPlayerComputeJob>> m_vpComputeJobs;
+	int NumPendingComputeJobs(EPlayerJobType Type);
 	polybob::CNetObj_PlayerInput m_aInputs[10];
 	int m_SentInputs = 0;
 	bool InputHistoryValid() const { return m_SentInputs > std::size(m_aInputs); }
