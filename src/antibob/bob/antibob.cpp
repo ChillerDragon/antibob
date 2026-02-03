@@ -446,6 +446,10 @@ void CAntibob::OnComputeJobResult(CAntibotPlayer *pPlayer, CPlayerComputeResult 
 	}
 }
 
+void CAntibob::OnComputeJobAborted(CAntibotPlayer *pPlayer, CPlayerComputeResult &Result)
+{
+}
+
 void CAntibob::OnPlayerConnect(CAntibotPlayer *pPlayer)
 {
 	if(!m_pRoundData)
@@ -632,6 +636,7 @@ void CAntibob::OnEngineTick()
 					switch(pJob->State())
 					{
 					case polybob::IJob::STATE_ABORTED:
+						OnComputeJobAborted(pPlayer, pJob->m_Result);
 						return true;
 						break;
 					case polybob::IJob::STATE_RUNNING:

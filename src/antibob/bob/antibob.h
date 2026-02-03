@@ -107,6 +107,7 @@ public:
 	virtual bool StartComputeJob(int RunnerClientId, CAntibotPlayer *pPlayer, CPlayerComputeRequest &Request);
 
 	virtual void OnComputeJobResult(CAntibotPlayer *pPlayer, CPlayerComputeResult &Result);
+	virtual void OnComputeJobAborted(CAntibotPlayer *pPlayer, CPlayerComputeResult &Result);
 
 	// same as IGameController::OnPlayerConnect(CPlayer *pPlayer)
 	// in ddnet code base
