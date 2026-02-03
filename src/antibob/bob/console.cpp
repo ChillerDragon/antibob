@@ -222,6 +222,9 @@ bool CBobConsole::ExecuteCmd(const char *pCommand)
 		{
 			CBobResult Result(pCommand + str_length(Cmd.m_pName), Cmd.m_pParams);
 
+			// TODO: blocked on https://github.com/ddnet/ddnet/pull/11688
+			Result.m_ClientId = -1;
+
 			char aError[512];
 			if(!Result.ParseArgs(aError, sizeof(aError)))
 			{
