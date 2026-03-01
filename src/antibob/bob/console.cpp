@@ -19,7 +19,6 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 {
 	const int ParamsLen = str_length(pParamsText);
 	bool InDesc = false;
-	int k = 0;
 	CBobParam Param;
 	Param.Reset();
 	pError[0] = '\0';
