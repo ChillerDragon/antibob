@@ -17,7 +17,7 @@
 #include <cstdlib>
 #endif
 
-#include <zlib.h>
+#include <polybob/engine/external/zlib/zlib.h>
 
 namespace polybob
 {
