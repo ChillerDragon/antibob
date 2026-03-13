@@ -1,10 +1,18 @@
-#include <arpa/inet.h>
-#include <netdb.h>
 #include <polybob/base/detect.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 #include <polybob/base/system/net.h>
 #include <polybob/base/system/str.h>
+
+#if defined(CONF_FAMILY_WINDOWS)
+#include <WS2tcpip.h>
+#include <WinSock2.h>
+#include <ws2def.h>
+#include <ws2ipdef.h>
+#else
+#include <arpa/inet.h>
+#include <netdb.h>
+#endif
 
 namespace polybob
 {

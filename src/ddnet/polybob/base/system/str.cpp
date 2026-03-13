@@ -1,7 +1,6 @@
 #include <polybob/base/system.h>
 #include <polybob/base/system/str.h>
-#include <string.h>
-#include <zlib.h>
+#include <cstring>
 
 namespace polybob
 {
