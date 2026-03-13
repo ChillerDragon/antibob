@@ -29,7 +29,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 ########################################################################
-# COMMON FUNCTIONS
+# Common functions
 ########################################################################
 
 macro(set_glob VAR DIRECTORY)
@@ -103,7 +103,7 @@ function(add_linker_flag_if_supported VARIABLE FLAG)
 endfunction()
 
 ########################################################################
-# DEPENDENCIES
+# Dependencies
 ########################################################################
 
 set(LIB_DIR "${TARGET_OS}/lib${TARGET_BITS}")
@@ -211,14 +211,11 @@ file(WRITE ${CMAKE_BINARY_DIR}/generated/git_revision.cpp
 
 set(DEPENDENCIES ${DEP_JSON} ${DEP_MD5} ${ZLIB_DEP} ${CMAKE_BINARY_DIR}/generated/git_revision.cpp)
 
-add_library(antibot SHARED
-    ${POLYBOB_SRCS}
-    ${ANTIBOB_SRCS}
-    ${DEPENDENCIES}
-)
+# Targets
+set(TARGETS_OWN)
 
+set(PLATFORM_LIBS)
 if(TARGET_OS STREQUAL "windows")
-    set(PLATFORM_LIBS)
     list(APPEND PLATFORM_LIBS shlwapi.lib) # PathIsRelativeW
     list(APPEND PLATFORM_LIBS version.lib) # GetFileVersionInfoSizeW
     list(APPEND PLATFORM_LIBS ws2_32.lib) # Windows sockets
@@ -233,12 +230,37 @@ set(LIBS
     ${CURL_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${PLATFORM_LIBS}
-    ${CMAKE_THREAD_LIBS_INIT}
 )
-target_link_libraries(antibot ${LIBS})
+
+# Static library for the tests
+add_library(antibot_static STATIC
+        ${POLYBOB_SRCS}
+        ${ANTIBOB_SRCS}
+        ${DEPENDENCIES}
+)
+list(APPEND TARGETS_OWN antibot_static)
+target_link_libraries(antibot_static PUBLIC ${LIBS})
+
+# Shared library for use
+add_library(antibot SHARED
+        ${POLYBOB_SRCS}
+        ${ANTIBOB_SRCS}
+        ${DEPENDENCIES}
+)
+list(APPEND TARGETS_OWN antibot)
+target_link_libraries(antibot PRIVATE ${LIBS})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+
+set(COPY_FILES
+        ${CURL_COPY_FILES}
+)
+file(COPY ${COPY_FILES} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+
+########################################################################
+# Apply options to targets
+########################################################################
 
 # antibob specific, not sure what we need it for
 add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -fPIC)
@@ -253,7 +275,6 @@ add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wthread-safety)
 add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wthread-safety-negative)
 add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wno-deprecated-enum-float-conversion) # c++20 arithmetic between floating-point type and enumeration type
 
-set(TARGETS_OWN antibot)
 set(TARGETS ${TARGETS_OWN} ${TARGETS_DEP})
 
 foreach(target ${TARGETS})
@@ -297,7 +318,7 @@ foreach(target ${TARGETS_DEP})
 endforeach()
 
 ########################################################################
-# tests
+# Tests
 ########################################################################
 
 # compile test binaries
@@ -311,9 +332,9 @@ file(GLOB_RECURSE TESTS_SRCS
 foreach(TEST_SRC ${TESTS_SRCS})
     get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
     add_executable(${TEST_NAME}_bob_test ${TEST_SRC} ${BOBTEST_FRAMEWORK_SRCS})
-    target_link_libraries(${TEST_NAME}_bob_test antibot z curl)
+    target_link_libraries(${TEST_NAME}_bob_test PRIVATE antibot_static)
     target_compile_options(${TEST_NAME}_bob_test PRIVATE ${OUR_FLAGS_OWN})
-    include_directories(src/test)
+    target_include_directories(${TEST_NAME}_bob_test PRIVATE src/test)
 endforeach()
 
 # tester runner target "make test"
@@ -322,6 +343,7 @@ file(GLOB TEST_BINARIES
     ${CMAKE_BINARY_DIR}/bin/*_bob_test
 )
 foreach(TEST_BIN ${TEST_BINARIES})
-    add_test(NAME ${TEST_BIN} COMMAND ${TEST_BIN})
+    get_filename_component(TEST_BIN_NAME ${TEST_BIN} NAME_WE)
+    add_test(NAME ${TEST_BIN_NAME} COMMAND ${TEST_BIN})
 endforeach()
 
