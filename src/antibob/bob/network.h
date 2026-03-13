@@ -84,6 +84,7 @@ public:
 
 	bool RepackMsg(const polybob::CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup);
 	bool SendMsg(polybob::CMsgPacker *pMsg, int Flags, int ClientId);
+	void SendRconLine(int ClientId, const char *pLine);
 
 	template<class T, typename std::enable_if<!polybob::protocol7::is_sixup<T>::value, int>::type = 0>
 	int SendPackMsg(const T *pMsg, int Flags, int ClientId)

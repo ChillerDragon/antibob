@@ -80,6 +80,13 @@ bool CNetwork::SendMsg(CMsgPacker *pMsg, int Flags, int ClientId)
 	return true;
 }
 
+void CNetwork::SendRconLine(int ClientId, const char *pLine)
+{
+	polybob::CMsgPacker Msg(NETMSG_RCON_LINE, true);
+	Msg.AddString(pLine, 512);
+	SendMsg(&Msg, MSGFLAG_VITAL, ClientId);
+}
+
 void CNetwork::OnClientConnect(int ClientId, bool Sixup)
 {
 	m_aClients[ClientId].Init(ClientId, Sixup);
