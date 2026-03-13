@@ -10,7 +10,10 @@
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/engine/storage.h>
 #include <polybob/game/generated/protocol.h>
+
+#if !defined(CONF_FAMILY_WINDOWS)
 #include <unistd.h>
+#endif
 
 #include <cstdarg>
 #include <thread>

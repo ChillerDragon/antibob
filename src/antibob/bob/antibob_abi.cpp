@@ -4,6 +4,7 @@
 #include <polybob/base/system.h>
 
 #if defined(CONF_FAMILY_WINDOWS)
+#include <windows.h>
 #include <libloaderapi.h>
 #define LOOKUP_SYM(name) \
 	m_pfn##name = (F##name)GetProcAddress(GetModuleHandleA(NULL), "Antibob" #name); \
