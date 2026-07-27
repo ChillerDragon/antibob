@@ -221,4 +221,14 @@ namespace polybob
 		return pPtr;
 	}
 
+	int CUnpacker::RemainingSize() const
+	{
+		return m_pEnd - m_pCurrent;
+	}
+
+	const unsigned char *CUnpacker::RemainingData() const
+	{
+		return m_pCurrent;
+	}
+
 } // namespace polybob
