@@ -35,6 +35,20 @@ void TestArgParse(CBobTest &BobTest)
 		EXPECT_EQ(Ok, true);
 		EXPECT_STREQ(aError, "");
 	}
+
+	{
+		CBobResult Result("foo \"bar", "ss");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, false);
+		EXPECT_STREQ(aError, "Expected closing quote (\") but got end of input");
+	}
+
+	{
+		CBobResult Result("foo \\\"bar", "ss");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, true);
+		EXPECT_STREQ(aError, "");
+	}
 }
 
 int main()

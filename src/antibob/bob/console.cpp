@@ -118,20 +118,61 @@ void CBobResult::ParseParams()
 bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 {
 	m_NumArgs = 0;
+	if(pError && ErrorSize)
+		pError[0] = '\0';
 	const int LineLen = str_length(m_aRawArgs);
 	int k = 0;
 	bool IsRest = false;
+	bool IsQuoted = false;
 	for(int i = 0; i < LineLen; i++)
 	{
 		if(m_NumArgs < m_vParams.size())
 			if(m_vParams[m_NumArgs].m_Type == CBobParam::EType::REST)
 				IsRest = true;
 
+		bool Escaped = i && m_aRawArgs[i - 1] == '\\';
+		if(m_aRawArgs[i] == '"' && !IsRest)
+		{
+			if(Escaped)
+			{
+				// overwrite \ with "
+				k = std::max(0, k - 1);
+			}
+			else if(k == 0)
+			{
+				// start of string
+				IsQuoted = true;
+				continue;
+			}
+			else if(IsQuoted)
+			{
+				// end of string
+				IsQuoted = false;
+				m_aaArgs[m_NumArgs][k++] = '\0';
+				m_NumArgs++;
+				k = 0;
+				continue;
+			}
+		}
+		// last character of input
+		if(i + 1 == LineLen)
+		{
+			// missing closing "
+			if(IsQuoted)
+			{
+				if(pError)
+				{
+					str_copy(pError, "Expected closing quote (\") but got end of input", ErrorSize);
+				}
+				return false;
+			}
+		}
+
 		// skip spaces between args
 		if(m_aRawArgs[i] == ' ' && k == 0)
 			continue;
 
-		if(m_aRawArgs[i] == ' ' && !IsRest)
+		if(m_aRawArgs[i] == ' ' && !IsRest && !IsQuoted)
 		{
 			m_aaArgs[m_NumArgs][k++] = '\0';
 			m_NumArgs++;
