@@ -71,6 +71,7 @@ public:
 	void Punish(int ClientId, const char *pReason, int TimeInMinutes, CPendingPunish::EPunish Punish);
 
 	// register suspicious activity detection
+	// that will show up in the "dump_antibot" rcon command
 	//
 	// ClientId - players client id
 	// EventId - event id should be defined in detection_events.h like BOB_DE_SAMPLE

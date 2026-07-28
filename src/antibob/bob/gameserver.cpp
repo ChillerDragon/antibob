@@ -1,5 +1,6 @@
 #include "gameserver.h"
 
+#include <bob/antibot_player.h>
 #include <bob/cmdline_arguments.h>
 #include <bob/console.h>
 #include <bob/network.h>
@@ -108,7 +109,14 @@ void CGameServer::Punish(int ClientId, const char *pReason, int TimeInMinutes, C
 
 void CGameServer::Detect(int ClientId, int EventId, const char *pInfo, int Confidence)
 {
-	m_apPlayers[ClientId]->Detect(EventId, pInfo, Confidence);
+	if(ClientId < 0 || ClientId >= MAX_CLIENTS)
+		return;
+	CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
+	if(!pPlayer)
+		return;
+
+	CDetectionEvent::PushAndStack(pPlayer->m_DetectionEvents, CDetectionEvent(EventId, pInfo, Confidence));
+
 	if(Config()->m_AbLogEvents)
 		LogEvent(ClientId, EventId, pInfo);
 }

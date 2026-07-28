@@ -172,11 +172,6 @@ void CAntibotPlayer::DumpInputHistory()
 	}
 }
 
-void CAntibotPlayer::Detect(int EventId, const char *pInfo, int Confidence)
-{
-	CDetectionEvent::PushAndStack(m_DetectionEvents, CDetectionEvent(EventId, pInfo, Confidence));
-}
-
 void CAntibotPlayer::OnTick()
 {
 }

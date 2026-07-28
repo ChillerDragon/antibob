@@ -211,10 +211,6 @@ public:
 
 	std::unordered_map<int, CDetectionEvent> m_DetectionEvents;
 
-	// registers a detection event
-	// that will show up in the "dump_antibot" rcon command
-	void Detect(int EventId, const char *pInfo = nullptr, int Confidence = 90);
-
 	//
 	// Add new member variables for forks below this comment to avoid merge conflicts.
 	//
