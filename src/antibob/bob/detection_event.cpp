@@ -43,6 +43,23 @@ const char *CDetectionEvent::ToString() const
 	return EventToStr(m_EventId);
 }
 
+std::optional<int> CDetectionEvent::EventNameToId(const char *pName)
+{
+	if(!pName || pName[0] == '\0')
+	{
+		return std::nullopt;
+	}
+#define MACRO_DETECTION_EVENT(EnumName, StrName, Desc) \
+	else if(str_comp(pName, StrName) == 0) \
+	{ \
+		return EnumName; \
+	}
+#include <bob/detection_events.h>
+#undef MACRO_DETECTION_EVENT
+
+	return std::nullopt;
+}
+
 const char *CDetectionEvent::EventToStr(int EventId)
 {
 	switch(EventId)

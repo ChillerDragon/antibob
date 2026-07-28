@@ -1,10 +1,14 @@
 #include <bob/antibob.h>
 #include <bob/antibot_player.h>
+#include <bob/detection_event.h>
+#include <bob/pending_punish.h>
 #include <bob/version.h>
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system/str.h>
 #include <polybob/engine/shared/jobs.h>
+
+#include <optional>
 
 void CAntibob::ComTest(CBobResult *pResult, void *pUserData)
 {
@@ -103,6 +107,45 @@ void CAntibob::ComKickEvents(CBobResult *pResult, void *pUserData)
 		Matches++;
 	}
 	log_info("antibot", "kicked %d players based on matching events", Matches);
+}
+
+void CAntibob::ComAutoPunishEvent(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+
+	const char *pName = pResult->GetString(0);
+	const char *pPunishType = pResult->GetString(1);
+
+	std::optional<int> CheckId = CDetectionEvent::EventNameToId(pName);
+	if(!CheckId.has_value())
+	{
+		log_info("antibot", "ERROR: event with name '%s' not found!", pName);
+		return;
+	}
+	int EventId = CheckId.value();
+
+	CEventPunishConfig *pCfg = &pSelf->m_PunishController.m_aConfigs[EventId];
+
+	if(str_comp(pPunishType, "off") == 0)
+	{
+		log_info("antibot", "successfully disabled auto punish for events of type '%s'", pName);
+		pCfg->m_Punish = CEventPunishConfig::EPunish::OFF;
+	}
+	else if(str_comp(pPunishType, "kick") == 0)
+	{
+		log_info("antibot", "successfully enabled auto kick for events of type '%s'", pName);
+		pCfg->m_Punish = CEventPunishConfig::EPunish::KICK;
+	}
+	else if(str_comp(pPunishType, "ban") == 0)
+	{
+		log_info("antibot", "successfully enabled auto ban for events of type '%s'", pName);
+		pCfg->m_Punish = CEventPunishConfig::EPunish::BAN;
+	}
+	else
+	{
+		log_info("antibot", "ERROR: invalid punish type '%s' possible values are: off, kick, ban", pPunishType);
+		return;
+	}
 }
 
 void CAntibob::ComVersion(CBobResult *pResult, void *pUserData)

@@ -4,6 +4,8 @@
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
+#include <algorithm>
+
 using namespace polybob;
 
 CPendingPunish::CPendingPunish(int ClientId, const NETADDR &Ip, const char *pReason, int TimeInMinutes, EPunish Punish) :
@@ -97,4 +99,17 @@ void CPunishController::ListPendingPunishments() const
 	log_info("antibob", "Next punish in %d seconds:", SecondsLeft);
 	for(const auto &Punish : m_vPendingPunishments)
 		log_info("antibob", "  cid=%d reason='%s' name='%s'", Punish.m_ClientId, Punish.m_aReason, m_pAntibob->ClientName(Punish.m_ClientId));
+}
+
+bool CPunishController::HasPendingPunishments(int ClientId) const
+{
+	return std::any_of(m_vPendingPunishments.begin(), m_vPendingPunishments.end(),
+		[ClientId](const auto &Punish) {
+			return Punish.m_ClientId == ClientId;
+		});
+}
+
+int CPunishController::SecondsUntilNextPunish() const
+{
+	return (m_NextPunishTime - time_get()) / time_freq();
 }
