@@ -233,6 +233,11 @@ void CAntibob::RconEvents(int ClientId)
 		if(Event.m_aInfo[0])
 			LogInfo("   %s", Event.m_aInfo);
 	}
+
+	if(m_PunishController.HasPendingPunishments(ClientId))
+	{
+		log_info("antibot", "  (scheduled punish will trigger in %d seconds per ab_kick_interval)", m_PunishController.SecondsUntilNextPunish());
+	}
 }
 
 //

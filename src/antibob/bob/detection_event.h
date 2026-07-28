@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 #include <unordered_map>
 
 enum
@@ -50,6 +51,9 @@ public:
 
 	// event id represented as human readable string
 	const char *ToString() const;
+
+	// find event id based on the short name
+	static std::optional<int> EventNameToId(const char *pName);
 
 	// turns event id into short friendly name
 	static const char *EventToStr(int EventId);

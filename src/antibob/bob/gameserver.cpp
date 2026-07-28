@@ -3,6 +3,7 @@
 #include <bob/antibot_player.h>
 #include <bob/cmdline_arguments.h>
 #include <bob/console.h>
+#include <bob/detection_event.h>
 #include <bob/network.h>
 #include <bob/pending_punish.h>
 #include <polybob/base/log.h>
@@ -111,6 +112,12 @@ void CGameServer::Detect(int ClientId, int EventId, const char *pInfo, int Confi
 {
 	if(ClientId < 0 || ClientId >= MAX_CLIENTS)
 		return;
+	if(EventId < 0 || EventId >= NUM_BOB_DETECTION_EVENTS)
+	{
+		// maybe even assert here?
+		log_error("antibot", "invalid event id %d", EventId);
+		return;
+	}
 	CAntibotPlayer *pPlayer = m_apPlayers[ClientId];
 	if(!pPlayer)
 		return;
@@ -119,6 +126,19 @@ void CGameServer::Detect(int ClientId, int EventId, const char *pInfo, int Confi
 
 	if(Config()->m_AbLogEvents)
 		LogEvent(ClientId, EventId, pInfo);
+
+	const CEventPunishConfig &Cfg = m_PunishController.m_aConfigs[EventId];
+	switch(Cfg.m_Punish)
+	{
+	case CEventPunishConfig::EPunish::OFF:
+		break;
+	case CEventPunishConfig::EPunish::KICK:
+		m_PunishController.SchedulePunish(ClientId, "antibot", 0, CPendingPunish::EPunish::KICK);
+		break;
+	case CEventPunishConfig::EPunish::BAN:
+		m_PunishController.SchedulePunish(ClientId, "antibot", 10, CPendingPunish::EPunish::BAN);
+		break;
+	}
 }
 
 void CGameServer::LogEvent(int ClientId, int EventId, const char *pInfo)
