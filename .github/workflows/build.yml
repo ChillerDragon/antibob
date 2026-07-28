@@ -84,9 +84,10 @@ jobs:
     - name: Test antibot
       run: |
           cd build
-          # TODO: without "cmake .." it says "No tests were found!!!"
+          # TODO: without running cmake it says "No tests were found!!!"
           #       the entire test code is super janky
-          cmake ..
+          #       anyways we use this opportunity to pass the ctest flags
+          cmake .. -DCMAKE_CTEST_ARGUMENTS="--rerun-failed;--output-on-failure"
           make test
 
     - name: Run server
