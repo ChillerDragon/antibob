@@ -81,6 +81,14 @@ jobs:
           cmake ..
           make
 
+    - name: Test antibot
+      run: |
+          cd build
+          # TODO: without "cmake .." it says "No tests were found!!!"
+          #       the entire test code is super janky
+          cmake ..
+          make test
+
     - name: Run server
       run: |
         cp build/libantibot.so ../ddnet/build
