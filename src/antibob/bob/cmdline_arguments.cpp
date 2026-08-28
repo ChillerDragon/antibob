@@ -5,11 +5,24 @@
 
 #include <cstdio>
 
+#if defined(CONF_FAMILY_WINDOWS)
+#include <windows.h>
+#include <shellapi.h>
+#endif
+
 using polybob::str_copy;
 using polybob::str_length;
 
 int CCmdlineArguments::GetNumArguments()
 {
+#if defined(CONF_FAMILY_WINDOWS)
+	int NumArgs = 0;
+	LPWSTR *szArglist = CommandLineToArgvW(GetCommandLineW(), &NumArgs);
+	if (szArglist != nullptr) {
+		LocalFree(szArglist);
+	}
+	return NumArgs;
+#else
 	FILE *pCmdline = fopen("/proc/self/cmdline", "rb");
 	char *pArg = nullptr;
 	size_t Size = 0;
@@ -19,10 +32,28 @@ int CCmdlineArguments::GetNumArguments()
 	free(pArg);
 	fclose(pCmdline);
 	return NumArgs;
+#endif
 }
 
 char **CCmdlineArguments::AllocateArguments()
 {
+#if defined(CONF_FAMILY_WINDOWS)
+	int NumArgs = 0;
+	LPWSTR *szArglist = CommandLineToArgvW(GetCommandLineW(), &NumArgs);
+	if (!szArglist)
+		return nullptr;
+
+	char **ppArguments = (char **)malloc(sizeof(char *) * NumArgs);
+	for(int i = 0; i < NumArgs; i++)
+	{
+		int Size = WideCharToMultiByte(CP_UTF8, 0, szArglist[i], -1, nullptr, 0, nullptr, nullptr);
+		ppArguments[i] = (char *)malloc(Size);
+		WideCharToMultiByte(CP_UTF8, 0, szArglist[i], -1, ppArguments[i], Size, nullptr, nullptr);
+	}
+
+	LocalFree(szArglist);
+	return ppArguments;
+#else
 	char **ppArguments = (char **)malloc(sizeof(const char *) * Num());
 	FILE *pCmdline = fopen("/proc/self/cmdline", "rb");
 	char *pArg = nullptr;
@@ -37,6 +68,7 @@ char **CCmdlineArguments::AllocateArguments()
 	free(pArg);
 	fclose(pCmdline);
 	return ppArguments;
+#endif
 }
 
 void CCmdlineArguments::FreeArguments(char **ppArguments, int Num)

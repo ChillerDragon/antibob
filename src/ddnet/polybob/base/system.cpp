@@ -2,6 +2,7 @@
 
 #include "lock.h"
 #include "logger.h"
+#include "windows.h"
 
 #include <sys/types.h>
 

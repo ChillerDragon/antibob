@@ -1,14 +1,35 @@
-#include <dirent.h>
 #include <polybob/base/detect.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 #include <polybob/base/system/fs.h>
 #include <polybob/base/system/str.h>
+#include <polybob/base/windows.h>
 #include <sys/stat.h>
+
+#if defined(CONF_FAMILY_WINDOWS)
+#include <Shlwapi.h>
+#else
+#include <dirent.h>
 #include <unistd.h>
+#endif
 
 namespace polybob
 {
+#if defined(CONF_FAMILY_WINDOWS)
+	static inline time_t filetime_to_unixtime(LPFILETIME filetime)
+	{
+		time_t t;
+		ULARGE_INTEGER li;
+		li.LowPart = filetime->dwLowDateTime;
+		li.HighPart = filetime->dwHighDateTime;
+
+		li.QuadPart /= 10000000; // 100ns to 1s
+		li.QuadPart -= 11644473600LL; // Windows epoch is in the past
+
+		t = li.QuadPart;
+		return t == (time_t)li.QuadPart ? t : (time_t)-1;
+	}
+#endif
 
 	void fs_listdir(const char *dir, FS_LISTDIR_CALLBACK cb, int type, void *user)
 	{
