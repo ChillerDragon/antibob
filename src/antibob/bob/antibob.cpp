@@ -498,7 +498,7 @@ void CAntibob::OnKnownCheaterJoin(CAntibotPlayer *pPlayer)
 	char aName[512];
 
 	CBobConsole::EscapeRconString(aName, ClientName(pPlayer->m_ClientId));
-	str_format(aBuf, sizeof(aBuf), "say \"[antibot] player '%s' was caught cheating already.\"", aName);
+	str_format(aBuf, sizeof(aBuf), "say \"[antibot] player '%s' has previously been caught cheating.\"", aName);
 
 	if(!m_BobAbi.Rcon(aBuf))
 		log_error("antibot", "server does not support antibob rcon extension");
