@@ -1,6 +1,11 @@
 #include <polybob/base/detect.h>
 #include <polybob/base/system/shell.h>
+
+#if defined(CONF_FAMILY_WINDOWS)
+#include <process.h>
+#else
 #include <unistd.h>
+#endif
 
 namespace polybob
 {

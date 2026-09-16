@@ -1,13 +1,22 @@
 #include "antibob_abi.h"
 
-#include <dlfcn.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
+#if defined(CONF_FAMILY_WINDOWS)
+#include <windows.h>
+#include <libloaderapi.h>
+#define LOOKUP_SYM(name) \
+	m_pfn##name = (F##name)GetProcAddress(GetModuleHandleA(NULL), "Antibob" #name); \
+	if(!m_pfn##name) \
+		log_error("antibot", "symbol 'Antibob" #name "' not found");
+#else
+#include <dlfcn.h>
 #define LOOKUP_SYM(name) \
 	m_pfn##name = (F##name)dlsym(RTLD_DEFAULT, "Antibob" #name); \
 	if(!m_pfn##name) \
 		log_error("antibot", "symbol 'Antibob" #name "' not found");
+#endif
 
 void CAntibobAbi::OnInit()
 {
