@@ -4,7 +4,6 @@
 #include <polybob/base/system.h>
 
 #include <cstdio>
-
 #include <string>
 #include <vector>
 
