@@ -20,9 +20,18 @@
 #   improve the readability of the code.
 # performance-noexcept-*
 #   Exceptions may be disabled later, adding noexcept is just noise
+# portability-avoid-pragma-once
+#   Only exists in newer clang-tidy versions, we use pragma once everywhere.
+# readability-inconsistent-ifelse-braces
+#   Only exists in newer clang-tidy versions, our style allows single
+#   statements without braces (like ddnet which disables
+#   readability-braces-around-statements).
+# bugprone-unchecked-string-to-number-conversion
+#   Only exists in newer clang-tidy versions, we use atoi everywhere
+#   without error checking, like ddnet's str_toint.
 
 HeaderFilterRegex: '.*'
-ExcludeHeaderFilterRegex: '(external/|generated/)'
+ExcludeHeaderFilterRegex: '(external/|generated/|polybob/)'
 
 Checks: >
   -*,
@@ -45,6 +54,7 @@ Checks: >
   -bugprone-switch-missing-default-case,
   -bugprone-unchecked-optional-access,
   -bugprone-unhandled-self-assignment,
+  -bugprone-unchecked-string-to-number-conversion,
   clang-analyzer-*,
   -clang-analyzer-optin.cplusplus.UninitializedObject,
   -clang-analyzer-optin.cplusplus.VirtualCall,
@@ -96,6 +106,7 @@ Checks: >
   -readability-function-size,
   -readability-identifier-length,
   -readability-implicit-bool-conversion,
+  -readability-inconsistent-ifelse-braces,
   -readability-isolate-declaration,
   -readability-magic-numbers,
   -readability-math-missing-parentheses,
@@ -111,6 +122,7 @@ Checks: >
   -performance-no-int-to-ptr,
   -performance-noexcept-*,
   portability-*,
+  -portability-avoid-pragma-once,
 
 WarningsAsErrors:
   readability-identifier-naming,

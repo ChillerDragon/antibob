@@ -79,7 +79,7 @@ public:
 	void Detect(int ClientId, int EventId, const char *pInfo = nullptr, int Confidence = 90);
 
 private:
-	void LogEvent(int ClientId, int EventId, const char *pInfo = nullptr);
+	void LogEvent(int ClientId, int EventId, const char *pInfo = nullptr) const;
 
 public:
 	//
@@ -93,8 +93,8 @@ public:
 	bool Ban(int ClientId, int TimeInMinutes, const char *pReason = nullptr);
 	bool Ban(const NETADDR &Ip, int TimeInMinutes, const char *pReason = nullptr);
 
-	void LogInfo(const char *pFormat, ...)
+	void LogInfo(const char *pFormat, ...) const
 		GNUC_ATTRIBUTE((format(printf, 2, 3)));
-	void LogError(const char *pFormat, ...)
+	void LogError(const char *pFormat, ...) const
 		GNUC_ATTRIBUTE((format(printf, 2, 3)));
 };

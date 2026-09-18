@@ -85,7 +85,7 @@ void CAntibob::ComKickEvents(CBobResult *pResult, void *pUserData)
 		bool MissingEvents = false;
 		for(int EventId : vEventIds)
 		{
-			if(pPlayer->m_DetectionEvents.count(EventId))
+			if(pPlayer->m_DetectionEvents.contains(EventId))
 				continue;
 
 			MissingEvents = true;

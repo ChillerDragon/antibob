@@ -4,14 +4,14 @@
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
-void ExpectEscape(CBobTest &BobTest, const char *pInput, const char *pEscaped)
+static void ExpectEscape(CBobTest &BobTest, const char *pInput, const char *pEscaped)
 {
 	char aEscaped[512];
 	CBobConsole::EscapeRconString(aEscaped, pInput);
 	EXPECT_STREQ(aEscaped, pEscaped);
 }
 
-void TestArgParse(CBobTest &BobTest)
+static void TestArgParse(CBobTest &BobTest)
 {
 	bool Ok;
 	char aError[512];
