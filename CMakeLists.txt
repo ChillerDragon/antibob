@@ -109,6 +109,7 @@ execute_process(
 
 # Create git revision file
 file(WRITE ${CMAKE_BINARY_DIR}/generated/git_revision.cpp
+    "#include <bob/version.h>\n"
     "const char *BOB_GIT_SHORTREV_HASH = \"${GIT_HASH}\";"
 )
 
