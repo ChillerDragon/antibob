@@ -5,37 +5,66 @@
 
 #include <cstdio>
 
+#include <string>
+#include <vector>
+
 using polybob::str_copy;
 using polybob::str_length;
 
 int CCmdlineArguments::GetNumArguments()
 {
 	FILE *pCmdline = fopen("/proc/self/cmdline", "rb");
-	char *pArg = nullptr;
-	size_t Size = 0;
-	int NumArgs = 0;
-	while(getdelim(&pArg, &Size, 0, pCmdline) != -1)
-		NumArgs++;
-	free(pArg);
+	if(!pCmdline)
+		return 0;
+	char aBuf[4096];
+	size_t Read = fread(aBuf, 1, sizeof(aBuf), pCmdline);
 	fclose(pCmdline);
+	int NumArgs = 0;
+	for(size_t i = 0; i < Read; i++)
+		if(aBuf[i] == '\0')
+			NumArgs++;
 	return NumArgs;
 }
 
 char **CCmdlineArguments::AllocateArguments()
 {
-	char **ppArguments = (char **)malloc(sizeof(const char *) * Num());
 	FILE *pCmdline = fopen("/proc/self/cmdline", "rb");
-	char *pArg = nullptr;
-	size_t Size = 0;
-	int Arg = 0;
-	while(getdelim(&pArg, &Size, 0, pCmdline) != -1)
+	if(!pCmdline)
+		return nullptr;
+
+	std::string Cmdline;
+	char aBuf[4096];
+	size_t Read;
+	while(!feof(pCmdline) && !ferror(pCmdline))
 	{
-		ppArguments[Arg] = (char *)malloc(str_length(pArg) + 2);
-		str_copy(ppArguments[Arg], pArg, str_length(pArg) + 1);
-		Arg++;
+		Read = fread(aBuf, 1, sizeof(aBuf), pCmdline);
+		if(Read == 0)
+			break;
+		Cmdline.append(aBuf, Read);
 	}
-	free(pArg);
 	fclose(pCmdline);
+
+	if(Cmdline.empty())
+		return nullptr;
+
+	std::vector<const char *> vArgs;
+	size_t Start = 0;
+	for(size_t i = 0; i < Cmdline.size(); i++)
+	{
+		if(Cmdline[i] == '\0')
+		{
+			vArgs.push_back(Cmdline.c_str() + Start);
+			Start = i + 1;
+		}
+	}
+
+	char **ppArguments = (char **)malloc(sizeof(const char *) * vArgs.size());
+	for(size_t i = 0; i < vArgs.size(); i++)
+	{
+		ppArguments[i] = (char *)calloc(str_length(vArgs[i]) + 2, 1);
+		str_copy(ppArguments[i], vArgs[i], str_length(vArgs[i]) + 1);
+	}
+	m_NumArgs = vArgs.size();
 	return ppArguments;
 }
 
@@ -55,8 +84,12 @@ CCmdlineArguments::~CCmdlineArguments()
 void CCmdlineArguments::Print()
 {
 	log_info("antibot", "num arguments %d", Num());
+	const char *const *ppArguments = All();
+	if(!ppArguments)
+		return;
 	for(int i = 0; i < Num(); i++)
-		log_info("antibot", " arg: %s", All()[i]);
+		// NOLINTNEXTLINE(clang-analyzer-core.CallAndMessage) the analyzer loses track of the malloc'ed argument array between the separate /proc/self/cmdline reads
+		log_info("antibot", " arg: %s", ppArguments[i]);
 }
 
 int CCmdlineArguments::Num()

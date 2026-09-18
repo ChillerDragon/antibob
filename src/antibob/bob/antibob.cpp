@@ -352,7 +352,7 @@ bool CAntibob::IsAntibobChatCommand(int ClientId, const char *pMessage)
 	aCommand[i] = '\0';
 	if(pMessage[i])
 		pArgs = str_skip_whitespaces_const(pMessage + i);
-	if(OnChatCommand(ClientId, aCommand, ""))
+	if(OnChatCommand(ClientId, aCommand, pArgs))
 		return true;
 	return false;
 }
@@ -421,7 +421,6 @@ bool CAntibob::StartComputeJob(int RunnerClientId, CAntibotPlayer *pPlayer, CPla
 	if(pPlayer->m_vpComputeJobs.size() > 10)
 		return false;
 
-	int ClientId = pPlayer->GetCid();
 	Request.m_RunnerClientId = RunnerClientId;
 	Request.m_RunnerUniqueClientId = 0;
 	if(RunnerClientId >= 0 && RunnerClientId < ANTIBOT_MAX_CLIENTS)
@@ -673,6 +672,9 @@ void CAntibob::OnEngineClientJoin(int ClientId)
 
 void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 {
+	if(ClientId < 0 || ClientId >= ANTIBOT_MAX_CLIENTS)
+		return;
+
 	TrackBan(ClientId, pReason);
 
 	if(m_Network.m_aClients[ClientId].m_State >= CAntibotClient::EState::READY)

@@ -141,7 +141,7 @@ void CGameServer::Detect(int ClientId, int EventId, const char *pInfo, int Confi
 	}
 }
 
-void CGameServer::LogEvent(int ClientId, int EventId, const char *pInfo)
+void CGameServer::LogEvent(int ClientId, int EventId, const char *pInfo) const
 {
 	// TODO: this filename will conflict when multiple servers try to write to it
 	//       ideally the filename would include the port of the server
@@ -206,7 +206,7 @@ bool CGameServer::Ban(int ClientId, int TimeInMinutes, const char *pReason)
 	return false;
 }
 
-void CGameServer::LogInfo(const char *pFormat, ...)
+void CGameServer::LogInfo(const char *pFormat, ...) const
 {
 	va_list Args;
 	va_start(Args, pFormat);
@@ -217,7 +217,7 @@ void CGameServer::LogInfo(const char *pFormat, ...)
 	m_pData->m_pfnLog(aBuf, m_pData->m_pUser);
 }
 
-void CGameServer::LogError(const char *pFormat, ...)
+void CGameServer::LogError(const char *pFormat, ...) const
 {
 	va_list Args;
 	va_start(Args, pFormat);
