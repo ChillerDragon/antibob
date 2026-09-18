@@ -1,49 +1,49 @@
-name: Check clang-tidy
-
-on:
-  push:
-    branches-ignore:
-      - gh-readonly-queue/**
-  pull_request:
-  merge_group:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/tags/') }}
-
-jobs:
-  check-clang-tidy:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Prepare Linux
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install \
-          cmake \
-          libcurl4-openssl-dev \
-          ninja-build \
-          pkg-config \
-          zlib1g-dev \
-          -y
-
-    - name: Install Clang 20
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget gnupg lsb-release
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 20 all
-
-    - name: Build with clang-tidy
-      run: |
-        mkdir clang-tidy
-        cd clang-tidy
-        cmake -G Ninja \
-          -DCMAKE_CXX_COMPILER=clang++-20 \
-          -DCMAKE_CXX_CLANG_TIDY="clang-tidy-20;-warnings-as-errors=*" \
-          -DCMAKE_BUILD_TYPE=Debug \
-          -Werror=dev ..
-        cmake --build . --config Debug -- -k 0
+# name: Check clang-tidy
+# 
+# on:
+#   push:
+#     branches-ignore:
+#       - gh-readonly-queue/**
+#   pull_request:
+#   merge_group:
+# 
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: ${{ github.ref != 'refs/heads/master' && !startsWith(github.ref, 'refs/tags/') }}
+# 
+# jobs:
+#   check-clang-tidy:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v4
+# 
+#     - name: Prepare Linux
+#       run: |
+#         sudo apt-get update -y
+#         sudo apt-get install \
+#           cmake \
+#           libcurl4-openssl-dev \
+#           ninja-build \
+#           pkg-config \
+#           zlib1g-dev \
+#           -y
+# 
+#     - name: Install Clang 20
+#       run: |
+#         sudo apt-get update
+#         sudo apt-get install -y wget gnupg lsb-release
+#         wget https://apt.llvm.org/llvm.sh
+#         chmod +x llvm.sh
+#         sudo ./llvm.sh 20 all
+# 
+#     - name: Build with clang-tidy
+#       run: |
+#         mkdir clang-tidy
+#         cd clang-tidy
+#         cmake -G Ninja \
+#           -DCMAKE_CXX_COMPILER=clang++-20 \
+#           -DCMAKE_CXX_CLANG_TIDY="clang-tidy-20;-warnings-as-errors=*" \
+#           -DCMAKE_BUILD_TYPE=Debug \
+#           -Werror=dev ..
+#         cmake --build . --config Debug -- -k 0

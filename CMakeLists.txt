@@ -115,19 +115,13 @@ file(WRITE ${CMAKE_BINARY_DIR}/generated/git_revision.cpp
 
 set(DEPENDENCIES ${DEPENDENCIES} ${CMAKE_BINARY_DIR}/generated/git_revision.cpp)
 
-# Vendored polybob code is not checked by clang-tidy
-add_library(polybob STATIC
+add_library(antibot SHARED
     ${POLYBOB_SRCS}
+    ${ANTIBOB_SRCS}
     ${DEPENDENCIES}
 )
-set_target_properties(polybob PROPERTIES POSITION_INDEPENDENT_CODE ON)
-set_target_properties(polybob PROPERTIES CXX_CLANG_TIDY "")
 
-add_library(antibot SHARED
-    ${ANTIBOB_SRCS}
-)
-
-target_link_libraries(antibot polybob z)
+target_link_libraries(antibot z)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
