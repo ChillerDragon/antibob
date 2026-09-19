@@ -3,12 +3,6 @@
 #include <cstdarg>
 #include <cstdint>
 
-#ifdef __GNUC__
-#define GNUC_ATTRIBUTE(x) __attribute__(x)
-#else
-#define GNUC_ATTRIBUTE(x)
-#endif
-
 enum LEVEL : char
 {
 	LEVEL_ERROR,
@@ -24,8 +18,6 @@ enum LEVEL : char
 #define log_debug(sys, ...) log_log(LEVEL_DEBUG, sys, __VA_ARGS__)
 #define log_trace(sys, ...) log_log(LEVEL_TRACE, sys, __VA_ARGS__)
 
-void log_log(LEVEL level, const char *sys, const char *fmt, ...)
-	GNUC_ATTRIBUTE((format(printf, 3, 4)));
+[[gnu::format(printf, 3, 4)]] void log_log(LEVEL level, const char *sys, const char *fmt, ...);
 
-void log_log_v(LEVEL level, const char *sys, const char *fmt, va_list args)
-	GNUC_ATTRIBUTE((format(printf, 3, 0)));
+[[gnu::format(printf, 3, 0)]] void log_log_v(LEVEL level, const char *sys, const char *fmt, va_list args);
