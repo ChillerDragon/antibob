@@ -1,4 +1,5 @@
 #include "bobtest.h"
+#include "server_mock/log.h"
 
 #include <bob/detection_event.h>
 

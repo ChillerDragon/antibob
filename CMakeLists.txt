@@ -150,6 +150,7 @@ endif()
 # compile test binaries
 file(GLOB BOBTEST_FRAMEWORK_SRCS
     src/test/*.cpp
+    src/test/server_mock/*.cpp
 )
 
 file(GLOB_RECURSE TESTS_SRCS
