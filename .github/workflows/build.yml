@@ -96,3 +96,8 @@ jobs:
         cd ../ddnet/build
         ./DDNet-Server shutdown
 
+    - name: Run integration test
+      run: |
+        export PATH="$HOME/.local/bin/:$PATH"
+        echo ~/.local/bin/ >> $GITHUB_PATH
+        ./scripts/integration_test.sh
