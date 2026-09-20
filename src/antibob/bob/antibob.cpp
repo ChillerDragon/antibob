@@ -71,7 +71,11 @@ void CAntibob::TrackBan(int ClientId, const char *pReason)
 	// TODO: the ClientName is an empty string
 	//       https://github.com/ddnet/ddnet/issues/10428
 
-	log_info("antibot", "player got banned ip=%s name='%s'", aAddr, pPlayer->Name());
+	// TODO: use log_info() instead of LogInfoDefer()
+	//       once it no longer leaks the ip to moderators on ban
+	//       https://github.com/ddnet/ddnet/issues/12897
+
+	LogInfoDefer("player got banned ip=%s name='%s'", aAddr, pPlayer->Name());
 
 	if(!Config()->m_AbTrackBans)
 		return;
@@ -596,6 +600,7 @@ void CAntibob::OnHookAttach(int ClientId, bool Player)
 
 void CAntibob::OnEngineTick()
 {
+	FlushDeferredLogs();
 	m_PunishController.OnTick();
 
 	for(CAntibotPlayer *pPlayer : m_apPlayers)
@@ -672,6 +677,7 @@ void CAntibob::OnEngineClientJoin(int ClientId)
 
 void CAntibob::OnEngineClientDrop(int ClientId, const char *pReason)
 {
+	// WARNING: only use LogInfoDefer() during disconnect
 	if(ClientId < 0 || ClientId >= ANTIBOT_MAX_CLIENTS)
 		return;
 

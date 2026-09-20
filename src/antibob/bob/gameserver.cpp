@@ -227,3 +227,21 @@ void CGameServer::LogError(const char *pFormat, ...) const
 
 	m_pData->m_pfnLog(aBuf, m_pData->m_pUser);
 }
+
+void CGameServer::LogInfoDefer(const char *pFormat, ...)
+{
+	va_list Args;
+	va_start(Args, pFormat);
+	char aBuf[4000];
+	str_format_v(aBuf, sizeof(aBuf), pFormat, Args);
+	va_end(Args);
+
+	m_vPendingLogInfos.emplace_back(aBuf);
+}
+
+void CGameServer::FlushDeferredLogs()
+{
+	for(const auto &Log : m_vPendingLogInfos)
+		LogInfo("%s", Log.c_str());
+	m_vPendingLogInfos.clear();
+}

@@ -119,6 +119,11 @@ public:
 	// in ddnet code base
 	// only called for clients that properly joined first
 	// this is not called for clients that abort during the connection phase
+	//
+	// WARNING: do not use LogInfo() or log_info() in this method!
+	//          any code executed during disconnect will be leaked to moderators
+	//          on ban if it uses the regular loggers!
+	//          Use LogInfoDefer() instead!
 	virtual void OnPlayerDisconnect(CAntibotPlayer *pPlayer, const char *pReason) {}
 
 	virtual void OnKnownCheaterJoin(CAntibotPlayer *pPlayer);

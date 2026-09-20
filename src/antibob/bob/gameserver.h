@@ -81,6 +81,8 @@ public:
 private:
 	void LogEvent(int ClientId, int EventId, const char *pInfo = nullptr) const;
 
+	std::vector<std::string> m_vPendingLogInfos;
+
 public:
 	//
 	// antibot callbacks
@@ -97,4 +99,16 @@ public:
 		GNUC_ATTRIBUTE((format(printf, 2, 3)));
 	void LogError(const char *pFormat, ...) const
 		GNUC_ATTRIBUTE((format(printf, 2, 3)));
+
+	// Same as LogInfo() but it will be delayed until the beginning of the next tick
+	// this is a hack to bypass the logscope
+	// use this as a workaround of the ddnet logscope bugs
+	// if you do not want to leak this log message to moderators
+	// when they use the ban command
+	// see this issue for more details
+	// https://github.com/ddnet/ddnet/issues/12897
+	void LogInfoDefer(const char *pFormat, ...)
+		GNUC_ATTRIBUTE((format(printf, 2, 3)));
+
+	void FlushDeferredLogs();
 };
