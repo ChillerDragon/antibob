@@ -1,15 +1,8 @@
 #pragma once
 
-#include <polybob/base/log.h> // for LEVEL enum
+// yea this a bit cursed :D
+// we already have the signature in polybob
+// so to avoid duplicated symbols we just include that
+// but there is a real implementation in the server mock source file
 
-#include <cstdarg>
-#include <cstdint>
-
-#define log_error(sys, ...) log_log(LEVEL_ERROR, sys, __VA_ARGS__)
-#define log_warn(sys, ...) log_log(LEVEL_WARN, sys, __VA_ARGS__)
-#define log_info(sys, ...) log_log(LEVEL_INFO, sys, __VA_ARGS__)
-#define log_debug(sys, ...) log_log(LEVEL_DEBUG, sys, __VA_ARGS__)
-#define log_trace(sys, ...) log_log(LEVEL_TRACE, sys, __VA_ARGS__)
-
-[[gnu::format(printf, 3, 4)]] void log_log(LEVEL level, const char *sys, const char *fmt, ...);
-[[gnu::format(printf, 3, 0)]] void log_log_v(LEVEL level, const char *sys, const char *fmt, va_list args);
+#include <polybob/base/log.h>
