@@ -320,6 +320,51 @@ void CAntibob::OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTi
 	// 	log_info("antibot", "player is walking %s", pInput->m_Direction == -1 ? "left" : "right");
 }
 
+// TODO: allow the antibot module to register own commands here
+//       send the command info to authed players and parse pLine
+//       if it contains the custom command and then call the provided callback
+//       this will allow the antibot module to register more commands than just "antibot" and "dump_antibot"
+
+bool CAntibob::OnRconCmd(int ClientId, const char *pLine)
+{
+	if(!m_pRoundData)
+		return true;
+	if(!m_pRoundData->m_aPlayers[ClientId].m_Authed)
+		return true;
+
+	// TODO: use real rcon parser
+	//       finally extract SplitConsoleStatements()
+	//       from ddnet++ into a own library that can be used here too
+
+	const char *pCmd = str_skip_whitespaces_const(pLine);
+	if(str_startswith(pCmd, "ban "))
+	{
+		char aBanArg[512];
+		str_copy(aBanArg, pCmd + str_length("ban "));
+		int i = 0;
+		while(true)
+		{
+			if(aBanArg[i] == '\0')
+				break;
+			if(aBanArg[i] == ';')
+				break;
+			if(aBanArg[i] == ' ')
+				break;
+			i++;
+		}
+		aBanArg[i] = '\0';
+
+		int VictimId;
+		if(str_toint(aBanArg, &VictimId))
+		{
+			if(!OnRconBan(ClientId, VictimId))
+				return false;
+		}
+	}
+
+	return true;
+}
+
 void CAntibob::ChatCmdAntibot(int ClientId, const char *pArgs)
 {
 	char aBuf[512];

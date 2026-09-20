@@ -68,6 +68,23 @@ public:
 
 	virtual void OnInputNetMessage(int ClientId, int AckGameTick, int PredictionTick, int Size, CNetObj_PlayerInput *pInput);
 
+	// Called when a client sends a rcon command.
+	// This is also called for clients that are NOT authenticated!
+	// pLine is basically a free text field which can be send by any user!
+	// it could be multiple commands chained with semicolons
+	//
+	// return false to drop the message
+	virtual bool OnRconCmd(int ClientId, const char *pLine);
+
+	// WARNING: this method is not reliable AT ALL
+	//          this relies on a super broken rcon command parser
+	//          it does not check if the authed player (here called AdminId)
+	//          even has access to the ban command or not
+	//          and if the authed player runs a command like "say foo;ban 2" it will not be called at all!
+	//
+	// return false to block the ban command
+	virtual bool OnRconBan(int AdminId, int VictimId) { return true; }
+
 	// WARNING: this is not fully implemented yet! Skin changes are not supported yet!
 	//
 	// called when the client sent a new skin info

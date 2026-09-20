@@ -123,6 +123,8 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int Msg
 				Msg = polybob::NETMSG_ENTERGAME;
 			else if(Msg == polybob::protocol7::NETMSG_INPUT)
 				Msg = polybob::NETMSG_INPUT;
+			else if(Msg == polybob::protocol7::NETMSG_RCON_CMD)
+				Msg = polybob::NETMSG_RCON_CMD;
 		}
 
 		if(Msg == polybob::NETMSG_READY)
@@ -160,6 +162,17 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int Msg
 				return false;
 
 			pAntibob->OnInputNetMessage(ClientId, LastAckedSnapshot, IntendedTick, Size, (CNetObj_PlayerInput *)aData);
+		}
+		else if(Msg == polybob::NETMSG_RCON_CMD)
+		{
+			const char *pCmd = Unpacker.GetString();
+			if(!Unpacker.Error())
+			{
+				if(!pAntibob->OnRconCmd(ClientId, pCmd))
+				{
+					return true;
+				}
+			}
 		}
 	}
 	else // game msg
