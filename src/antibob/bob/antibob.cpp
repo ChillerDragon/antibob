@@ -360,6 +360,15 @@ bool CAntibob::OnRconCmd(int ClientId, const char *pLine)
 			if(!OnRconBan(ClientId, VictimId))
 				return false;
 		}
+		else
+		{
+			CAntibotPlayer *pVictim = GetPlayerByIpAddr(aBanArg);
+			if(pVictim)
+			{
+				if(!OnRconBan(ClientId, pVictim->GetCid()))
+					return false;
+			}
+		}
 	}
 
 	return true;

@@ -54,6 +54,7 @@ public:
 	// the unique client ids start at 1 and are never reused during the
 	// runtime of the server
 	CAntibotPlayer *GetPlayerByUniqueClientId(int UniqueClientId);
+	CAntibotPlayer *GetPlayerByIpAddr(const char *pIpAddr);
 
 	const char *ClientName(int ClientId) const { return !m_pRoundData ? "(null)" : m_pRoundData->m_aCharacters[ClientId].m_aName; }
 	bool IsClientReady(int ClientId) const;

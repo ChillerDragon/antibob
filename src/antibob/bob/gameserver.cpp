@@ -9,6 +9,7 @@
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 #include <polybob/base/system/net.h>
+#include <polybob/base/types.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/engine/storage.h>
 #include <polybob/game/generated/protocol.h>
@@ -48,6 +49,23 @@ CAntibotPlayer *CGameServer::GetPlayerByUniqueClientId(int UniqueClientId)
 		if(!pPlayer)
 			continue;
 		if(pPlayer->m_UniqueClientId != UniqueClientId)
+			continue;
+
+		return pPlayer;
+	}
+	return nullptr;
+}
+
+CAntibotPlayer *CGameServer::GetPlayerByIpAddr(const char *pIpAddr)
+{
+	NETADDR Addr;
+	net_addr_from_str(&Addr, pIpAddr);
+
+	for(CAntibotPlayer *pPlayer : m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+		if(net_addr_comp_noport(&Addr, &pPlayer->m_Addr))
 			continue;
 
 		return pPlayer;
