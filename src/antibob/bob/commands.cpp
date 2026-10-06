@@ -103,7 +103,7 @@ void CAntibob::ComKickEvents(CBobResult *pResult, void *pUserData)
 		std::vector<int> vMissingEvents;
 		for(int EventId : vEventIds)
 		{
-			if(pPlayer->m_DetectionEvents.count(EventId) >= 0)
+			if(pPlayer->m_DetectionEvents.count(EventId) > 0)
 				continue;
 
 			vMissingEvents.emplace_back(EventId);
