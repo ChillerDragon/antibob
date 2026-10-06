@@ -5,6 +5,7 @@
 #include <bob/version.h>
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/log.h>
+#include <polybob/base/system.h>
 #include <polybob/base/system/str.h>
 #include <polybob/engine/shared/jobs.h>
 
@@ -48,6 +49,24 @@ void CAntibob::ComEvents(CBobResult *pResult, void *pUserData)
 	pSelf->RconEvents(pResult->GetInteger(0));
 }
 
+static void JoinInts(const std::vector<int> &vInts, char *pBuf, int BufSize)
+{
+	pBuf[0] = '\0';
+	bool First = true;
+	for(int Num : vInts)
+	{
+		if(!First)
+		{
+			str_append(pBuf, ", ", BufSize);
+			First = false;
+		}
+
+		char aNum[512];
+		str_format_int(aNum, sizeof(aNum), Num);
+		str_append(pBuf, aNum, BufSize);
+	}
+}
+
 void CAntibob::ComKickEvents(CBobResult *pResult, void *pUserData)
 {
 	CAntibob *pSelf = (CAntibob *)pUserData;
@@ -82,17 +101,27 @@ void CAntibob::ComKickEvents(CBobResult *pResult, void *pUserData)
 		if(pPlayer->m_DetectionEvents.empty())
 			continue;
 
-		bool MissingEvents = false;
+		std::vector<int> vMissingEvents;
 		for(int EventId : vEventIds)
 		{
-			if(pPlayer->m_DetectionEvents.contains(EventId))
+			if(pPlayer->m_DetectionEvents.count(EventId) >= 0)
 				continue;
 
-			MissingEvents = true;
+			vMissingEvents.emplace_back(EventId);
+		}
+		if(!vMissingEvents.empty())
+		{
+			char aMissingEvents[2048] = "";
+			JoinInts(vMissingEvents, aMissingEvents, sizeof(aMissingEvents));
+
+			log_info(
+				"antibot",
+				"cid=%d name='%s' has triggered events but is missing %s",
+				pPlayer->GetCid(),
+				pSelf->ClientName(pPlayer->GetCid()),
+				aMissingEvents);
 			break;
 		}
-		if(MissingEvents)
-			break;
 
 		char aPlayerEvents[512];
 		CDetectionEvent::EventsToIdStr(pPlayer->m_DetectionEvents, 0, aPlayerEvents, sizeof(aPlayerEvents));
@@ -106,7 +135,10 @@ void CAntibob::ComKickEvents(CBobResult *pResult, void *pUserData)
 		pSelf->Kick(pPlayer->GetCid(), "antibot");
 		Matches++;
 	}
-	log_info("antibot", "kicked %d players based on matching events", Matches);
+
+	char aParsedEvents[2048] = "";
+	JoinInts(vEventIds, aParsedEvents, sizeof(aParsedEvents));
+	log_info("antibot", "kicked %d players based on matching events (%s)", Matches, aParsedEvents);
 }
 
 void CAntibob::ComAutoPunishEvent(CBobResult *pResult, void *pUserData)
