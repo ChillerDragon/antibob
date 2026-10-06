@@ -55,7 +55,7 @@ static void JoinInts(const std::vector<int> &vInts, char *pBuf, int BufSize)
 	bool First = true;
 	for(int Num : vInts)
 	{
-		if(!First)
+		if(First)
 			First = false;
 		else
 			str_append(pBuf, ", ", BufSize);
