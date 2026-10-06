@@ -56,10 +56,9 @@ static void JoinInts(const std::vector<int> &vInts, char *pBuf, int BufSize)
 	for(int Num : vInts)
 	{
 		if(!First)
-		{
-			str_append(pBuf, ", ", BufSize);
 			First = false;
-		}
+		else
+			str_append(pBuf, ", ", BufSize);
 
 		char aNum[512];
 		str_format_int(aNum, sizeof(aNum), Num);
