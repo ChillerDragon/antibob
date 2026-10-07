@@ -34,6 +34,11 @@ namespace polybob
 	/**
 	 * @ingroup Network-General
 	 */
+	typedef struct NETSOCKET_INTERNAL *NETSOCKET;
+
+	/**
+	 * @ingroup Network-General
+	 */
 	inline constexpr auto NETTYPE_INVALID = 0;
 
 	/**

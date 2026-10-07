@@ -11,6 +11,84 @@ namespace polybob
 
 #define AF_WEBSOCKET_INET (0xee)
 
+#ifdef CONF_PLATFORM_LINUX
+	static constexpr size_t VLEN = 128;
+#endif
+	static constexpr size_t PACKETSIZE = 1400;
+
+	typedef struct
+	{
+#ifdef CONF_PLATFORM_LINUX
+		int pos;
+		int size;
+		struct mmsghdr msgs[VLEN];
+		struct iovec iovecs[VLEN];
+		char bufs[VLEN][PACKETSIZE];
+		char sockaddrs[VLEN][128];
+#else
+		char buf[PACKETSIZE];
+#endif
+	} NETSOCKET_BUFFER;
+
+	static constexpr const unsigned char LOOPBACKADDR_IPV4[16] = {127, 0, 0, 1};
+	static constexpr const unsigned char LOOPBACKADDR_IPV6[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
+
+	static void net_buffer_init(NETSOCKET_BUFFER *buffer)
+	{
+#if defined(CONF_PLATFORM_LINUX)
+		buffer->pos = 0;
+		buffer->size = 0;
+		mem_zero(buffer->msgs, sizeof(buffer->msgs));
+		mem_zero(buffer->iovecs, sizeof(buffer->iovecs));
+		mem_zero(buffer->sockaddrs, sizeof(buffer->sockaddrs));
+		for(size_t i = 0; i < VLEN; ++i)
+		{
+			buffer->iovecs[i].iov_base = buffer->bufs[i];
+			buffer->iovecs[i].iov_len = PACKETSIZE;
+			buffer->msgs[i].msg_hdr.msg_iov = &(buffer->iovecs[i]);
+			buffer->msgs[i].msg_hdr.msg_iovlen = 1;
+			buffer->msgs[i].msg_hdr.msg_name = &(buffer->sockaddrs[i]);
+			buffer->msgs[i].msg_hdr.msg_namelen = sizeof(buffer->sockaddrs[i]);
+		}
+#endif
+	}
+
+#if defined(CONF_PLATFORM_LINUX)
+	static void net_buffer_reinit(NETSOCKET_BUFFER *buffer)
+	{
+		for(size_t i = 0; i < VLEN; i++)
+		{
+			buffer->msgs[i].msg_hdr.msg_namelen = sizeof(buffer->sockaddrs[i]);
+		}
+	}
+#endif
+
+#if defined(CONF_WEBSOCKETS)
+	static void net_buffer_simple(NETSOCKET_BUFFER *buffer, char **buf, int *size)
+	{
+#if defined(CONF_PLATFORM_LINUX)
+		*buf = buffer->bufs[0];
+		*size = sizeof(buffer->bufs[0]);
+#else
+		*buf = buffer->buf;
+		*size = sizeof(buffer->buf);
+#endif
+	}
+#endif
+
+	struct NETSOCKET_INTERNAL
+	{
+		int type;
+		int ipv4sock;
+		int ipv6sock;
+		int web_ipv4sock;
+		int web_ipv6sock;
+		bool broken;
+
+		NETSOCKET_BUFFER buffer;
+	};
+	static NETSOCKET_INTERNAL invalid_socket = {NETTYPE_INVALID, -1, -1, -1, -1, false};
+
 	const NETADDR NETADDR_ZEROED = {NETTYPE_INVALID, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 0};
 
 	static void netaddr_to_sockaddr_in(const NETADDR *src, struct sockaddr_in *dest)
