@@ -119,7 +119,7 @@ void CAntibob::ComKickEvents(CBobResult *pResult, void *pUserData)
 				pPlayer->GetCid(),
 				pSelf->ClientName(pPlayer->GetCid()),
 				aMissingEvents);
-			break;
+			continue;
 		}
 
 		char aPlayerEvents[512];
