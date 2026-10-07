@@ -118,6 +118,28 @@ namespace polybob
 	NETSOCKET net_tcp_create(NETADDR bindaddr);
 
 	/**
+	 * Make a socket not block on operations.
+	 *
+	 * @ingroup Network-General
+	 *
+	 * @param sock The socket to set non-blocking mode on.
+	 *
+	 * @returns `0` on success.
+	 */
+	int net_set_non_blocking(NETSOCKET sock);
+
+	/**
+	 * Make a socket block on operations.
+	 *
+	 * @ingroup Network-General
+	 *
+	 * @param sock The socket to set blocking mode on.
+	 *
+	 * @returns `0` on success.
+	 */
+	int net_set_blocking(NETSOCKET sock);
+
+	/**
 	 * Makes the socket start listening for new connections.
 	 *
 	 * @ingroup Network-TCP
