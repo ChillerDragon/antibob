@@ -83,4 +83,124 @@ namespace polybob
 	 */
 	int net_addr_from_str(NETADDR *addr, const char *string);
 
+	/**
+	 * If a network operation failed, the error code.
+	 *
+	 * @ingroup Network-General
+	 *
+	 * @returns The error code.
+	 */
+	int net_errno();
+
+	/**
+	 * If a network operation failed, the platform-specific error code and string.
+	 *
+	 * @ingroup Network-General
+	 *
+	 * @returns The error code and string combined into one string.
+	 */
+	std::string net_error_message();
+
+	/**
+	 * Creates a TCP socket.
+	 *
+	 * In case a port is already in use on any of the protocol families, the whole
+	 * bind operation fails. Otherwise, if binding at least one protocol family
+	 * succeeds, the operation is treated as a success: the host may not support all
+	 * protocol families.
+	 *
+	 * @ingroup Network-TCP
+	 *
+	 * @param bindaddr Address to bind the socket to.
+	 *
+	 * @return On success it returns an handle to the socket. On failure it returns `nullptr`.
+	 */
+	NETSOCKET net_tcp_create(NETADDR bindaddr);
+
+	/**
+	 * Makes the socket start listening for new connections.
+	 *
+	 * @ingroup Network-TCP
+	 *
+	 * @param sock Socket to start listen to.
+	 * @param backlog Size of the queue of incoming connections to keep.
+	 *
+	 * @return `0` on success.
+	 */
+	int net_tcp_listen(NETSOCKET sock, int backlog);
+
+	/**
+	 * Polls a listening socket for a new connection.
+	 *
+	 * @ingroup Network-TCP
+	 *
+	 * @param sock Listening socket to poll.
+	 * @param new_sock Pointer to a socket to fill in with the new socket.
+	 * @param addr Pointer to an address that will be filled in the remote address, can be `nullptr`.
+	 *
+	 * @return A non-negative integer on success. Negative integer on failure.
+	 */
+	int net_tcp_accept(NETSOCKET sock, NETSOCKET *new_sock, NETADDR *addr);
+
+	/**
+	 * Connects one socket to another.
+	 *
+	 * @ingroup Network-TCP
+	 *
+	 * @param sock Socket to connect.
+	 * @param addr Address to connect to.
+	 *
+	 * @return `0` on success.
+	 *
+	 */
+	int net_tcp_connect(NETSOCKET sock, const NETADDR *addr);
+
+	/**
+	 * Connect a socket to a TCP address without blocking.
+	 *
+	 * @ingroup Network-TCP
+	 *
+	 * @param sock The socket to connect with.
+	 * @param bindaddr The address to connect to.
+	 *
+	 * @returns `0` on success.
+	 */
+	int net_tcp_connect_non_blocking(NETSOCKET sock, NETADDR bindaddr);
+
+	/**
+	 * Sends data to a TCP stream.
+	 *
+	 * @ingroup Network-TCP
+	 *
+	 * @param sock Socket to send data to.
+	 * @param data Pointer to the data to send.
+	 * @param size Size of the data to send.
+	 *
+	 * @return Number of bytes sent. Negative value on failure.
+	 */
+	int net_tcp_send(NETSOCKET sock, const void *data, int size);
+
+	/**
+	 * Receives data from a TCP stream.
+	 *
+	 * @ingroup Network-TCP
+	 *
+	 * @param sock Socket to recvive data from.
+	 * @param data Pointer to a buffer to write the data to.
+	 * @param maxsize Maximum of data to write to the buffer.
+	 *
+	 * @return Number of bytes recvived. Negative value on failure. When in
+	 * non-blocking mode, it returns 0 when there is no more data to be fetched.
+	 */
+	int net_tcp_recv(NETSOCKET sock, void *data, int maxsize);
+
+	/**
+	 * Closes a TCP socket.
+	 *
+	 * @ingroup Network-TCP
+	 *
+	 * @param sock Socket to close.
+	 */
+	void net_tcp_close(NETSOCKET sock);
+
 } // namespace polybob

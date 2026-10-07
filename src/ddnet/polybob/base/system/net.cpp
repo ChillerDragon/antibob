@@ -1,10 +1,17 @@
-#include <arpa/inet.h>
-#include <netdb.h>
 #include <polybob/base/detect.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
 #include <polybob/base/system/net.h>
 #include <polybob/base/system/str.h>
+
+#if defined(CONF_FAMILY_UNIX)
+#include <unistd.h> // close
+
+// UNIX net includes
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <sys/ioctl.h>
+#endif
 
 namespace polybob
 {
@@ -109,32 +116,27 @@ namespace polybob
 		mem_copy(&dest->sin6_addr.s6_addr, src->ip, 16);
 	}
 
-	static void sockaddr_to_netaddr(const struct sockaddr *src, NETADDR *dst)
+	static void sockaddr_to_netaddr(const sockaddr *src, socklen_t src_len, NETADDR *dst)
 	{
-		if(src->sa_family == AF_INET)
+		*dst = NETADDR_ZEROED;
+		if(src->sa_family == AF_INET && src_len >= (socklen_t)sizeof(sockaddr_in))
 		{
-			mem_zero(dst, sizeof(NETADDR));
+			const sockaddr_in *src_in = (const sockaddr_in *)src;
 			dst->type = NETTYPE_IPV4;
-			dst->port = htons(((struct sockaddr_in *)src)->sin_port);
-			mem_copy(dst->ip, &((struct sockaddr_in *)src)->sin_addr.s_addr, 4);
+			dst->port = htons(src_in->sin_port);
+			static_assert(sizeof(dst->ip) >= sizeof(src_in->sin_addr.s_addr));
+			mem_copy(dst->ip, &src_in->sin_addr.s_addr, sizeof(src_in->sin_addr.s_addr));
 		}
-		else if(src->sa_family == AF_WEBSOCKET_INET)
+		else if(src->sa_family == AF_INET6 && src_len >= (socklen_t)sizeof(sockaddr_in6))
 		{
-			mem_zero(dst, sizeof(NETADDR));
-			dst->type = NETTYPE_WEBSOCKET_IPV4;
-			dst->port = htons(((struct sockaddr_in *)src)->sin_port);
-			mem_copy(dst->ip, &((struct sockaddr_in *)src)->sin_addr.s_addr, 4);
-		}
-		else if(src->sa_family == AF_INET6)
-		{
-			mem_zero(dst, sizeof(NETADDR));
+			const sockaddr_in6 *src_in6 = (const sockaddr_in6 *)src;
 			dst->type = NETTYPE_IPV6;
-			dst->port = htons(((struct sockaddr_in6 *)src)->sin6_port);
-			mem_copy(dst->ip, &((struct sockaddr_in6 *)src)->sin6_addr.s6_addr, 16);
+			dst->port = htons(src_in6->sin6_port);
+			static_assert(sizeof(dst->ip) >= sizeof(src_in6->sin6_addr.s6_addr));
+			mem_copy(dst->ip, &src_in6->sin6_addr.s6_addr, sizeof(src_in6->sin6_addr.s6_addr));
 		}
 		else
 		{
-			mem_zero(dst, sizeof(struct sockaddr));
 			log_warn("net", "Cannot convert sockaddr of family %d", src->sa_family);
 		}
 	}
@@ -173,6 +175,36 @@ namespace polybob
 		return 0;
 	}
 
+	static int net_host_lookup_fallback(const char *hostname, NETADDR *addr, int types, int port)
+	{
+		if(str_comp_nocase(hostname, "localhost") == 0)
+		{
+			if(types == NETTYPE_IPV4)
+			{
+				addr->type = NETTYPE_IPV4;
+				mem_copy(addr->ip, LOOPBACKADDR_IPV4, sizeof(LOOPBACKADDR_IPV4));
+				addr->port = port;
+				return 0;
+			}
+			else if(types == NETTYPE_IPV6)
+			{
+				addr->type = NETTYPE_IPV6;
+				mem_copy(addr->ip, LOOPBACKADDR_IPV6, sizeof(LOOPBACKADDR_IPV6));
+				addr->port = port;
+				return 0;
+			}
+			else
+			{
+				// TODO: return both IPv4 and IPv6 address
+				addr->type = NETTYPE_IPV4;
+				mem_copy(addr->ip, LOOPBACKADDR_IPV4, sizeof(LOOPBACKADDR_IPV4));
+				addr->port = port;
+				return 0;
+			}
+		}
+		return -1;
+	}
+
 	static int net_host_lookup_impl(const char *hostname, NETADDR *addr, int types)
 	{
 		char host[256];
@@ -195,15 +227,17 @@ namespace polybob
 		struct addrinfo *result = nullptr;
 		int e = getaddrinfo(host, nullptr, &hints, &result);
 		if(!result)
-			return -1;
+		{
+			return net_host_lookup_fallback(host, addr, types, port);
+		}
 
 		if(e != 0)
 		{
 			freeaddrinfo(result);
-			return -1;
+			return net_host_lookup_fallback(host, addr, types, port);
 		}
 
-		sockaddr_to_netaddr(result->ai_addr, addr);
+		sockaddr_to_netaddr(result->ai_addr, result->ai_addrlen, addr);
 		addr->port = port;
 		freeaddrinfo(result);
 		return 0;
@@ -226,6 +260,17 @@ namespace polybob
 			return result;
 		}
 		return net_host_lookup_impl(hostname, addr, types & ~NETTYPE_WEBSOCKET_IPV4);
+	}
+
+	std::string net_error_message()
+	{
+		const int error = net_errno();
+#if defined(CONF_FAMILY_WINDOWS)
+		const std::string message = windows_format_system_message(error);
+		return std::to_string(error) + " '" + message + "'";
+#else
+		return std::to_string(error) + " '" + strerror(error) + "'";
+#endif
 	}
 
 	int net_addr_comp(const NETADDR *a, const NETADDR *b)
@@ -419,7 +464,7 @@ namespace polybob
 		if(str[0] == '[')
 		{
 			/* ipv6 */
-			struct sockaddr_in6 sa6;
+			sockaddr_in6 sa6;
 			char buf[128];
 			int i;
 			str++;
@@ -432,7 +477,7 @@ namespace polybob
 				int size;
 				sa6.sin6_family = AF_INET6;
 				size = (int)sizeof(sa6);
-				if(WSAStringToAddressA(buf, AF_INET6, nullptr, (struct sockaddr *)&sa6, &size) != 0)
+				if(WSAStringToAddressA(buf, AF_INET6, nullptr, (sockaddr *)&sa6, &size) != 0)
 					return -1;
 			}
 #else
@@ -441,7 +486,7 @@ namespace polybob
 			if(inet_pton(AF_INET6, buf, &sa6.sin6_addr) != 1)
 				return -1;
 #endif
-			sockaddr_to_netaddr((struct sockaddr *)&sa6, addr);
+			sockaddr_to_netaddr((sockaddr *)&sa6, sizeof(sa6), addr);
 
 			if(*str == ']')
 			{
@@ -492,6 +537,347 @@ namespace polybob
 		}
 
 		return 0;
+	}
+
+	int net_errno()
+	{
+#if defined(CONF_FAMILY_WINDOWS)
+		return WSAGetLastError();
+#else
+		return errno;
+#endif
+	}
+
+	static int net_set_blocking_impl(NETSOCKET sock, bool blocking)
+	{
+		unsigned long mode = blocking ? 0 : 1;
+		const char *mode_str = blocking ? "blocking" : "non-blocking";
+		int sockets[] = {sock->ipv4sock, sock->ipv6sock};
+		const char *socket_str[] = {"IPv4", "IPv6"};
+
+		for(size_t i = 0; i < std::size(sockets); ++i)
+		{
+			if(sockets[i] >= 0)
+			{
+#if defined(CONF_FAMILY_WINDOWS)
+				if(ioctlsocket(sockets[i], FIONBIO, &mode) != NO_ERROR)
+				{
+					log_error("net", "Setting %s mode for %s socket failed (%s)", socket_str[i], mode_str, net_error_message().c_str());
+				}
+#else
+				if(ioctl(sockets[i], FIONBIO, &mode) == -1)
+				{
+					log_error("net", "Setting %s mode for %s socket failed (%s)", socket_str[i], mode_str, net_error_message().c_str());
+				}
+#endif
+			}
+		}
+
+		return 0;
+	}
+
+	int net_set_non_blocking(NETSOCKET sock)
+	{
+		return net_set_blocking_impl(sock, false);
+	}
+
+	int net_set_blocking(NETSOCKET sock)
+	{
+		return net_set_blocking_impl(sock, true);
+	}
+
+	static bool net_address_in_use()
+	{
+#if defined(CONF_FAMILY_WINDOWS)
+		return net_errno() == WSAEADDRINUSE;
+#else
+		return net_errno() == EADDRINUSE;
+#endif
+	}
+
+	static void priv_net_close_socket(int sock)
+	{
+#if defined(CONF_FAMILY_WINDOWS)
+		dbg_assert(closesocket(sock) == 0, "closesocket failure (%s)", net_error_message().c_str());
+#else
+		dbg_assert(close(sock) == 0, "close failure (%s)", net_error_message().c_str());
+#endif
+	}
+
+	static void priv_net_close_all_sockets(NETSOCKET sock)
+	{
+		if(sock->ipv4sock >= 0)
+		{
+			priv_net_close_socket(sock->ipv4sock);
+			sock->ipv4sock = -1;
+			sock->type &= ~NETTYPE_IPV4;
+		}
+
+#if defined(CONF_WEBSOCKETS)
+		if(sock->web_ipv4sock >= 0)
+		{
+			websocket_destroy(sock->web_ipv4sock);
+			sock->web_ipv4sock = -1;
+			sock->type &= ~NETTYPE_WEBSOCKET_IPV4;
+		}
+#endif
+
+		if(sock->ipv6sock >= 0)
+		{
+			priv_net_close_socket(sock->ipv6sock);
+			sock->ipv6sock = -1;
+			sock->type &= ~NETTYPE_IPV6;
+		}
+
+#if defined(CONF_WEBSOCKETS)
+		if(sock->web_ipv6sock >= 0)
+		{
+			websocket_destroy(sock->web_ipv6sock);
+			sock->web_ipv6sock = -1;
+			sock->type &= ~NETTYPE_WEBSOCKET_IPV6;
+		}
+#endif
+
+		free(sock);
+	}
+
+	// `address_in_use` is only ever set to `true`, so the same variable can be
+	// passed for all sockets of one `NETSOCKET`.
+	static int priv_net_create_socket(int domain, int type, const NETADDR *bindaddr, bool *address_in_use)
+	{
+		int sock = socket(domain, type, 0);
+		if(sock < 0)
+		{
+			log_error("net", "Failed to create socket with domain %d and type %d (%s)", domain, type, net_error_message().c_str());
+			return -1;
+		}
+
+#if defined(CONF_FAMILY_UNIX)
+		// On TCP sockets set SO_REUSEADDR to fix port rebind on restart
+		if(domain == AF_INET && type == SOCK_STREAM)
+		{
+			int reuse_addr = 1;
+			if(setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&reuse_addr, sizeof(reuse_addr)) != 0)
+			{
+				log_error("net", "Setting SO_REUSEADDR failed with domain %d and type %d (%s)", domain, type, net_error_message().c_str());
+			}
+		}
+#elif defined(CONF_FAMILY_WINDOWS)
+		{
+			// Ensure exclusive use of address, otherwise it's possible on Windows to bind to the same address and port with another socket.
+			// See https://learn.microsoft.com/en-us/windows/win32/winsock/using-so-reuseaddr-and-so-exclusiveaddruse (last update 06/14/2022)
+			int exclusive_addr_use = 1;
+			if(setsockopt(sock, SOL_SOCKET, SO_EXCLUSIVEADDRUSE, (const char *)&exclusive_addr_use, sizeof(exclusive_addr_use)) != 0)
+			{
+				log_error("net", "Setting SO_EXCLUSIVEADDRUSE failed with domain %d and type %d (%s)", domain, type, net_error_message().c_str());
+			}
+		}
+#endif
+
+		// Set to IPv6-only if that's what we are creating, to ensure that dual-stack does not block the same IPv4 port.
+#if defined(IPV6_V6ONLY)
+		if(domain == AF_INET6)
+		{
+			int ipv6only = 1;
+			if(setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, (const char *)&ipv6only, sizeof(ipv6only)) != 0)
+			{
+				log_error("net", "Setting IPV6_V6ONLY failed with domain %d and type %d (%s)", domain, type, net_error_message().c_str());
+			}
+		}
+#endif
+
+		sockaddr_storage addr;
+		socklen_t addr_len;
+		if(bindaddr->type == NETTYPE_IPV4)
+		{
+			netaddr_to_sockaddr_in(bindaddr, (sockaddr_in *)&addr);
+			addr_len = sizeof(sockaddr_in);
+		}
+		else if(bindaddr->type == NETTYPE_IPV6)
+		{
+			netaddr_to_sockaddr_in6(bindaddr, (sockaddr_in6 *)&addr);
+			addr_len = sizeof(sockaddr_in6);
+		}
+		else
+		{
+			dbg_assert(false, "socket type invalid: %d", type);
+		}
+
+		if(bind(sock, (sockaddr *)&addr, addr_len) != 0)
+		{
+			if(net_address_in_use())
+			{
+				*address_in_use = true;
+			}
+			log_error("net", "Failed to bind socket with domain %d and type %d (%s)", domain, type, net_error_message().c_str());
+			priv_net_close_socket(sock);
+			return -1;
+		}
+
+		return sock;
+	}
+
+	NETSOCKET net_tcp_create(NETADDR bindaddr)
+	{
+		NETSOCKET sock = (NETSOCKET_INTERNAL *)malloc(sizeof(*sock));
+		*sock = invalid_socket;
+		bool address_in_use = false;
+
+		if(bindaddr.type & NETTYPE_IPV4)
+		{
+			NETADDR bindaddr_ipv4 = bindaddr;
+			bindaddr_ipv4.type = NETTYPE_IPV4;
+			const int socket4 = priv_net_create_socket(AF_INET, SOCK_STREAM, &bindaddr_ipv4, &address_in_use);
+			if(socket4 >= 0)
+			{
+				sock->type |= NETTYPE_IPV4;
+				sock->ipv4sock = socket4;
+			}
+		}
+
+		if(bindaddr.type & NETTYPE_IPV6)
+		{
+			NETADDR bindaddr_ipv6 = bindaddr;
+			bindaddr_ipv6.type = NETTYPE_IPV6;
+			const int socket6 = priv_net_create_socket(AF_INET6, SOCK_STREAM, &bindaddr_ipv6, &address_in_use);
+			if(socket6 >= 0)
+			{
+				sock->type |= NETTYPE_IPV6;
+				sock->ipv6sock = socket6;
+			}
+		}
+
+		if(sock->type == NETTYPE_INVALID || address_in_use)
+		{
+			priv_net_close_all_sockets(sock);
+			sock = nullptr;
+		}
+
+		return sock;
+	}
+
+	int net_tcp_listen(NETSOCKET sock, int backlog)
+	{
+		int err = -1;
+		if(sock->ipv4sock >= 0)
+		{
+			err = listen(sock->ipv4sock, backlog);
+		}
+		if(sock->ipv6sock >= 0)
+		{
+			err = listen(sock->ipv6sock, backlog);
+		}
+		return err;
+	}
+
+	int net_tcp_accept(NETSOCKET sock, NETSOCKET *new_sock, NETADDR *a)
+	{
+		*new_sock = nullptr;
+
+		if(sock->ipv4sock >= 0)
+		{
+			sockaddr_storage addr;
+			socklen_t sockaddr_len = sizeof(addr);
+
+			int s = accept(sock->ipv4sock, (sockaddr *)&addr, &sockaddr_len);
+			if(s != -1)
+			{
+				sockaddr_to_netaddr((sockaddr *)&addr, sockaddr_len, a);
+
+				*new_sock = (NETSOCKET_INTERNAL *)malloc(sizeof(**new_sock));
+				**new_sock = invalid_socket;
+				(*new_sock)->type = NETTYPE_IPV4;
+				(*new_sock)->ipv4sock = s;
+				return s;
+			}
+		}
+
+		if(sock->ipv6sock >= 0)
+		{
+			sockaddr_storage addr;
+			socklen_t sockaddr_len = sizeof(addr);
+
+			int s = accept(sock->ipv6sock, (sockaddr *)&addr, &sockaddr_len);
+			if(s != -1)
+			{
+				*new_sock = (NETSOCKET_INTERNAL *)malloc(sizeof(**new_sock));
+				**new_sock = invalid_socket;
+				sockaddr_to_netaddr((sockaddr *)&addr, sockaddr_len, a);
+				(*new_sock)->type = NETTYPE_IPV6;
+				(*new_sock)->ipv6sock = s;
+				return s;
+			}
+		}
+
+		return -1;
+	}
+
+	int net_tcp_connect(NETSOCKET sock, const NETADDR *a)
+	{
+		if(a->type & NETTYPE_IPV4)
+		{
+			if(sock->ipv4sock < 0)
+				return -2;
+			sockaddr_in addr;
+			netaddr_to_sockaddr_in(a, &addr);
+			return connect(sock->ipv4sock, (sockaddr *)&addr, sizeof(addr));
+		}
+
+		if(a->type & NETTYPE_IPV6)
+		{
+			if(sock->ipv6sock < 0)
+				return -2;
+			sockaddr_in6 addr;
+			netaddr_to_sockaddr_in6(a, &addr);
+			return connect(sock->ipv6sock, (sockaddr *)&addr, sizeof(addr));
+		}
+
+		return -1;
+	}
+
+	int net_tcp_connect_non_blocking(NETSOCKET sock, NETADDR bindaddr)
+	{
+		net_set_non_blocking(sock);
+		int res = net_tcp_connect(sock, &bindaddr);
+		net_set_blocking(sock);
+		return res;
+	}
+
+	int net_tcp_send(NETSOCKET sock, const void *data, int size)
+	{
+		int bytes = -1;
+
+		if(sock->ipv4sock >= 0)
+		{
+			bytes = send(sock->ipv4sock, (const char *)data, size, 0);
+		}
+		if(sock->ipv6sock >= 0)
+		{
+			bytes = send(sock->ipv6sock, (const char *)data, size, 0);
+		}
+
+		return bytes;
+	}
+
+	int net_tcp_recv(NETSOCKET sock, void *data, int maxsize)
+	{
+		int bytes = -1;
+
+		if(sock->ipv4sock >= 0)
+		{
+			bytes = recv(sock->ipv4sock, (char *)data, maxsize, 0);
+		}
+		if(sock->ipv6sock >= 0)
+		{
+			bytes = recv(sock->ipv6sock, (char *)data, maxsize, 0);
+		}
+
+		return bytes;
+	}
+
+	void net_tcp_close(NETSOCKET sock)
+	{
+		priv_net_close_all_sockets(sock);
 	}
 
 } // namespace polybob
