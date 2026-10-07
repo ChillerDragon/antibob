@@ -586,6 +586,15 @@ namespace polybob
 		return net_set_blocking_impl(sock, true);
 	}
 
+	int net_would_block()
+	{
+#if defined(CONF_FAMILY_WINDOWS)
+		return net_errno() == WSAEWOULDBLOCK;
+#else
+		return net_errno() == EWOULDBLOCK;
+#endif
+	}
+
 	static bool net_address_in_use()
 	{
 #if defined(CONF_FAMILY_WINDOWS)

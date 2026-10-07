@@ -140,6 +140,15 @@ namespace polybob
 	int net_set_blocking(NETSOCKET sock);
 
 	/**
+	 * Determines whether a network operation would block.
+	 *
+	 * @ingroup Network-General
+	 *
+	 * @returns `0` if wouldn't block, `1` if would block.
+	 */
+	int net_would_block();
+
+	/**
 	 * Makes the socket start listening for new connections.
 	 *
 	 * @ingroup Network-TCP
