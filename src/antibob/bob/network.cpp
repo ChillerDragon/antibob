@@ -7,6 +7,7 @@
 #include <polybob/antibot/antibot_data.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
+#include <polybob/engine/shared/bob_uuid_manager.h>
 #include <polybob/engine/shared/protocol.h>
 #include <polybob/game/generated/protocol.h>
 #include <polybob/game/generated/protocolglue.h>
@@ -102,6 +103,7 @@ void CNetwork::OnClientConnect(int ClientId, bool Sixup)
 void CNetwork::OnClientDisconnect(int ClientId)
 {
 	m_aClients[ClientId].m_Active = false;
+	m_aClients[ClientId].m_DDNetVersion = 0;
 	m_aClients[ClientId].m_State = CAntibotClient::EState::EMPTY;
 }
 
@@ -191,6 +193,19 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int Msg
 				}
 			}
 		}
+		else if(Msg == NETMSG_CLIENTVER)
+		{
+			Unpacker.GetRaw(sizeof(CUuid));
+			int DDNetVersion = Unpacker.GetInt();
+			// Unpacker.GetString(CUnpacker::SANITIZE_CC);
+
+			if(Unpacker.Error() || DDNetVersion < 0)
+			{
+				return false;
+			}
+
+			m_aClients[ClientId].m_DDNetVersion = DDNetVersion;
+		}
 	}
 	else // game msg
 	{
@@ -235,6 +250,16 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int Msg
 	return false;
 }
 
+int CNetwork::GetClientVersion(int ClientId) const
+{
+	if(ClientId < 0 || ClientId >= MAX_CLIENTS)
+		return VERSION_NONE;
+	if(!m_aClients[ClientId].m_Active)
+		return VERSION_NONE;
+
+	return m_aClients[ClientId].m_DDNetVersion;
+}
+
 void CNetwork::RedirectClient(int ClientId, int Port)
 {
 	// dbg_assert(0 <= ClientId && ClientId < MAX_CLIENTS, "Invalid ClientId: %d", ClientId);
@@ -246,9 +271,16 @@ void CNetwork::RedirectClient(int ClientId, int Port)
 	if(m_aClients[ClientId].m_State == CAntibotClient::EState::REDIRECTED)
 		return;
 
-	// TODO: could check the version here to check if the client supports redirect
-	//       this is how ddnet does it to kick old and teeworlds clients instantly
-	//       we just kick them in the fallback right now
+	bool SupportsRedirect = GetClientVersion(ClientId) >= VERSION_DDNET_REDIRECT;
+	log_info("antibot", "redirecting client, cid=%d port=%d supported=%d", ClientId, Port, SupportsRedirect);
+
+	if(!SupportsRedirect)
+	{
+		char aBuf[128];
+		str_format(aBuf, sizeof(aBuf), "Redirect unsupported: please connect to port %d", Port);
+		m_pGameServer->Kick(ClientId, aBuf);
+		return;
+	}
 
 	CMsgPacker Msg(NETMSG_REDIRECT, true);
 	Msg.AddInt(Port);
@@ -257,7 +289,7 @@ void CNetwork::RedirectClient(int ClientId, int Port)
 	str_format(
 		m_aClients[ClientId].m_aRedirectMsg,
 		sizeof(m_aClients[ClientId].m_aRedirectMsg),
-		"redirect failed please connect to port %d",
+		"Redirect failed: please connect to port %d",
 		Port);
 
 	m_aClients[ClientId].m_RedirectDropTime = time_get() + time_freq() * 10;

@@ -23,6 +23,9 @@ public:
 	int64_t m_RedirectDropTime = 0;
 	char m_aRedirectMsg[512] = "redirected";
 
+	// ddnet client version
+	int m_DDNetVersion = 0;
+
 	enum class EState
 	{
 		REDIRECTED = -1,
@@ -56,6 +59,7 @@ public:
 		m_ClientId = ClientId;
 		m_Sixup = Sixup;
 		m_RedirectDropTime = 0;
+		m_DDNetVersion = 0;
 		m_State = EState::CONNECTING;
 		// str_copy(m_aName, "(connecting)");
 	}
@@ -84,6 +88,7 @@ public:
 	bool ClientIngame(int ClientId) { return m_aClients[ClientId].m_Active; }
 	int Tick() const;
 	int TickSpeed() const { return SERVER_TICK_SPEED; }
+	int GetClientVersion(int ClientId) const;
 	void RedirectClient(int ClientId, int Port);
 
 	bool RepackMsg(const polybob::CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup);
