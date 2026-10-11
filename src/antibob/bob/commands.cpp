@@ -239,6 +239,9 @@ void CAntibob::ComRedirectKnownCheaters(CBobResult *pResult, void *pUserData)
 			continue;
 
 		log_info("antibot", "cid=%d name='%s' was caught cheating already redirecting to port %d", i, pSelf->ClientName(i), DstPort);
+
+		// FIXME: do not use rcon, use native redirect implementation
+
 		char aCmd[512];
 		str_format(aCmd, sizeof(aCmd), "redirect %d %d", i, DstPort);
 		if(!pSelf->m_BobAbi.Rcon(aCmd))
@@ -316,4 +319,29 @@ void CAntibob::ComPlayerJobs(CBobResult *pResult, void *pUserData)
 		log_info("antibot", "cid=%d queued=%d running=%d", pPlayer->GetCid(), Queued, Running);
 	}
 	log_info("antibot", "total queued=%d running=%d", TotalQueued, TotalRunning);
+}
+
+void CAntibob::ComRedirect(CBobResult *pResult, void *pUserData)
+{
+	CAntibob *pSelf = (CAntibob *)pUserData;
+	if(!pSelf->m_pRoundData)
+	{
+		log_error("antibot", "missing round data");
+		return;
+	}
+	int ClientId = pResult->GetInteger(0);
+	int Port = pResult->GetInteger(1);
+	if(ClientId < 0 || ClientId >= ANTIBOT_MAX_CLIENTS)
+	{
+		log_error("antibot", "invalid cid=%d", ClientId);
+		return;
+	}
+	CAntibotPlayer *pPlayer = pSelf->m_apPlayers[ClientId];
+	if(!pPlayer)
+	{
+		log_error("antibot", "cid=%d not online", ClientId);
+		return;
+	}
+
+	pSelf->Server()->RedirectClient(ClientId, Port);
 }

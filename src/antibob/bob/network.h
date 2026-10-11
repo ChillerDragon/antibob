@@ -20,6 +20,8 @@ public:
 	int m_ClientId = -1;
 	bool m_Sixup = false;
 	// char m_aName[MAX_NAME_LENGTH];
+	int64_t m_RedirectDropTime = 0;
+	char m_aRedirectMsg[512] = "redirected";
 
 	enum class EState
 	{
@@ -53,6 +55,7 @@ public:
 
 		m_ClientId = ClientId;
 		m_Sixup = Sixup;
+		m_RedirectDropTime = 0;
 		m_State = EState::CONNECTING;
 		// str_copy(m_aName, "(connecting)");
 	}
@@ -81,6 +84,7 @@ public:
 	bool ClientIngame(int ClientId) { return m_aClients[ClientId].m_Active; }
 	int Tick() const;
 	int TickSpeed() const { return SERVER_TICK_SPEED; }
+	void RedirectClient(int ClientId, int Port);
 
 	bool RepackMsg(const polybob::CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup);
 	bool SendMsg(polybob::CMsgPacker *pMsg, int Flags, int ClientId);

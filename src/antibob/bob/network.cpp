@@ -19,6 +19,20 @@ void CNetwork::OnInit(CAntibotData *pData, CGameServer *pGameServer)
 	m_pGameServer = pGameServer;
 }
 
+void CNetwork::OnTick()
+{
+	for(auto &Client : m_aClients)
+	{
+		if(Client.m_State == CAntibotClient::EState::REDIRECTED)
+		{
+			if(time_get() > Client.m_RedirectDropTime)
+			{
+				m_pGameServer->Kick(Client.m_ClientId, Client.m_aRedirectMsg);
+			}
+		}
+	}
+}
+
 bool CNetwork::RepackMsg(const CMsgPacker *pMsg, polybob::CPacker &Packer, bool Sixup)
 {
 	int MsgId = pMsg->m_MsgId;
@@ -93,6 +107,9 @@ void CNetwork::OnClientDisconnect(int ClientId)
 
 bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int MsgSize, int Flags, class CAntibob *pAntibob)
 {
+	if(m_aClients[ClientId].m_State == CAntibotClient::EState::REDIRECTED)
+		return true;
+
 	// TODO: ddnet does a Server()->ClientIngame(ClientId)
 	//       check here. We probably need that too otherwise clients can
 	//       send messages to early in their connection phase
@@ -216,6 +233,35 @@ bool CNetwork::OnEngineClientMessage(int ClientId, const void *pMsgData, int Msg
 		}
 	}
 	return false;
+}
+
+void CNetwork::RedirectClient(int ClientId, int Port)
+{
+	// dbg_assert(0 <= ClientId && ClientId < MAX_CLIENTS, "Invalid ClientId: %d", ClientId);
+	// dbg_assert(m_aClients[ClientId].m_State != CAntibotClient::EState::EMPTY, "Client slot empty: %d", ClientId);
+	if(ClientId < 0 || ClientId >= MAX_CLIENTS)
+		return;
+	if(m_aClients[ClientId].m_State == CAntibotClient::EState::EMPTY)
+		return;
+	if(m_aClients[ClientId].m_State == CAntibotClient::EState::REDIRECTED)
+		return;
+
+	// TODO: could check the version here to check if the client supports redirect
+	//       this is how ddnet does it to kick old and teeworlds clients instantly
+	//       we just kick them in the fallback right now
+
+	CMsgPacker Msg(NETMSG_REDIRECT, true);
+	Msg.AddInt(Port);
+	SendMsg(&Msg, MSGFLAG_VITAL | MSGFLAG_FLUSH, ClientId);
+
+	str_format(
+		m_aClients[ClientId].m_aRedirectMsg,
+		sizeof(m_aClients[ClientId].m_aRedirectMsg),
+		"redirect failed please connect to port %d",
+		Port);
+
+	m_aClients[ClientId].m_RedirectDropTime = time_get() + time_freq() * 10;
+	m_aClients[ClientId].m_State = CAntibotClient::EState::REDIRECTED;
 }
 
 int CNetwork::Tick() const

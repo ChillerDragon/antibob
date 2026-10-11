@@ -715,6 +715,8 @@ void CAntibob::OnEngineTick()
 				}),
 			pPlayer->m_vpComputeJobs.end());
 	}
+
+	m_Network.OnTick();
 }
 
 void CAntibob::OnEngineClientJoin(int ClientId)
