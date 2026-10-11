@@ -239,16 +239,7 @@ void CAntibob::ComRedirectKnownCheaters(CBobResult *pResult, void *pUserData)
 			continue;
 
 		log_info("antibot", "cid=%d name='%s' was caught cheating already redirecting to port %d", i, pSelf->ClientName(i), DstPort);
-
-		// FIXME: do not use rcon, use native redirect implementation
-
-		char aCmd[512];
-		str_format(aCmd, sizeof(aCmd), "redirect %d %d", i, DstPort);
-		if(!pSelf->m_BobAbi.Rcon(aCmd))
-		{
-			log_error("antibob", "antibob rcon abi not supported. redirect failed.");
-		}
-
+		pSelf->Server()->RedirectClient(i, DstPort);
 		GotKnown = true;
 	}
 
