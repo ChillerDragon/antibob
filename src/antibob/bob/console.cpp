@@ -23,6 +23,10 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 	Param.Reset();
 	pError[0] = '\0';
 
+	// as soon as the first optional param was defined
+	// nothing after it can be non optional
+	bool ExpectOnlyOptionals = false;
+
 	for(int i = 0; i < ParamsLen; i++)
 	{
 		if(pParamsText[i] == '[')
@@ -43,6 +47,11 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 				return false;
 			}
 
+			if(ExpectOnlyOptionals && !Param.m_Optional)
+			{
+				str_format(pError, ErrorSize, "got non optional param after optional param in '%s'", pParamsText);
+				return false;
+			}
 			InDesc = false;
 			vParams.emplace_back(Param);
 			Param.Reset();
@@ -63,6 +72,7 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 			}
 
 			Param.m_Optional = true;
+			ExpectOnlyOptionals = true;
 		}
 		else if(InDesc)
 		{
@@ -89,6 +99,11 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 			}
 			if(pParamsText[i + 1] != '[')
 			{
+				if(ExpectOnlyOptionals && !Param.m_Optional)
+				{
+					str_format(pError, ErrorSize, "got non optional param after optional param in '%s'", pParamsText);
+					return false;
+				}
 				vParams.emplace_back(Param);
 				Param.Reset();
 			}

@@ -101,6 +101,24 @@ static void TestParseParams(CBobTest &BobTest)
 	EXPECT_STREQ(aError, "");
 	EXPECT_EQ(vParams.size(), 2);
 	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "i?ss", aError, sizeof(aError));
+	EXPECT_EQ(Ok, false);
+	EXPECT_STREQ(aError, "got non optional param after optional param in 'i?ss'");
+	EXPECT_EQ(vParams.size(), 2);
+	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "sssisisiisisis", aError, sizeof(aError));
+	EXPECT_EQ(Ok, true);
+	EXPECT_STREQ(aError, "");
+	EXPECT_EQ(vParams.size(), 14);
+	vParams.clear();
+
+	// Ok = CBobConsole::ParseParams(vParams, "s s s", aError, sizeof(aError));
+	// EXPECT_EQ(Ok, true);
+	// EXPECT_STREQ(aError, "");
+	// EXPECT_EQ(vParams.size(), 14);
+	// vParams.clear();
 }
 
 int main()
