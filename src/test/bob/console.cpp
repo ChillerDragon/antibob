@@ -49,6 +49,41 @@ static void TestArgParse(CBobTest &BobTest)
 		EXPECT_EQ(Ok, true);
 		EXPECT_STREQ(aError, "");
 	}
+
+	{
+		CBobResult Result("foo \\\"bar", "vv");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, false);
+		EXPECT_STREQ(aError, "argument 'at offset 1' has value 'foo' which is not a valid victim");
+	}
+
+	{
+		CBobResult Result("1 2", "vv");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, true);
+		EXPECT_STREQ(aError, "");
+	}
+
+	{
+		CBobResult Result("-1", "v");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, false);
+		EXPECT_STREQ(aError, "argument 'at offset 1' has value -1 which is not a valid victim (to small)");
+	}
+
+	{
+		CBobResult Result("99999", "v");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, false);
+		EXPECT_STREQ(aError, "argument 'at offset 1' has value 99999 which is not a valid victim (to big)");
+	}
+
+	{
+		CBobResult Result("99999", "v[target]");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, false);
+		EXPECT_STREQ(aError, "argument 'target' has value 99999 which is not a valid victim (to big)");
+	}
 }
 
 static void TestExpectEscape(CBobTest &BobTest)
@@ -168,6 +203,12 @@ static void TestParseParams(CBobTest &BobTest)
 	EXPECT_STREQ(aError, "");
 	EXPECT_EQ(vParams.size(), 2);
 	EXPECT_STREQ(vParams.at(1).m_aDescription, " HELLO   WORLD ");
+	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "v[source]v[target]", aError, sizeof(aError));
+	EXPECT_EQ(Ok, true);
+	EXPECT_STREQ(aError, "");
+	EXPECT_EQ(vParams.size(), 2);
 	vParams.clear();
 }
 

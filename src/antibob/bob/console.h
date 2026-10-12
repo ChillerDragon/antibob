@@ -19,6 +19,7 @@ public:
 		INT,
 		STRING,
 		REST,
+		VICTIM,
 		INVALID
 	};
 	EType m_Type = EType::INVALID;

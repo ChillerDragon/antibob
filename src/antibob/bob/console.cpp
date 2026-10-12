@@ -3,6 +3,7 @@
 #include <bob/antibob.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
+#include <polybob/engine/shared/protocol.h>
 
 #include <cstdlib>
 
@@ -101,6 +102,9 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 				break;
 			case 'r':
 				Param.m_Type = CBobParam::EType::REST;
+				break;
+			case 'v':
+				Param.m_Type = CBobParam::EType::VICTIM;
 				break;
 			default:
 				str_format(pError, ErrorSize, "invalid parameter type %c in params %s", pParamsText[i], pParamsText);
@@ -239,14 +243,57 @@ bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 
 	for(int i = 0; i < m_NumArgs; i++)
 	{
+		char aParamName[512];
+		if(m_vParams[i].m_aDescription[0])
+		{
+			str_copy(aParamName, m_vParams[i].m_aDescription);
+		}
+		else
+		{
+			str_format(
+				aParamName,
+				sizeof(aParamName),
+				"at offset %d",
+				i + 1);
+		}
+
+		int Value;
 		switch(m_vParams[i].m_Type)
 		{
 		case CBobParam::EType::INT:
-			int Value;
 			if(!str_toint(m_aaArgs[i], &Value) ||
 				Value == std::numeric_limits<int>::max() || Value == std::numeric_limits<int>::min())
 			{
-				str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not a valid integer", m_vParams[i].m_aDescription, m_aaArgs[i]);
+				str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not a valid integer", aParamName, m_aaArgs[i]);
+				return false;
+			}
+			break;
+		case CBobParam::EType::VICTIM:
+			if(!str_toint(m_aaArgs[i], &Value) ||
+				Value == std::numeric_limits<int>::max() || Value == std::numeric_limits<int>::min())
+			{
+				if(str_comp(m_aaArgs[i], "all") == 0)
+				{
+					str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not yet supported for victim", aParamName, m_aaArgs[i]);
+					return false;
+				}
+				else if(str_comp(m_aaArgs[i], "me") == 0)
+				{
+					// depends on https://github.com/ddnet/ddnet/pull/11688
+					str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not yet supported for victim", aParamName, m_aaArgs[i]);
+					return false;
+				}
+				str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not a valid victim", aParamName, m_aaArgs[i]);
+				return false;
+			}
+			if(Value < 0)
+			{
+				str_format(pError, ErrorSize, "argument '%s' has value %d which is not a valid victim (to small)", aParamName, Value);
+				return false;
+			}
+			if(Value >= MAX_CLIENTS)
+			{
+				str_format(pError, ErrorSize, "argument '%s' has value %d which is not a valid victim (to big)", aParamName, Value);
 				return false;
 			}
 			break;
