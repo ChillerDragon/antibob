@@ -71,7 +71,7 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 		{
 			if(Param.m_Optional)
 			{
-				str_format(pError, ErrorSize, "nameless optional parameter in %s", pParamsText);
+				str_format(pError, ErrorSize, "nameless optional parameter in '%s'", pParamsText);
 				return false;
 			}
 			if(pParamsText[i + 1] == '[')
@@ -126,7 +126,7 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 
 	if(Param.m_Optional)
 	{
-		str_format(pError, ErrorSize, "nameless optional parameter in %s", pParamsText);
+		str_format(pError, ErrorSize, "nameless optional parameter in '%s'", pParamsText);
 		return false;
 	}
 

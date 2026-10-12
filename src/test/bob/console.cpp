@@ -125,6 +125,50 @@ static void TestParseParams(CBobTest &BobTest)
 	EXPECT_STREQ(aError, "got invalid type for param in 's s s  i      [age]'");
 	EXPECT_EQ(vParams.size(), 4);
 	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "?", aError, sizeof(aError));
+	EXPECT_EQ(Ok, false);
+	EXPECT_STREQ(aError, "nameless optional parameter in '?'");
+	EXPECT_EQ(vParams.size(), 0);
+	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "\?\?\?", aError, sizeof(aError));
+	EXPECT_EQ(Ok, false);
+	EXPECT_STREQ(aError, "nameless optional parameter in '\?\?\?'");
+	EXPECT_EQ(vParams.size(), 0);
+	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "s[name]i[level]s['foo'|'bar'|'baz']", aError, sizeof(aError));
+	EXPECT_EQ(Ok, true);
+	EXPECT_STREQ(aError, "");
+	EXPECT_EQ(vParams.size(), 3);
+	EXPECT_STREQ(vParams.at(2).m_aDescription, "'foo'|'bar'|'baz'");
+	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "s[name]r[password]", aError, sizeof(aError));
+	EXPECT_EQ(Ok, true);
+	EXPECT_STREQ(aError, "");
+	EXPECT_EQ(vParams.size(), 2);
+	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "s[name]r[password]?i[pin]", aError, sizeof(aError));
+	EXPECT_EQ(Ok, true);
+	EXPECT_STREQ(aError, "");
+	EXPECT_EQ(vParams.size(), 3);
+	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "   s[name]        r[password]             ?i[pin]", aError, sizeof(aError));
+	EXPECT_EQ(Ok, true);
+	EXPECT_STREQ(aError, "");
+	EXPECT_EQ(vParams.size(), 3);
+	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "i[client id] s[ HELLO   WORLD ]", aError, sizeof(aError));
+	EXPECT_EQ(Ok, true);
+	EXPECT_STREQ(aError, "");
+	EXPECT_EQ(vParams.size(), 2);
+	EXPECT_STREQ(vParams.at(1).m_aDescription, " HELLO   WORLD ");
+	vParams.clear();
 }
 
 int main()
