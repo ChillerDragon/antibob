@@ -56,6 +56,11 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 				str_format(pError, ErrorSize, "nameless optional parameter in %s", pParamsText);
 				return false;
 			}
+			if(pParamsText[i + 1] == '[')
+			{
+				str_format(pError, ErrorSize, "missing type for optional parameter in %s", pParamsText);
+				return false;
+			}
 
 			Param.m_Optional = true;
 		}

@@ -92,9 +92,8 @@ static void TestParseParams(CBobTest &BobTest)
 
 	//                                                   v missing "s" for string
 	Ok = CBobConsole::ParseParams(vParams, "i[client_id]?[name]", aError, sizeof(aError));
-	EXPECT_EQ(Ok, true);
-	EXPECT_STREQ(aError, "");
-	EXPECT_EQ(vParams.size(), 2);
+	EXPECT_EQ(Ok, false);
+	EXPECT_STREQ(aError, "missing type for optional parameter in i[client_id]?[name]");
 	vParams.clear();
 
 	Ok = CBobConsole::ParseParams(vParams, "i?s", aError, sizeof(aError));
