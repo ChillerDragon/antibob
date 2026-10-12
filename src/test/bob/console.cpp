@@ -114,11 +114,17 @@ static void TestParseParams(CBobTest &BobTest)
 	EXPECT_EQ(vParams.size(), 14);
 	vParams.clear();
 
-	// Ok = CBobConsole::ParseParams(vParams, "s s s", aError, sizeof(aError));
-	// EXPECT_EQ(Ok, true);
-	// EXPECT_STREQ(aError, "");
-	// EXPECT_EQ(vParams.size(), 14);
-	// vParams.clear();
+	Ok = CBobConsole::ParseParams(vParams, "s s s", aError, sizeof(aError));
+	EXPECT_EQ(Ok, true);
+	EXPECT_STREQ(aError, "");
+	EXPECT_EQ(vParams.size(), 3);
+	vParams.clear();
+
+	Ok = CBobConsole::ParseParams(vParams, "s s s  i      [age]", aError, sizeof(aError));
+	EXPECT_EQ(Ok, false);
+	EXPECT_STREQ(aError, "got invalid type for param in 's s s  i      [age]'");
+	EXPECT_EQ(vParams.size(), 4);
+	vParams.clear();
 }
 
 int main()

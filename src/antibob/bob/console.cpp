@@ -29,6 +29,10 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 
 	for(int i = 0; i < ParamsLen; i++)
 	{
+		// allow spaces between params
+		if(!InDesc && pParamsText[i] == ' ')
+			continue;
+
 		if(pParamsText[i] == '[')
 		{
 			if(InDesc)
@@ -47,6 +51,11 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 				return false;
 			}
 
+			if(Param.m_Type == CBobParam::EType::INVALID)
+			{
+				str_format(pError, ErrorSize, "got invalid type for param in '%s'", pParamsText);
+				return false;
+			}
 			if(ExpectOnlyOptionals && !Param.m_Optional)
 			{
 				str_format(pError, ErrorSize, "got non optional param after optional param in '%s'", pParamsText);
@@ -99,6 +108,11 @@ bool CBobConsole::ParseParams(std::vector<CBobParam> &vParams, const char *pPara
 			}
 			if(pParamsText[i + 1] != '[')
 			{
+				if(Param.m_Type == CBobParam::EType::INVALID)
+				{
+					str_format(pError, ErrorSize, "got invalid type for param in '%s'", pParamsText);
+					return false;
+				}
 				if(ExpectOnlyOptionals && !Param.m_Optional)
 				{
 					str_format(pError, ErrorSize, "got non optional param after optional param in '%s'", pParamsText);
