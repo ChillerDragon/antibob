@@ -1,4 +1,4 @@
-#include "bobtest.h"
+#include "../bobtest.h"
 
 #include <bob/console.h>
 #include <polybob/base/log.h>
