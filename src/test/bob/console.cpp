@@ -1,5 +1,6 @@
 #include "../bobtest.h"
 
+#include <bob/config.h>
 #include <bob/console.h>
 #include <polybob/base/log.h>
 #include <polybob/base/system.h>
@@ -237,12 +238,33 @@ static void TestParseParams(CBobTest &BobTest)
 
 static void TestExec(CBobTest &BobTest)
 {
-	// FIXME: remove CAntibob dependency from console and Register a custom command here
-	//        and then call it with ExecuteCommand
-	//        give it a victim param and check if the default is set correctly when no arg is provided
-
 	CBobConsole Console;
-	// Console.OnInit(CBobConfigManager *pConfigManager, class CAntibob *pAntibob)
+	CBobConfigManager Config;
+	Config.OnInit();
+	Console.OnInit(&Config);
+
+	Console.Register(
+		"expect_10",
+		"i",
+		[](CBobResult *pResult, void *pUserData) {
+			CBobTest *pTest = (CBobTest *)pUserData;
+			pTest->ExpectEq(pResult->GetInteger(0), 10, __FILE__, __LINE__);
+		},
+		&BobTest,
+		"");
+
+	Console.Register(
+		"default_vic",
+		"?v",
+		[](CBobResult *pResult, void *pUserData) {
+			CBobTest *pTest = (CBobTest *)pUserData;
+			pTest->ExpectEq(pResult->GetVictim(0), 5, __FILE__, __LINE__);
+		},
+		&BobTest,
+		"");
+
+	Console.ExecuteCmd(-1, "expect_10 10");
+	Console.ExecuteCmd(5, "default_vic");
 }
 
 int main()
