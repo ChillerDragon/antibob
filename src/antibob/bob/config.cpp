@@ -112,7 +112,7 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand)
 	return false;
 }
 
-void CBobConfigManager::PrintConfigs()
+void CBobConfigManager::PrintConfigs() const
 {
 	char aVariables[2048];
 	aVariables[0] = '\0';

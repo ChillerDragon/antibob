@@ -97,7 +97,7 @@ public:
 
 	// returns true if the console command operated on a config
 	bool OnConsoleCommand(const char *pCommand);
-	void PrintConfigs();
+	void PrintConfigs() const;
 
 	// returns false if the `pCommand` does not start with a valid config variable
 	// it prints nothing in that case

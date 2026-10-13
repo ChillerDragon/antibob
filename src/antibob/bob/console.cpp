@@ -486,7 +486,7 @@ void CBobConsole::PrintCmdHelp(const char *pCommand)
 	log_info("antibot", "no such command '%s'", pCommand);
 }
 
-void CBobConsole::PrintConfigs()
+void CBobConsole::PrintConfigs() const
 {
 	m_pConfigManager->PrintConfigs();
 }
