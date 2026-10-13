@@ -18,7 +18,7 @@ CONSOLE_COMMAND("known", "", ComKnownCheaters, this, "list players that were alr
 CONSOLE_COMMAND("redirect_cheaters", "i[port]", ComRedirectKnownCheaters, this, "redirect all players caught cheating already")
 CONSOLE_COMMAND("sample_job", "i[client id]", ComSampleJob, this, "launch a job for a player in the worker thread (just an example)")
 CONSOLE_COMMAND("player_jobs", "", ComPlayerJobs, this, "list amount of pending jobs per player")
-CONSOLE_COMMAND("redirect", "i[client_id]i[port]", ComRedirect, this, "redirect the client to another game server")
+CONSOLE_COMMAND("redirect", "?v[client_id]?i[port]", ComRedirect, this, "redirect the client to another game server")
 
 //
 // Add new commands for forks below this comment to avoid merge conflicts.

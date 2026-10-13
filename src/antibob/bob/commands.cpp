@@ -320,7 +320,7 @@ void CAntibob::ComRedirect(CBobResult *pResult, void *pUserData)
 		log_error("antibot", "missing round data");
 		return;
 	}
-	int ClientId = pResult->GetInteger(0);
+	int ClientId = pResult->GetVictim(0);
 	int Port = pResult->GetInteger(1);
 	if(ClientId < 0 || ClientId >= ANTIBOT_MAX_CLIENTS)
 	{

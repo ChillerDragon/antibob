@@ -42,11 +42,24 @@ class CBobResult
 	int NumParams() { return m_vParams.size(); }
 
 public:
+	class CVictim
+	{
+	public:
+		static constexpr unsigned MAX_VICTIM_LENGTH = 16;
+		// symbolic victim like "me" or "all", resolved to ids before the command callback runs
+		char m_aSpecialVictim[MAX_VICTIM_LENGTH] = "";
+		std::optional<int> m_Id;
+	};
+	std::vector<CVictim> m_vVictims;
+	void AddVictim(const char *pVictim);
+	void SetVictim(unsigned Slot, int Victim);
+	int GetVictim(unsigned Slot) const;
+
 	int GetInteger(unsigned Index) const { return atoi(m_aaArgs[Index]); }
 	const char *GetString(unsigned Index) const { return m_aaArgs[Index]; }
-	// int GetVictim() const { return 0; }
 	int NumArguments() const { return m_NumArgs; }
 	int NumRequiredParameters() const;
+
 	int m_ClientId = -1;
 
 	char m_aRawArgs[2028];
@@ -97,14 +110,30 @@ class CBobConsole
 {
 	class CAntibob *m_pAntibob = nullptr;
 
+	// Normally the gameserver implements special victims such as "me" and "all"
+	// but in the tests we do not want to set that callback
+	// and in general this fallback will make things more portable and robust
+	// for the rare edge cases where the real fallback is not set yet
+	static std::optional<std::vector<int>> ClientsForVictimFallback(int ClientId, const char *pVictim, void *pUser);
+
 public:
 	static bool ParseParams(std::vector<CBobParam> &vParams, const char *pParamsText, char *pError, int ErrorSize);
 
 	std::vector<CBobCommand> m_vCommands;
 	CBobConfigManager *m_pConfigManager = nullptr;
 
+	CBobConsole();
+
 	void OnInit(CBobConfigManager *pConfigManager, class CAntibob *pAntibob);
 
+	typedef std::optional<std::vector<int>> (*FGetVictimsCommandCallback)(int ClientId, const char *pVictim, void *pUser);
+	void SetGetVictimsCommandCallback(FGetVictimsCommandCallback pfnCallback, void *pUser);
+
+private:
+	FGetVictimsCommandCallback m_pfnGetVictimsCommandCallback = nullptr;
+	void *m_pGetVictimsCommandUserData = nullptr;
+
+public:
 	void Register(
 		const char *pName,
 		const char *pParams,
@@ -112,8 +141,10 @@ public:
 		void *pUser,
 		const char *pHelp);
 
+	// WARNING: ClientId is wrong because of https://github.com/ddnet/ddnet/pull/11688
+	//
 	// returns true if the command or config exists
-	bool ExecuteCmd(const char *pCommand);
+	bool ExecuteCmd(int ClientId, const char *pCommand);
 
 	void PrintCmdHelp(const char *pCommand);
 	void PrintConfigs();

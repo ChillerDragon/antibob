@@ -19,6 +19,8 @@
 
 class CGameServer
 {
+	static std::optional<std::vector<int>> ClientsForVictim(int ClientId, const char *pVictim, void *pUser);
+
 public:
 	CGameServer(CAntibotData *pData);
 	virtual ~CGameServer();

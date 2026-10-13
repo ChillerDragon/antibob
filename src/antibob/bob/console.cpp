@@ -5,7 +5,56 @@
 #include <polybob/base/system.h>
 #include <polybob/engine/shared/protocol.h>
 
-#include <cstdlib>
+std::optional<std::vector<int>> CBobConsole::ClientsForVictimFallback(int ClientId, const char *pVictim, void *pUser)
+{
+	CBobConsole *pSelf = (CBobConsole *)pUser;
+	std::vector<int> vClientIds;
+
+	log_warn("antibot", "WARNING: ClientsForVictimFallback() called. This should only happen in unit tests!");
+
+	if(!str_comp(pVictim, "me"))
+	{
+		if(ClientId < 0)
+			return std::nullopt;
+		vClientIds.emplace_back(ClientId);
+	}
+	else if(!str_comp(pVictim, "all"))
+	{
+		// this is wrong but we are just a stupid fallback
+		vClientIds.emplace_back(ClientId);
+	}
+	else
+	{
+		return std::nullopt;
+	}
+
+	return std::make_optional(std::move(vClientIds));
+}
+
+int CBobResult::GetVictim(unsigned Slot) const
+{
+	dbg_assert(Slot < m_vVictims.size(), "victim slot %u out of range", Slot);
+	dbg_assert(m_vVictims[Slot].m_Id.has_value(), "victim %u has no value", Slot);
+	return m_vVictims[Slot].m_Id.value();
+}
+
+void CBobResult::SetVictim(unsigned Slot, int Victim)
+{
+	dbg_assert(Slot < m_vVictims.size(), "victim slot %u out of range", Slot);
+	dbg_assert(in_range(Victim, 0, MAX_CLIENTS - 1), "Victim ID %d out of range [0, %d]", Victim, MAX_CLIENTS - 1);
+	m_vVictims[Slot].m_Id = Victim;
+}
+
+void CBobResult::AddVictim(const char *pVictim)
+{
+	CVictim Victim;
+	int Value;
+	if(str_toint(pVictim, &Value) && in_range(Value, 0, MAX_CLIENTS - 1))
+		Victim.m_Id = Value;
+	else
+		str_copy(Victim.m_aSpecialVictim, pVictim);
+	m_vVictims.push_back(Victim);
+}
 
 int CBobResult::NumRequiredParameters() const
 {
@@ -274,10 +323,10 @@ bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 			{
 				if(str_comp(m_aaArgs[i], "all") == 0)
 				{
-					str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not yet supported for victim", aParamName, m_aaArgs[i]);
-					return false;
+					AddVictim(m_aaArgs[i]);
+					continue;
 				}
-				else if(str_comp(m_aaArgs[i], "me") == 0)
+				if(str_comp(m_aaArgs[i], "me") == 0)
 				{
 					// depends on https://github.com/ddnet/ddnet/pull/11688
 					str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not yet supported for victim", aParamName, m_aaArgs[i]);
@@ -296,6 +345,7 @@ bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 				str_format(pError, ErrorSize, "argument '%s' has value %d which is not a valid victim (to big)", aParamName, Value);
 				return false;
 			}
+			AddVictim(m_aaArgs[i]);
 			break;
 		case CBobParam::EType::STRING:
 		case CBobParam::EType::REST:
@@ -304,13 +354,34 @@ bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 		}
 	}
 
+	// TODO: this code is untested there might be off by one errors
+	for(int i = m_NumArgs; i < m_vParams.size(); i++)
+	{
+		if(m_vParams[i].m_Optional && m_vParams[i].m_Type == CBobParam::EType::VICTIM)
+		{
+			// If the victim argument is optional we default to "me"
+			AddVictim("me");
+		}
+	};
+
 	return true;
+}
+
+CBobConsole::CBobConsole()
+{
+	SetGetVictimsCommandCallback(ClientsForVictimFallback, this);
 }
 
 void CBobConsole::OnInit(CBobConfigManager *pConfigManager, CAntibob *pAntibob)
 {
 	m_pConfigManager = pConfigManager;
 	m_pAntibob = pAntibob;
+}
+
+void CBobConsole::SetGetVictimsCommandCallback(FGetVictimsCommandCallback pfnCallback, void *pUser)
+{
+	m_pfnGetVictimsCommandCallback = pfnCallback;
+	m_pGetVictimsCommandUserData = pUser;
 }
 
 void CBobConsole::Register(
@@ -335,7 +406,7 @@ static bool MatchCmd(const char *pName, const char *pCommandWithArgs)
 	return CmdEnd == ' ';
 }
 
-bool CBobConsole::ExecuteCmd(const char *pCommand)
+bool CBobConsole::ExecuteCmd(int ClientId, const char *pCommand)
 {
 	for(auto Cmd : m_vCommands)
 	{
@@ -350,7 +421,48 @@ bool CBobConsole::ExecuteCmd(const char *pCommand)
 				return true;
 			}
 
-			Cmd.m_pfnFunc(&Result, Cmd.m_pUser);
+			int FanOutSlot = -1;
+			std::vector<int> vFanOutIds;
+			for(unsigned Slot = 0; Slot < Result.m_vVictims.size(); Slot++)
+			{
+				if(!Result.m_vVictims[Slot].m_aSpecialVictim[0])
+					continue;
+				std::optional<std::vector<int>> Victims;
+				if(m_pfnGetVictimsCommandCallback)
+					Victims = m_pfnGetVictimsCommandCallback(ClientId, Result.m_vVictims[Slot].m_aSpecialVictim, m_pGetVictimsCommandUserData);
+
+				if(!Victims.has_value())
+				{
+					log_error("antibot", "Invalid victim '%s'", Result.m_vVictims[Slot].m_aSpecialVictim);
+					return true;
+				}
+				if(Victims->size() != 1 && FanOutSlot >= 0)
+				{
+					log_error("antibot", "Only one parameter may target multiple clients");
+					return true;
+				}
+				if(Victims->size() == 1)
+					Result.SetVictim(Slot, Victims->front());
+				else
+				{
+					FanOutSlot = Slot;
+					vFanOutIds = std::move(Victims.value());
+				}
+			}
+
+			if(FanOutSlot < 0)
+			{
+				Cmd.m_pfnFunc(&Result, Cmd.m_pUser);
+			}
+			else
+			{
+				for(const int VictimId : vFanOutIds)
+				{
+					Result.SetVictim(FanOutSlot, VictimId);
+					Cmd.m_pfnFunc(&Result, Cmd.m_pUser);
+				}
+			}
+
 			return true;
 		}
 	}

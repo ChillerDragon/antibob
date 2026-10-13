@@ -84,6 +84,29 @@ static void TestArgParse(CBobTest &BobTest)
 		EXPECT_EQ(Ok, false);
 		EXPECT_STREQ(aError, "argument 'target' has value 99999 which is not a valid victim (to big)");
 	}
+
+	{
+		CBobResult Result("all", "v");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, true);
+		EXPECT_STREQ(aError, "");
+	}
+
+	{
+		CBobResult Result("2", "v");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, true);
+		EXPECT_STREQ(aError, "");
+	}
+
+	{
+		CBobResult Result("2", "?v");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, true);
+		EXPECT_STREQ(aError, "");
+
+		EXPECT_EQ(Result.GetVictim(0), 2);
+	}
 }
 
 static void TestExpectEscape(CBobTest &BobTest)
@@ -212,6 +235,16 @@ static void TestParseParams(CBobTest &BobTest)
 	vParams.clear();
 }
 
+static void TestExec(CBobTest &BobTest)
+{
+	// FIXME: remove CAntibob dependency from console and Register a custom command here
+	//        and then call it with ExecuteCommand
+	//        give it a victim param and check if the default is set correctly when no arg is provided
+
+	CBobConsole Console;
+	// Console.OnInit(CBobConfigManager *pConfigManager, class CAntibob *pAntibob)
+}
+
 int main()
 {
 	CBobTest BobTest;
@@ -219,4 +252,5 @@ int main()
 	TestExpectEscape(BobTest);
 	TestArgParse(BobTest);
 	TestParseParams(BobTest);
+	TestExec(BobTest);
 }

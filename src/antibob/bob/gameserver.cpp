@@ -29,6 +29,8 @@ CGameServer::CGameServer(CAntibotData *pData) :
 		log_error("antibot", "Failed to initialize the HTTP client.");
 	}
 
+	m_Console.SetGetVictimsCommandCallback(ClientsForVictim, this);
+
 	CCmdlineArguments CliArgs;
 	m_pStorage = polybob::CreateStorage(IStorage::EInitializationType::SERVER, 1, (const char **)CliArgs.All());
 	m_JobPool.Init(std::max(4, (int)std::thread::hardware_concurrency()) - 2);
@@ -40,6 +42,36 @@ CGameServer::~CGameServer()
 	delete m_pStorage;
 	log_info("antibot", "shutting down job pool ...");
 	m_JobPool.Shutdown();
+}
+
+std::optional<std::vector<int>> CGameServer::ClientsForVictim(int ClientId, const char *pVictim, void *pUser)
+{
+	CGameServer *pSelf = (CGameServer *)pUser;
+	std::vector<int> vClientIds;
+
+	if(!str_comp(pVictim, "me"))
+	{
+		if(ClientId < 0)
+			return std::nullopt;
+		vClientIds.emplace_back(ClientId);
+	}
+	else if(!str_comp(pVictim, "all"))
+	{
+		const int MaxClients = pSelf->Server()->MaxClients();
+		for(int i = 0; i < MaxClients; i++)
+		{
+			if(!pSelf->Server()->ClientIngame(i))
+				continue;
+
+			vClientIds.emplace_back(i);
+		}
+	}
+	else
+	{
+		return std::nullopt;
+	}
+
+	return std::make_optional(std::move(vClientIds));
 }
 
 CAntibotPlayer *CGameServer::GetPlayerByUniqueClientId(int UniqueClientId)
