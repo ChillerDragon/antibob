@@ -108,8 +108,6 @@ public:
 
 class CBobConsole
 {
-	class CAntibob *m_pAntibob = nullptr;
-
 	// Normally the gameserver implements special victims such as "me" and "all"
 	// but in the tests we do not want to set that callback
 	// and in general this fallback will make things more portable and robust
@@ -124,7 +122,7 @@ public:
 
 	CBobConsole();
 
-	void OnInit(CBobConfigManager *pConfigManager, class CAntibob *pAntibob);
+	void OnInit(CBobConfigManager *pConfigManager);
 
 	typedef std::optional<std::vector<int>> (*FGetVictimsCommandCallback)(int ClientId, const char *pVictim, void *pUser);
 	void SetGetVictimsCommandCallback(FGetVictimsCommandCallback pfnCallback, void *pUser);

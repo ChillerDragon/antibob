@@ -578,7 +578,7 @@ void CAntibob::OnInit(CAntibotData *pData)
 
 	RegisterCommands();
 	m_ConfigManager.OnInit();
-	m_Console.OnInit(&m_ConfigManager, this);
+	m_Console.OnInit(&m_ConfigManager);
 	m_PunishController.OnInit(this);
 }
 

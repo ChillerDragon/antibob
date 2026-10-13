@@ -372,10 +372,9 @@ CBobConsole::CBobConsole()
 	SetGetVictimsCommandCallback(ClientsForVictimFallback, this);
 }
 
-void CBobConsole::OnInit(CBobConfigManager *pConfigManager, CAntibob *pAntibob)
+void CBobConsole::OnInit(CBobConfigManager *pConfigManager)
 {
 	m_pConfigManager = pConfigManager;
-	m_pAntibob = pAntibob;
 }
 
 void CBobConsole::SetGetVictimsCommandCallback(FGetVictimsCommandCallback pfnCallback, void *pUser)
@@ -417,7 +416,7 @@ bool CBobConsole::ExecuteCmd(int ClientId, const char *pCommand)
 			char aError[512];
 			if(!Result.ParseArgs(aError, sizeof(aError)))
 			{
-				m_pAntibob->LogError("failed to parse %s arguments: %s", Cmd.m_pName, aError);
+				log_error("antibot", "failed to parse %s arguments: %s", Cmd.m_pName, aError);
 				return true;
 			}
 
@@ -466,7 +465,7 @@ bool CBobConsole::ExecuteCmd(int ClientId, const char *pCommand)
 			return true;
 		}
 	}
-	return m_pConfigManager->OnConsoleCommand(pCommand, m_pAntibob);
+	return m_pConfigManager->OnConsoleCommand(pCommand);
 }
 
 void CBobConsole::PrintCmdHelp(const char *pCommand)
@@ -475,21 +474,21 @@ void CBobConsole::PrintCmdHelp(const char *pCommand)
 	{
 		if(!str_comp_nocase(pCommand, Cmd.m_pName))
 		{
-			m_pAntibob->LogInfo("Usage: %s %s", Cmd.m_pName, Cmd.m_pParams);
-			m_pAntibob->LogInfo("%s", Cmd.m_pHelp);
+			log_info("antibot", "Usage: %s %s", Cmd.m_pName, Cmd.m_pParams);
+			log_info("antibot", "%s", Cmd.m_pHelp);
 			return;
 		}
 	}
 
-	if(m_pConfigManager->PrintHelp(pCommand, m_pAntibob))
+	if(m_pConfigManager->PrintHelp(pCommand))
 		return;
 
-	m_pAntibob->LogInfo("no such command '%s'", pCommand);
+	log_info("antibot", "no such command '%s'", pCommand);
 }
 
 void CBobConsole::PrintConfigs()
 {
-	m_pConfigManager->PrintConfigs(m_pAntibob);
+	m_pConfigManager->PrintConfigs();
 }
 
 void CBobConsole::PrintCmdlist()
@@ -506,7 +505,7 @@ void CBobConsole::PrintCmdlist()
 			str_append(aCommands, ", ");
 	}
 
-	m_pAntibob->LogInfo("%s", aCommands);
+	log_info("antibot", "%s", aCommands);
 }
 
 // TODO: this is not matching the ddnet implementation!

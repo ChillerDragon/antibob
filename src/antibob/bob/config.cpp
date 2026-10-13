@@ -1,7 +1,7 @@
 #include "config.h"
 
-#include <bob/antibob.h>
 #include <bob/console.h>
+#include <polybob/base/log.h>
 #include <polybob/base/system.h>
 
 #include <algorithm>
@@ -52,7 +52,7 @@ CBobConfigVariable *CBobConfigManager::FindConfig(const char *pCommand)
 	return nullptr;
 }
 
-bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibob)
+bool CBobConfigManager::OnConsoleCommand(const char *pCommand)
 {
 	for(auto *pVariable : m_vpAllVariables)
 	{
@@ -81,7 +81,7 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibo
 				str_copy(aValue, ((CBobStringConfigVariable *)pVariable)->m_pStr);
 				break;
 			}
-			pAntibob->LogInfo("config %s value: %s", pVariable->m_pScriptName, aValue);
+			log_info("antibot", "config %s value: %s", pVariable->m_pScriptName, aValue);
 			return true;
 		}
 
@@ -94,7 +94,7 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibo
 			pInt = (CBobIntConfigVariable *)pVariable;
 			if(!str_toint(pEnd, pInt->m_pVariable))
 			{
-				pAntibob->LogInfo("'%s' is not a valid integer", pEnd);
+				log_info("antibot", "'%s' is not a valid integer", pEnd);
 			}
 			*pInt->m_pVariable = std::clamp(*pInt->m_pVariable, pInt->m_Min, pInt->m_Max);
 			break;
@@ -102,7 +102,7 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibo
 			pStr = (CBobStringConfigVariable *)pVariable;
 			if(!CBobConsole::ParseStringQuotes(pEnd, pStr->m_pStr, pStr->m_MaxSize))
 			{
-				pAntibob->LogInfo("failed to parse string");
+				log_info("antibot", "failed to parse string");
 			}
 			break;
 		}
@@ -112,7 +112,7 @@ bool CBobConfigManager::OnConsoleCommand(const char *pCommand, CAntibob *pAntibo
 	return false;
 }
 
-void CBobConfigManager::PrintConfigs(CAntibob *pAntibob)
+void CBobConfigManager::PrintConfigs()
 {
 	char aVariables[2048];
 	aVariables[0] = '\0';
@@ -126,16 +126,16 @@ void CBobConfigManager::PrintConfigs(CAntibob *pAntibob)
 			str_append(aVariables, ", ");
 	}
 
-	pAntibob->LogInfo("%s", aVariables);
+	log_info("antibot", "%s", aVariables);
 }
 
-bool CBobConfigManager::PrintHelp(const char *pCommand, CAntibob *pAntibob)
+bool CBobConfigManager::PrintHelp(const char *pCommand)
 {
 	CBobConfigVariable *pVar = FindConfig(pCommand);
 	if(!pVar)
 		return false;
 
-	pAntibob->LogInfo("Config: %s %s", pVar->m_pScriptName, pVar->m_pHelp);
+	log_info("antibot", "Config: %s %s", pVar->m_pScriptName, pVar->m_pHelp);
 
 	CBobStringConfigVariable *pStr = nullptr;
 	CBobIntConfigVariable *pInt = nullptr;
@@ -143,7 +143,8 @@ bool CBobConfigManager::PrintHelp(const char *pCommand, CAntibob *pAntibob)
 	{
 	case CBobConfigVariable::EVarType::INT:
 		pInt = (CBobIntConfigVariable *)pVar;
-		pAntibob->LogInfo(
+		log_info(
+			"antibot",
 			"Type: int, Min: %d, Max: %d, Default: %d",
 			pInt->m_Min,
 			pInt->m_Max,
@@ -151,7 +152,8 @@ bool CBobConfigManager::PrintHelp(const char *pCommand, CAntibob *pAntibob)
 		break;
 	case CBobConfigVariable::EVarType::STRING:
 		pStr = (CBobStringConfigVariable *)pVar;
-		pAntibob->LogInfo(
+		log_info(
+			"antibot",
 			"Type: string, Max length: %zu, Default: %s",
 			pStr->m_MaxSize,
 			pStr->m_pDefault);
