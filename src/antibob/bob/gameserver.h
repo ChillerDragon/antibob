@@ -58,7 +58,7 @@ public:
 	CAntibotPlayer *GetPlayerByUniqueClientId(int UniqueClientId);
 	CAntibotPlayer *GetPlayerByIpAddr(const char *pIpAddr);
 
-	const char *ClientName(int ClientId) const { return !m_pRoundData ? "(null)" : m_pRoundData->m_aCharacters[ClientId].m_aName; }
+	const char *ClientName(int ClientId) const;
 	bool IsClientReady(int ClientId) const;
 
 	void AddJob(std::shared_ptr<polybob::IJob> pJob);

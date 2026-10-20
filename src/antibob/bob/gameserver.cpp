@@ -105,6 +105,17 @@ CAntibotPlayer *CGameServer::GetPlayerByIpAddr(const char *pIpAddr)
 	return nullptr;
 }
 
+const char *CGameServer::ClientName(int ClientId) const
+{
+	if(!m_pRoundData)
+		return "(null)";
+	// TODO: should we introduce magic (server) for -1?
+	if(ClientId < 0 || ClientId >= MAX_CLIENTS)
+		return "(invalid)";
+
+	return m_pRoundData->m_aCharacters[ClientId].m_aName;
+}
+
 bool CGameServer::IsClientReady(int ClientId) const
 {
 	if(!m_apPlayers[ClientId])
