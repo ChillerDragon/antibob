@@ -33,5 +33,5 @@ void log_log_v(LEVEL level, const char *sys, const char *fmt, va_list args)
 
 	char aTimestamp[512];
 	polybob::str_timestamp_format(aTimestamp, sizeof(aTimestamp), FORMAT_SPACE);
-	fprintf(level == LEVEL_ERROR ? stderr : stdout, "(test mock) %s %c %s: %s\n", aTimestamp, "EWIDT"[level], sys, aLine);
+	fprintf(level == LEVEL_ERROR ? stderr : stdout, "(standalone logger) %s %c %s: %s\n", aTimestamp, "EWIDT"[level], sys, aLine);
 }

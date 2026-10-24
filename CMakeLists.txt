@@ -150,13 +150,41 @@ if(OUR_FLAGS_OWN)
 endif()
 
 ########################################################################
+# gameserver fallback
+########################################################################
+
+# The regular antibot module calls some exposed symbols from the gameserver
+# to allow unit tests and tools to call those too
+# we ship our own fallback implementation for standalone binaries
+# that do not run together with a real ddnet game server
+
+file(GLOB_RECURSE GAMESERVER_FALLBACK_SRCS
+  src/gameserver_fallback/*.cpp
+  src/gameserver_fallback/*.h
+)
+
+########################################################################
+# tools
+########################################################################
+
+file(GLOB TOOLS_SRCS
+  src/tools/*.cpp
+)
+foreach(TOOL_SRC ${TOOLS_SRCS})
+  get_filename_component(TOOL_NAME ${TOOL_SRC} NAME_WE)
+  add_executable(${TOOL_NAME} ${TOOL_SRC} ${GAMESERVER_FALLBACK_SRCS})
+  target_link_libraries(${TOOL_NAME} antibot z curl)
+  target_compile_options(${TOOL_NAME} PRIVATE ${OUR_FLAGS_OWN})
+  include_directories(src/gameserver_fallback)
+endforeach()
+
+########################################################################
 # tests
 ########################################################################
 
 # compile test binaries
 file(GLOB BOBTEST_FRAMEWORK_SRCS
   src/test/*.cpp
-  src/test/server_mock/*.cpp
 )
 
 file(GLOB_RECURSE TESTS_SRCS
@@ -164,10 +192,16 @@ file(GLOB_RECURSE TESTS_SRCS
 )
 foreach(TEST_SRC ${TESTS_SRCS})
   get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
-  add_executable(${TEST_NAME}_bob_test ${TEST_SRC} ${BOBTEST_FRAMEWORK_SRCS})
+  add_executable(
+    ${TEST_NAME}_bob_test
+    ${TEST_SRC}
+    ${BOBTEST_FRAMEWORK_SRCS}
+    ${GAMESERVER_FALLBACK_SRCS}
+  )
   target_link_libraries(${TEST_NAME}_bob_test antibot z curl)
   target_compile_options(${TEST_NAME}_bob_test PRIVATE ${OUR_FLAGS_OWN})
   include_directories(src/test)
+  include_directories(src/gameserver_fallback)
 endforeach()
 
 # tester runner target "make test"

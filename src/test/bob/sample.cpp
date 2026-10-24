@@ -1,7 +1,7 @@
 #include "bobtest.h"
-#include "server_mock/log.h"
 
 #include <bob/detection_event.h>
+#include <standalone_logger/log.h>
 
 int main()
 {
