@@ -75,56 +75,56 @@ endfunction()
 
 # Include directories
 include_directories(
-    src/antibob
-    src/ddnet
+  src/antibob
+  src/ddnet
 )
 
 # Find all source files
 file(GLOB_RECURSE POLYBOB_SRCS
-    src/ddnet/polybob/*/*.cpp
-    src/ddnet/polybob/base/unicode/*.cpp
-    src/ddnet/polybob/base/system/*.cpp
-    src/ddnet/polybob/game/generated/*.cpp
-    src/ddnet/polybob/game/server/*.cpp
-    src/ddnet/polybob/engine/shared/*.cpp
+  src/ddnet/polybob/*/*.cpp
+  src/ddnet/polybob/base/unicode/*.cpp
+  src/ddnet/polybob/base/system/*.cpp
+  src/ddnet/polybob/game/generated/*.cpp
+  src/ddnet/polybob/game/server/*.cpp
+  src/ddnet/polybob/engine/shared/*.cpp
 )
 
 file(GLOB_RECURSE ANTIBOB_SRCS
-    src/antibob/interface.cpp
-    src/antibob/*/*.cpp
+  src/antibob/interface.cpp
+  src/antibob/*/*.cpp
 )
 
 # External dependencies
 set(DEPENDENCIES
-    src/ddnet/polybob/engine/external/md5/md5.cpp
-    src/ddnet/polybob/engine/external/json-parser/json.cpp
+  src/ddnet/polybob/engine/external/md5/md5.cpp
+  src/ddnet/polybob/engine/external/json-parser/json.cpp
 )
 
 # Generate git revision
 execute_process(
-    COMMAND git rev-parse --short=16 HEAD
-    OUTPUT_VARIABLE GIT_HASH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
+  COMMAND git rev-parse --short=16 HEAD
+  OUTPUT_VARIABLE GIT_HASH
+  OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 # Create git revision file
 file(WRITE ${CMAKE_BINARY_DIR}/generated/git_revision.cpp
-    "#include <bob/version.h>\n"
-    "const char *BOB_GIT_SHORTREV_HASH = \"${GIT_HASH}\";"
+  "#include <bob/version.h>\n"
+  "const char *BOB_GIT_SHORTREV_HASH = \"${GIT_HASH}\";"
 )
 
 set(DEPENDENCIES ${DEPENDENCIES} ${CMAKE_BINARY_DIR}/generated/git_revision.cpp)
 
 # Vendored polybob code is not checked by clang-tidy
 add_library(polybob STATIC
-    ${POLYBOB_SRCS}
-    ${DEPENDENCIES}
+  ${POLYBOB_SRCS}
+  ${DEPENDENCIES}
 )
 set_target_properties(polybob PROPERTIES POSITION_INDEPENDENT_CODE ON)
 set_target_properties(polybob PROPERTIES CXX_CLANG_TIDY "")
 
 add_library(antibot SHARED
-    ${ANTIBOB_SRCS}
+  ${ANTIBOB_SRCS}
 )
 
 target_link_libraries(antibot polybob z)
@@ -146,7 +146,7 @@ add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wthread-safety-negative)
 add_cxx_compiler_flag_if_supported(OUR_FLAGS_OWN -Wno-deprecated-enum-float-conversion) # c++20 arithmetic between floating-point type and enumeration type
 
 if(OUR_FLAGS_OWN)
-    target_compile_options(antibot PRIVATE ${OUR_FLAGS_OWN})
+  target_compile_options(antibot PRIVATE ${OUR_FLAGS_OWN})
 endif()
 
 ########################################################################
@@ -155,27 +155,27 @@ endif()
 
 # compile test binaries
 file(GLOB BOBTEST_FRAMEWORK_SRCS
-    src/test/*.cpp
-    src/test/server_mock/*.cpp
+  src/test/*.cpp
+  src/test/server_mock/*.cpp
 )
 
 file(GLOB_RECURSE TESTS_SRCS
-    src/test/bob/*.cpp
+  src/test/bob/*.cpp
 )
 foreach(TEST_SRC ${TESTS_SRCS})
-    get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
-    add_executable(${TEST_NAME}_bob_test ${TEST_SRC} ${BOBTEST_FRAMEWORK_SRCS})
-    target_link_libraries(${TEST_NAME}_bob_test antibot z curl)
-    target_compile_options(${TEST_NAME}_bob_test PRIVATE ${OUR_FLAGS_OWN})
-    include_directories(src/test)
+  get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
+  add_executable(${TEST_NAME}_bob_test ${TEST_SRC} ${BOBTEST_FRAMEWORK_SRCS})
+  target_link_libraries(${TEST_NAME}_bob_test antibot z curl)
+  target_compile_options(${TEST_NAME}_bob_test PRIVATE ${OUR_FLAGS_OWN})
+  include_directories(src/test)
 endforeach()
 
 # tester runner target "make test"
 enable_testing()
 file(GLOB TEST_BINARIES
-    ${CMAKE_BINARY_DIR}/bin/*_bob_test
+  ${CMAKE_BINARY_DIR}/bin/*_bob_test
 )
 foreach(TEST_BIN ${TEST_BINARIES})
-    add_test(NAME ${TEST_BIN} COMMAND ${TEST_BIN})
+  add_test(NAME ${TEST_BIN} COMMAND ${TEST_BIN})
 endforeach()
 
