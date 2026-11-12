@@ -89,6 +89,12 @@ class CPlayerComputeResult
 public:
 	EPlayerJobType m_Type;
 
+	// the unique client id of the admin that executed the command
+	// can be 0 for econ clients
+	// used for targeted log responses
+	// https://github.com/ddnet/ddnet/issues/11687
+	uint32_t m_RunnerUniqueClientId;
+
 	union
 	{
 		struct
