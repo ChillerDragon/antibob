@@ -26,7 +26,7 @@ void AntibotDestroy(void)
 	pAntibob->OnDestroy();
 	delete pAntibob;
 }
-void AntibotConsoleCommand(const char *pCommand) { pAntibob->OnConsoleCommand(pCommand); }
+void AntibotConsoleCommand(int ClientId, const char *pCommand) { pAntibob->OnConsoleCommand(ClientId, pCommand); }
 void AntibotOnPlayerInit(int ClientId) { pAntibob->OnPlayerInit(ClientId); }
 void AntibotOnPlayerDestroy(int ClientId) { pAntibob->OnPlayerDestroy(ClientId); }
 void AntibotOnSpawn(int ClientId) { pAntibob->OnSpawn(ClientId); }

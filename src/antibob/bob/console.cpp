@@ -324,13 +324,15 @@ bool CBobResult::ParseArgs(char *pError, int ErrorSize)
 				if(str_comp(m_aaArgs[i], "all") == 0)
 				{
 					AddVictim(m_aaArgs[i]);
+					// FIXME: why is this a continue? test this properly
+					//        also a bit confusing that there is a switch in a for so break breaks the switch
+					//        and continue continues the for?
 					continue;
 				}
 				if(str_comp(m_aaArgs[i], "me") == 0)
 				{
-					// depends on https://github.com/ddnet/ddnet/pull/11688
-					str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not yet supported for victim", aParamName, m_aaArgs[i]);
-					return false;
+					AddVictim("me");
+					break;
 				}
 				str_format(pError, ErrorSize, "argument '%s' has value '%s' which is not a valid victim", aParamName, m_aaArgs[i]);
 				return false;
@@ -411,7 +413,7 @@ bool CBobConsole::ExecuteCmd(int ClientId, const char *pCommand)
 	{
 		if(MatchCmd(Cmd.m_pName, pCommand))
 		{
-			CBobResult Result(pCommand + str_length(Cmd.m_pName), Cmd.m_pParams);
+			CBobResult Result(ClientId, pCommand + str_length(Cmd.m_pName), Cmd.m_pParams);
 
 			char aError[512];
 			if(!Result.ParseArgs(aError, sizeof(aError)))
@@ -465,7 +467,7 @@ bool CBobConsole::ExecuteCmd(int ClientId, const char *pCommand)
 			return true;
 		}
 	}
-	return m_pConfigManager->OnConsoleCommand(pCommand);
+	return m_pConfigManager->OnConsoleCommand(ClientId, pCommand);
 }
 
 void CBobConsole::PrintCmdHelp(const char *pCommand)

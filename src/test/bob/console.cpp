@@ -18,95 +18,110 @@ static void TestArgParse(CBobTest &BobTest)
 	char aError[512];
 
 	{
-		CBobResult Result("hello world", "ss");
+		CBobResult Result(-1, "hello world", "ss");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, true);
 	}
 
 	{
-		CBobResult Result("hello world too many args", "ss");
+		CBobResult Result(-1, "hello world too many args", "ss");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, false);
 		EXPECT_STREQ(aError, "got 5 out of 2 arguments ss");
 	}
 
 	{
-		CBobResult Result("foo \"hello world\" bar", "sss");
+		CBobResult Result(-1, "foo \"hello world\" bar", "sss");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, true);
 		EXPECT_STREQ(aError, "");
 	}
 
 	{
-		CBobResult Result("foo \"bar", "ss");
+		CBobResult Result(-1, "foo \"bar", "ss");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, false);
 		EXPECT_STREQ(aError, "Expected closing quote (\") but got end of input");
 	}
 
 	{
-		CBobResult Result("foo \\\"bar", "ss");
+		CBobResult Result(-1, "foo \\\"bar", "ss");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, true);
 		EXPECT_STREQ(aError, "");
 	}
 
 	{
-		CBobResult Result("foo \\\"bar", "vv");
+		CBobResult Result(-1, "foo \\\"bar", "vv");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, false);
 		EXPECT_STREQ(aError, "argument 'at offset 1' has value 'foo' which is not a valid victim");
 	}
 
 	{
-		CBobResult Result("1 2", "vv");
+		CBobResult Result(-1, "1 2", "vv");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, true);
 		EXPECT_STREQ(aError, "");
 	}
 
 	{
-		CBobResult Result("-1", "v");
+		CBobResult Result(-1, "-1", "v");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, false);
 		EXPECT_STREQ(aError, "argument 'at offset 1' has value -1 which is not a valid victim (to small)");
 	}
 
 	{
-		CBobResult Result("99999", "v");
+		CBobResult Result(-1, "99999", "v");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, false);
 		EXPECT_STREQ(aError, "argument 'at offset 1' has value 99999 which is not a valid victim (to big)");
 	}
 
 	{
-		CBobResult Result("99999", "v[target]");
+		CBobResult Result(-1, "99999", "v[target]");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, false);
 		EXPECT_STREQ(aError, "argument 'target' has value 99999 which is not a valid victim (to big)");
 	}
 
 	{
-		CBobResult Result("all", "v");
+		CBobResult Result(-1, "all", "v");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, true);
 		EXPECT_STREQ(aError, "");
 	}
 
 	{
-		CBobResult Result("2", "v");
+		CBobResult Result(-1, "2", "v");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, true);
 		EXPECT_STREQ(aError, "");
 	}
 
 	{
-		CBobResult Result("2", "?v");
+		CBobResult Result(-1, "2", "?v");
 		Ok = Result.ParseArgs(aError, sizeof(aError));
 		EXPECT_EQ(Ok, true);
 		EXPECT_STREQ(aError, "");
 
 		EXPECT_EQ(Result.GetVictim(0), 2);
+	}
+
+	{
+		CBobResult Result(16, "me", "?v");
+		Ok = Result.ParseArgs(aError, sizeof(aError));
+		EXPECT_EQ(Ok, true);
+		EXPECT_STREQ(aError, "");
+
+		// // in theory we could implement "me" in GetVictim directly
+		// // check the special string and return m_ClientId
+		// // but then that logic is duplicated with the victim callback
+		// // so lets avoid that to stay close to ddnet and keep things simple
+		// // which means the unit test can not call GetVictim() because we are missing
+		// // the wrapper code which sets it based on the callback
+		// EXPECT_EQ(Result.GetVictim(0), 16);
 	}
 }
 

@@ -52,7 +52,7 @@ CBobConfigVariable *CBobConfigManager::FindConfig(const char *pCommand)
 	return nullptr;
 }
 
-bool CBobConfigManager::OnConsoleCommand(const char *pCommand)
+bool CBobConfigManager::OnConsoleCommand(int ClientId, const char *pCommand)
 {
 	for(auto *pVariable : m_vpAllVariables)
 	{

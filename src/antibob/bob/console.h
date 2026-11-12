@@ -60,14 +60,15 @@ public:
 	int NumArguments() const { return m_NumArgs; }
 	int NumRequiredParameters() const;
 
-	int m_ClientId = -1;
+	int m_ClientId;
 
 	char m_aRawArgs[2028];
 	char m_aParamsText[512];
 	char m_aShortParams[512];
 
-	CBobResult(const char *pRawArgs, const char *pParams)
+	CBobResult(int ClientId, const char *pRawArgs, const char *pParams)
 	{
+		m_ClientId = ClientId;
 		str_copy(m_aRawArgs, pRawArgs);
 		str_copy(m_aParamsText, pParams);
 		for(auto *pArg : m_aaArgs)
@@ -139,8 +140,6 @@ public:
 		void *pUser,
 		const char *pHelp);
 
-	// WARNING: ClientId is wrong because of https://github.com/ddnet/ddnet/pull/11688
-	//
 	// returns true if the command or config exists
 	bool ExecuteCmd(int ClientId, const char *pCommand);
 

@@ -604,9 +604,8 @@ void CAntibob::OnDestroy()
 {
 }
 
-bool CAntibob::OnConsoleCommand(const char *pCommand)
+bool CAntibob::OnConsoleCommand(int ClientId, const char *pCommand)
 {
-	int ClientId = -1; // FIXME: https://github.com/ddnet/ddnet/pull/11688
 	if(!Console()->ExecuteCmd(ClientId, pCommand))
 	{
 		LogInfo("unknown antibot command '%s' see 'antibot cmdlist' for a full list", pCommand);

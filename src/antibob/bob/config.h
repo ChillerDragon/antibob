@@ -96,7 +96,7 @@ public:
 	CBobConfigVariable *FindConfig(const char *pCommand);
 
 	// returns true if the console command operated on a config
-	bool OnConsoleCommand(const char *pCommand);
+	bool OnConsoleCommand(int ClientId, const char *pCommand);
 	void PrintConfigs() const;
 
 	// returns false if the `pCommand` does not start with a valid config variable

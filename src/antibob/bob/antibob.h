@@ -155,7 +155,7 @@ public:
 	virtual void OnUpdateData();
 	virtual void OnDestroy();
 	// returns false on unknown command
-	virtual bool OnConsoleCommand(const char *pCommand);
+	virtual bool OnConsoleCommand(int ClientId, const char *pCommand);
 	virtual void OnPlayerInit(int ClientId);
 	virtual void OnPlayerDestroy(int ClientId);
 	virtual void OnSpawn(int ClientId);
